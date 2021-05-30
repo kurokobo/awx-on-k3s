@@ -1,0 +1,22 @@
+---
+apiVersion: awx.ansible.com/v1beta1
+kind: AWX
+metadata:
+  name: awx
+spec:
+  tower_image_version: "19.1.0"
+  tower_postgres_image_version: "12"
+
+  tower_ingress_type: Ingress
+  tower_ingress_tls_secret: awx-secret-tls
+  tower_hostname: awx.example.com
+
+  tower_postgres_configuration_secret: awx-secret-postgres
+
+  tower_postgres_storage_class: awx-postgres-volume
+  tower_postgres_storage_requirements:
+    requests:
+      storage: 2Gi
+
+  tower_projects_persistence: true
+  tower_projects_existing_claim: awx-projects-claim

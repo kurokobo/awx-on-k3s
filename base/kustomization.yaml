@@ -1,0 +1,35 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: awx
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+  - name: awx-secret-tls
+    type: kubernetes.io/tls
+    files:
+      - tls.crt
+      - tls.key
+
+  - name: awx-postgres-configuration
+    type: Opaque
+    literals:
+      - host=awx-postgres
+      - port=5432
+      - database=awx
+      - username=awx
+      - password=Ansible123!
+      - type=managed
+
+  - name: awx-admin-password
+    type: Opaque
+    literals:
+      - password=Ansible123!
+
+resources:
+  - namespace.yaml
+  - pv.yaml
+  - pvc.yaml
+  - awx.yaml
