@@ -12,15 +12,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - Tested on:
   - CentOS 8 (Minimal)
 - Products that will be deployed:
-  - AWX-Operator 0.9.0
-  - AWX Version 19.1.0
+  - AWX-Operator 0.10.0
+  - AWX Version 19.2.0
   - PostgreSQL 12
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.1.0/INSTALL.md) @19.1.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.9.0/README.md) @0.9.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.2.0/INSTALL.md) @19.2.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.10.0/README.md) @0.10.0
 
 ## Procedure
 
@@ -45,7 +45,7 @@ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
 Install specified version of AWX Operator.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/ansible/awx-operator/0.9.0/deploy/awx-operator.yaml
+kubectl apply -f https://raw.githubusercontent.com/ansible/awx-operator/0.10.0/deploy/awx-operator.yaml
 ```
 
 ### Prepare required files
@@ -64,15 +64,14 @@ AWX_HOST="awx.example.com"
 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./base/tls.crt -keyout ./base/tls.key -subj "/CN=${AWX_HOST}/O=${AWX_HOST}" -addext "subjectAltName = DNS:${AWX_HOST}"
 ```
 
-Modify `tower_hostname` in `base\awx.yaml`.
+Modify `hostname` in `base\awx.yaml`.
 
 ```yaml
----
 ...
 spec:
-  tower_ingress_type: Ingress
-  tower_ingress_tls_secret: awx-secret-tls
-  tower_hostname: awx.example.com     👈👈👈
+  ingress_type: ingress
+  ingress_tls_secret: awx-secret-tls
+  hostname: awx.example.com     👈👈👈
 ...
 ```
 
@@ -116,9 +115,11 @@ kubectl apply -k base
 Once this completed, the logs of `deployment/awx-operator` end with:
 
 ```txt
+$ kubectl logs -f deployment/awx-operator
+...
 --------------------------- Ansible Task Status Event StdOut  -----------------
 PLAY RECAP *********************************************************************
-localhost                  : ok=42   changed=0    unreachable=0    failed=0    skipped=31   rescued=0    ignored=0
+localhost                  : ok=51   changed=2    unreachable=0    failed=0    skipped=32   rescued=0    ignored=0
 -------------------------------------------------------------------------------
 ```
 
@@ -126,22 +127,22 @@ Required objects has been deployed in `awx` namespace.
 
 ```bash
 $ kubectl get all -n awx
-NAME                       READY   STATUS    RESTARTS   AGE
-pod/awx-postgres-0         1/1     Running   0          131m
-pod/awx-545c885884-62qxd   4/4     Running   0          131m
+NAME                      READY   STATUS    RESTARTS   AGE
+pod/awx-postgres-0        1/1     Running   0          4m30s
+pod/awx-b47fd55cd-d8dqj   4/4     Running   0          4m22s
 
-NAME                   TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
-service/awx-postgres   ClusterIP   None          <none>        5432/TCP       131m
-service/awx-service    NodePort    10.43.34.90   <none>        80:30882/TCP   131m
+NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/awx-postgres   ClusterIP   None            <none>        5432/TCP   4m30s
+service/awx-service    ClusterIP   10.43.159.187   <none>        80/TCP     4m24s
 
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/awx   1/1     1            1           131m
+deployment.apps/awx   1/1     1            1           4m22s
 
-NAME                             DESIRED   CURRENT   READY   AGE
-replicaset.apps/awx-545c885884   1         1         1       131m
+NAME                            DESIRED   CURRENT   READY   AGE
+replicaset.apps/awx-b47fd55cd   1         1         1       4m22s
 
 NAME                            READY   AGE
-statefulset.apps/awx-postgres   1/1     131m
+statefulset.apps/awx-postgres   1/1     4m30s
 ```
 
 Now AWX is available at `https://<awx-host>/`.

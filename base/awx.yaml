@@ -4,19 +4,25 @@ kind: AWX
 metadata:
   name: awx
 spec:
-  tower_image_version: "19.1.0"
-  tower_postgres_image_version: "12"
+  # These parameters are designed for use with:
+  # - AWX Operator: 0.10.0
+  #   https://github.com/ansible/awx-operator/blob/0.10.0/README.md
+  # - AWX: 19.2.0
+  #   https://github.com/ansible/awx/blob/19.2.0/INSTALL.md
 
-  tower_ingress_type: Ingress
-  tower_ingress_tls_secret: awx-secret-tls
-  tower_hostname: awx.example.com
+  admin_user: admin
+  admin_password_secret: awx-admin-password
 
-  tower_postgres_configuration_secret: awx-secret-postgres
+  ingress_type: ingress
+  ingress_tls_secret: awx-secret-tls
+  hostname: awx.example.com
 
-  tower_postgres_storage_class: awx-postgres-volume
-  tower_postgres_storage_requirements:
+  postgres_configuration_secret: awx-postgres-configuration
+
+  postgres_storage_class: awx-postgres-volume
+  postgres_storage_requirements:
     requests:
       storage: 2Gi
 
-  tower_projects_persistence: true
-  tower_projects_existing_claim: awx-projects-claim
+  projects_persistence: true
+  projects_existing_claim: awx-projects-claim
