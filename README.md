@@ -7,6 +7,26 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - Fixed (configurable) passwords for AWX and PostgreSQL
 - Fixed (configurable) versions of AWX and PostgreSQL
 
+## Table of Contents
+
+- [AWX on Single Node K3s](#awx-on-single-node-k3s)
+  - [Table of Contents](#table-of-contents)
+  - [Environment](#environment)
+  - [References](#references)
+  - [Procedure](#procedure)
+    - [Prepare CentOS 8 host](#prepare-centos-8-host)
+    - [Install K3s](#install-k3s)
+    - [Install AWX Operator](#install-awx-operator)
+    - [Prepare required files](#prepare-required-files)
+    - [Deploy AWX](#deploy-awx)
+  - [Backing up and Restoring using AWX Operator](#backing-up-and-restoring-using-awx-operator)
+    - [Backing up using AWX Operator](#backing-up-using-awx-operator)
+      - [Prepare for Backup](#prepare-for-backup)
+      - [Invoke Manual Backup](#invoke-manual-backup)
+    - [Restoring using AWX Operator](#restoring-using-awx-operator)
+      - [Prepare for Restore](#prepare-for-restore)
+      - [Invoke Manual Restore](#invoke-manual-restore)
+
 ## Environment
 
 - Tested on:
@@ -64,7 +84,7 @@ AWX_HOST="awx.example.com"
 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./base/tls.crt -keyout ./base/tls.key -subj "/CN=${AWX_HOST}/O=${AWX_HOST}" -addext "subjectAltName = DNS:${AWX_HOST}"
 ```
 
-Modify `hostname` in `base\awx.yaml`.
+Modify `hostname` in `base/awx.yaml`.
 
 ```yaml
 ...
@@ -75,7 +95,7 @@ spec:
 ...
 ```
 
-Modify two `password`s in `base\kustomization.yaml`.
+Modify two `password`s in `base/kustomization.yaml`.
 
 ```yaml
 ...
@@ -146,3 +166,162 @@ statefulset.apps/awx-postgres   1/1     4m30s
 ```
 
 Now AWX is available at `https://<awx-host>/`.
+
+## Backing up and Restoring using AWX Operator
+
+The AWX Operator `0.10.0` or later has the ability to backup and restore AWX in easy way.
+
+### Backing up using AWX Operator
+
+#### Prepare for Backup
+
+Prepare directories for Persistent Volumes to store backup files that defined in `backup/pv.yaml`.
+
+```bash
+sudo mkdir -p /data/backup
+```
+
+Then deploy Persistent Volume and Persistent Volume Claim.
+
+```bash
+kubectl apply -k backup
+```
+
+#### Invoke Manual Backup
+
+Modify the name of the AWXBackup object in `backup/awxbackup.yaml`.
+
+```yaml
+...
+kind: AWXBackup
+metadata:
+  name: awxbackup-2021-06-06     👈👈👈
+  namespace: awx
+...
+```
+
+Then invoke backup by applying this manifest file.
+
+```bash
+kubectl apply -f backup/awxbackup.yaml
+```
+
+Once this completed, the logs of `deployment/awx-operator` end with:
+
+```txt
+$ kubectl logs -f deployment/awx-operator
+--------------------------- Ansible Task Status Event StdOut  -----------------
+PLAY RECAP *********************************************************************
+localhost                  : ok=4    changed=0    unreachable=0    failed=0    skipped=7    rescued=0    ignored=0
+-------------------------------------------------------------------------------
+```
+
+This will create AWXBackup object in the namespace and also create backup files in the Persistent Volume. In this example those files are available at `/data/backup`.
+
+```bash
+$ kubectl get awxbackup -n awx
+NAME                   AGE
+awxbackup-2021-06-06   6m47s
+```
+
+```bash
+$ ls -l /data/backup/
+total 0
+drwxr-xr-x. 2 root root 59 Jun  5 06:51 tower-openshift-backup-2021-06-06-10:51:49
+
+$ ls -l /data/backup/tower-openshift-backup-2021-06-06-10\:51\:49/
+total 736
+-rw-r--r--. 1 root             root    749 Jun  6 06:51 awx_object
+-rw-r--r--. 1 root             root    482 Jun  6 06:51 secrets.yml
+-rw-------. 1 systemd-coredump root 745302 Jun  6 06:51 tower.db
+```
+
+Note that the contents of the Secret that passed through `ingress_tls_secret` parameter will not be included in this backup files. If necessary, get a dump of this Secret, or keep original certificate file and key file.
+
+```bash
+kubectl get secret awx-secret-tls -n awx -o yaml > awx-secret-tls.yaml
+```
+
+### Restoring using AWX Operator
+
+#### Prepare for Restore
+
+If your PV, PVC, and Secret still exist, no preparation is required.
+
+If you are restoring the entire AWX to a new environment, create the PVs and PVCs first to be restored.
+
+```bash
+sudo mkdir -p /data/postgres
+sudo mkdir -p /data/projects
+sudo chown 1000:0 /data/projects
+```
+
+Then deploy Persistent Volume and Persistent Volume Claim.
+
+```bash
+kubectl apply -k restore
+```
+
+#### Invoke Manual Restore
+
+Modify the name of the AWXRestore object in `restore/awxrestore.yaml`.
+
+```yaml
+...
+kind: AWXRestore
+metadata:
+  name: awxrestore-2021-06-06     👈👈👈
+  namespace: awx
+...
+```
+
+If you want to restore from AWXBackup object, specify its name in `restore/awxrestore.yaml`.
+
+```yaml
+...
+  # Parameters to restore from AWXBackup object
+  backup_pvc_namespace: awx
+  backup_name: awxbackup-2021-06-06     👈👈👈
+...
+```
+
+If the AWXBackup object no longer exists, place the backup files and specify the name of the PVC and directory in `restore/awxrestore.yaml`.
+
+```yaml
+...
+  # Parameters to restore from existing files on PVC (without AWXBackup object)
+  backup_pvc_namespace: awx
+  backup_pvc: awx-backup-claim     👈👈👈
+  backup_dir: /backups/tower-openshift-backup-2021-06-06-10:51:49     👈👈👈
+...
+```
+
+Then invoke restore by applying this manifest file.
+
+```bash
+kubectl apply -f restore/awxrestore.yaml
+```
+
+Once this completed, the logs of `deployment/awx-operator` end with:
+
+```txt
+$ kubectl logs -f deployment/awx-operator
+--------------------------- Ansible Task Status Event StdOut  -----------------
+PLAY RECAP *********************************************************************
+localhost                  : ok=53   changed=2    unreachable=0    failed=0    skipped=30   rescued=0    ignored=0
+-------------------------------------------------------------------------------
+```
+
+This will create AWXRestore object in the namespace.
+
+```bash
+$ kubectl get awxrestore -n awx
+NAME                    AGE
+awxrestore-2021-06-06   137m
+```
+
+Then restore the Secret for TLS manually (or create newly using original certificate and key file).
+
+```bash
+kubectl apply -f awx-secret-tls.yaml
+```

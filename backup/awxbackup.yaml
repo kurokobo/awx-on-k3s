@@ -1,0 +1,10 @@
+---
+apiVersion: awx.ansible.com/v1beta1
+kind: AWXBackup
+metadata:
+  name: awxbackup-2021-06-06
+  namespace: awx
+spec:
+  deployment_name: awx
+  backup_pvc: awx-backup-claim
+  postgres_label_selector: app.kubernetes.io/instance=postgres-awx
