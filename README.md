@@ -32,15 +32,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - Tested on:
   - CentOS 8 (Minimal)
 - Products that will be deployed:
-  - AWX-Operator 0.10.0
-  - AWX Version 19.2.0
+  - AWX-Operator 0.12.0
+  - AWX Version 19.2.2
   - PostgreSQL 12
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.2.0/INSTALL.md) @19.2.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.10.0/README.md) @0.10.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.2.2/INSTALL.md) @19.2.2
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.12.0/README.md) @0.12.0
 
 ## Procedure
 
@@ -65,7 +65,7 @@ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
 Install specified version of AWX Operator.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/ansible/awx-operator/0.10.0/deploy/awx-operator.yaml
+kubectl apply -f https://raw.githubusercontent.com/ansible/awx-operator/0.12.0/deploy/awx-operator.yaml
 ```
 
 ### Prepare required files

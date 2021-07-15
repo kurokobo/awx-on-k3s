@@ -7,4 +7,3 @@ metadata:
 spec:
   deployment_name: awx
   backup_pvc: awx-backup-claim
-  postgres_label_selector: app.kubernetes.io/instance=postgres-awx
