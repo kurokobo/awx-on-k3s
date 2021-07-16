@@ -1,3 +1,4 @@
+<!-- omit in toc -->
 # AWX on Single Node K3s
 
 An example implementation of AWX on single node K3s using AWX Operator, with easy-to-use simplified configuration with ownership of data and passwords.
@@ -7,25 +8,25 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - Fixed (configurable) passwords for AWX and PostgreSQL
 - Fixed (configurable) versions of AWX and PostgreSQL
 
+<!-- omit in toc -->
 ## Table of Contents
 
-- [AWX on Single Node K3s](#awx-on-single-node-k3s)
-  - [Table of Contents](#table-of-contents)
-  - [Environment](#environment)
-  - [References](#references)
-  - [Procedure](#procedure)
-    - [Prepare CentOS 8 host](#prepare-centos-8-host)
-    - [Install K3s](#install-k3s)
-    - [Install AWX Operator](#install-awx-operator)
-    - [Prepare required files](#prepare-required-files)
-    - [Deploy AWX](#deploy-awx)
-  - [Backing up and Restoring using AWX Operator](#backing-up-and-restoring-using-awx-operator)
-    - [Backing up using AWX Operator](#backing-up-using-awx-operator)
-      - [Prepare for Backup](#prepare-for-backup)
-      - [Invoke Manual Backup](#invoke-manual-backup)
-    - [Restoring using AWX Operator](#restoring-using-awx-operator)
-      - [Prepare for Restore](#prepare-for-restore)
-      - [Invoke Manual Restore](#invoke-manual-restore)
+- [Environment](#environment)
+- [References](#references)
+- [Procedure](#procedure)
+  - [Prepare CentOS 8 host](#prepare-centos-8-host)
+  - [Install K3s](#install-k3s)
+  - [Install AWX Operator](#install-awx-operator)
+  - [Prepare required files](#prepare-required-files)
+  - [Deploy AWX](#deploy-awx)
+- [Backing up and Restoring using AWX Operator](#backing-up-and-restoring-using-awx-operator)
+  - [Backing up using AWX Operator](#backing-up-using-awx-operator)
+    - [Prepare for Backup](#prepare-for-backup)
+    - [Invoke Manual Backup](#invoke-manual-backup)
+  - [Restoring using AWX Operator](#restoring-using-awx-operator)
+    - [Prepare for Restore](#prepare-for-restore)
+    - [Invoke Manual Restore](#invoke-manual-restore)
+- [Deploy Private Container Registry](#deploy-private-container-registry)
 
 ## Environment
 
@@ -325,3 +326,11 @@ Then restore the Secret for TLS manually (or create newly using original certifi
 ```bash
 kubectl apply -f awx-secret-tls.yaml
 ```
+
+## Deploy Private Container Registry
+
+To use Execution Environments in AWX (AWX-EE), we have to push the container image built with `ansible-builder` to the container registry.
+
+If we don't want to push our container images to Docker Hub or other cloud services, we can deploy a private container registry on K3s.
+
+See [📝 `registry/README.md`](registry/README.md) for instructions.

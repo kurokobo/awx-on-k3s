@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry
+  labels:
+    app: registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registry
+  template:
+    metadata:
+      labels:
+        app: registry
+    spec:
+      containers:
+        - name: registry
+          image: registry:2.7
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          volumeMounts:
+            - name: registry-volume
+              mountPath: /var/lib/registry
+            - name: registry-config
+              mountPath: /etc/docker/registry
+      volumes:
+        - name: registry-volume
+          persistentVolumeClaim:
+            claimName: registry-claim
+        - name: registry-config
+          configMap:
+            defaultMode: 420
+            name: registry-configmap
