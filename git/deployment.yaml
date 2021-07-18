@@ -1,0 +1,32 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: git
+  labels:
+    app: git
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: git
+  template:
+    metadata:
+      labels:
+        app: git
+    spec:
+      containers:
+        - name: git
+          image: gitea/gitea:1.14
+          ports:
+            - name: gitea-http
+              containerPort: 3000
+            - name: gitea-ssh
+              containerPort: 22
+          volumeMounts:
+            - name: git-volume
+              mountPath: /data
+      volumes:
+        - name: git-volume
+          persistentVolumeClaim:
+            claimName: git-claim

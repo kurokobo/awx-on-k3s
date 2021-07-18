@@ -1,0 +1,21 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: git-ingress
+spec:
+  tls:
+    - hosts:
+        - git.example.com
+      secretName: git-secret-tls
+  rules:
+    - host: git.example.com
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: git-service
+                port:
+                  number: 3000

@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: git-service
+spec:
+  ports:
+    - name: gitea-http
+      protocol: TCP
+      port: 3000
+    - name: gitea-ssh
+      protocol: TCP
+      port: 22
+  selector:
+    app: git

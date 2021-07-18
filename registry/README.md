@@ -12,7 +12,7 @@ Deploying your private container registry on your K3s to use with AWX.
 - [Quick Testing](#quick-testing)
   - [Testing with Docker](#testing-with-docker)
   - [Digging into the Registry](#digging-into-the-registry)
-- [(Optional) Use as Private Container Registry for K3s](#optional-use-as-private-container-registry-for-k3s)
+- [Use as Private Container Registry for K3s](#use-as-private-container-registry-for-k3s)
   - [Procedure](#procedure-1)
   - [Testing](#testing)
 
@@ -174,9 +174,9 @@ reg tags -k registry.example.com/reguser/whalesay
 reg rm -k registry.example.com/reguser/whalesay:latest
 ```
 
-## (Optional) Use as Private Container Registry for K3s
+## Use as Private Container Registry for K3s
 
-Optionally, this registry can also be registered as a private container registry for K3s.
+This registry can also be registered as a private container registry for K3s. This is required procedure to use this registry to store images for AWX Execution Environment.
 
 ### Procedure
 

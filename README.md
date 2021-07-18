@@ -26,7 +26,13 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - [Restoring using AWX Operator](#restoring-using-awx-operator)
     - [Prepare for Restore](#prepare-for-restore)
     - [Invoke Manual Restore](#invoke-manual-restore)
+- [Deploy Private Git Repository](#deploy-private-git-repository)
 - [Deploy Private Container Registry](#deploy-private-container-registry)
+- [Use Ansible Builder](#use-ansible-builder)
+- [Use Ansible Runner](#use-ansible-runner)
+- [Additional Configuration for AWX](#additional-configuration-for-awx)
+  - [Configure AWX to use Git Repository with Self-Signed Certificate](#configure-awx-to-use-git-repository-with-self-signed-certificate)
+  - [Expose your /etc/hosts to K3s](#expose-your-etchosts-to-k3s)
 
 ## Environment
 
@@ -327,10 +333,82 @@ Then restore the Secret for TLS manually (or create newly using original certifi
 kubectl apply -f awx-secret-tls.yaml
 ```
 
+## Deploy Private Git Repository
+
+To use AWX with SCM, this repository includes the manifests to deploy [Gitea](https://gitea.io/en-us/).
+
+See [📝`git/README.md`](git) for instructions.
+
 ## Deploy Private Container Registry
 
 To use Execution Environments in AWX (AWX-EE), we have to push the container image built with `ansible-builder` to the container registry.
 
 If we don't want to push our container images to Docker Hub or other cloud services, we can deploy a private container registry on K3s.
 
-See [📝 `registry/README.md`](registry/README.md) for instructions.
+See [📝`registry/README.md`](registry) for instructions.
+
+## Use Ansible Builder
+
+See [📝`builder/README.md`](builder) for instructions.
+
+## Use Ansible Runner
+
+See [📝`runner/README.md`](runner) for instructions.
+
+## Additional Configuration for AWX
+
+### Configure AWX to use Git Repository with Self-Signed Certificate
+
+1. Add Credentials for SCM
+2. Allow Self-Signed Certificate such as this Gitea
+   - Open `Settings` > `Jobs settings` in AWX
+   - Press `Edit` and scroll down to `Extra Environment Variables`, then add `"GIT_SSL_NO_VERIFY": "True"` in `{}`
+   - Press `Save`
+
+### Expose your /etc/hosts to K3s
+
+If we don't have a DNS server and are using `/etc/hosts`, we will need to do some additional tasks to get the Pods on K3s to resolve names according to `/etc/hosts`.
+
+This is necessary for AWX to resolve the hostname for your Private Git Repository or pull images from the Container Registry.
+
+One easy way to do this is to use `dnsmasq`.
+
+1. Add entries to `/etc/hosts` on your K3s host. Note that the IP addresses have to be replaced with your K3s host's one.
+
+   ```bash
+   sudo echo "192.168.0.100 awx.example.com" >> /etc/hosts
+   sudo echo "192.168.0.100 registry.example.com" >> /etc/hosts
+   sudo echo "192.168.0.100 git.example.com" >> /etc/hosts
+   ```
+
+2. Install and start `dnsmasq` with default configuration.
+
+   ```bash
+   sudo dnf install dnsmasq
+   sudo systemctl enable dnsmasq --now
+   ```
+
+3. Create new `resolv.conf` to use K3s. Note that the IP addresses have to be replaced with your K3s host's one.
+
+   ```bash
+   sudo echo "nameserver 192.168.0.100" > /etc/rancher/k3s/resolv.conf
+   ```
+
+4. Add `--resolv-conf /etc/rancher/k3s/resolv.conf` as an argument for `k3s server` command.
+
+   ```bash
+   $ cat /etc/systemd/system/k3s.service
+   ...
+   ExecStart=/usr/local/bin/k3s \
+       server \
+           '--write-kubeconfig-mode' \
+           '644' \
+           '--resolv-conf' \     👈👈👈
+           '/etc/rancher/k3s/resolv.conf' \     👈👈👈
+   ```
+
+5. Restart K3s.
+
+   ```bash
+   sudo systemctl restart k3s
+   ```

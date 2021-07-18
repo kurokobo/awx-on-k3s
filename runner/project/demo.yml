@@ -1,0 +1,38 @@
+---
+- hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Ensure that the host is reachable
+      ansible.builtin.ping:
+
+    - name: Print variables for debugging
+      ansible.builtin.debug:
+        var: data
+      vars:
+        data:
+          ansible_playbook_python: "{{ ansible_playbook_python }}"
+          ansible_python_version: "{{ ansible_python_version }}"
+          ansible_python.executable: "{{ ansible_python.executable }}"
+          ansible_version.full: "{{ ansible_version.full }}"
+
+    - name: Invoke debug commands
+      ansible.builtin.command: "{{ item }}"
+      changed_when: false
+      failed_when: false
+      loop:
+        - hostname
+        - whoami
+        - pwd
+        - python3 -m pip list
+        - ansible-galaxy collection list -p .
+      register: command_results
+    - ansible.builtin.debug:
+        msg: "{{ item.stdout_lines }}"
+      loop: "{{ command_results.results }}"
+      loop_control:
+        label: "{{ item.cmd }}"
+
+    # - name: Simply pause for a while
+    #   ansible.builtin.pause:
+    #     minutes: 10
