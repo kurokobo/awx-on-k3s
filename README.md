@@ -33,6 +33,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - [Additional Configuration for AWX](#additional-configuration-for-awx)
   - [Configure AWX to use Git Repository with Self-Signed Certificate](#configure-awx-to-use-git-repository-with-self-signed-certificate)
   - [Expose your /etc/hosts to Pods on K3s](#expose-your-etchosts-to-pods-on-k3s)
+  - [Use Customized Pod Specification for your Execution Environment](#use-customized-pod-specification-for-your-execution-environment)
 
 ## Environment
 
@@ -433,3 +434,7 @@ One easy way to do this is to use `dnsmasq`.
    ```bash
    sudo systemctl restart dnsmasq
    ```
+
+### Use Customized Pod Specification for your Execution Environment
+
+See [📝`containergroup/README.md`](containergroup) for instructions.

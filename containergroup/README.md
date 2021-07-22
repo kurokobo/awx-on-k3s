@@ -1,0 +1,169 @@
+<!-- omit in toc -->
+# Customize Pod Specification for Execution Environment
+
+You can customize the specification of the Pod of the Execution Environment using **Container Group**.
+
+In this example, we make the Execution Environment to work with the Pod with following specification .
+
+- Run in a different namespace `ee-demo` instead of default one
+- Have an additional label `app: ee-demo-pod`
+- Have `requests` and `limits` for CPU and Memory resources
+- Mount PVC as `/etc/demo`
+- Run on the node with the label `awx-node-type: demo` using `nodeSelector`
+
+<!-- omit in toc -->
+## Table of Contents
+
+- [Procedure](#procedure)
+  - [Prepare host and kubernetes](#prepare-host-and-kubernetes)
+  - [Create Container Group](#create-container-group)
+- [Quick Testing](#quick-testing)
+
+## Procedure
+
+### Prepare host and kubernetes
+
+Prepare directories for Persistent Volumes defined in `containergroup/pv.yaml`.
+
+```bash
+sudo mkdir -p /data/demo
+```
+
+Create Namespace, PV, and PVC.
+
+```bash
+kubectl apply -k registry
+```
+
+Add label to the node.
+
+```bash
+$ kubectl label nodes kuro-awx01.kuro.lab awx-node-type=demo
+
+$ kubectl get nodes --show-labels
+NAME                  STATUS   ROLES                  AGE    VERSION        LABELS
+kuro-awx01.kuro.lab   Ready    control-plane,master   3d7h   v1.21.2+k3s1   awx-node-type=demo,...
+```
+
+Copy `awx` role and `awx` rolebinding to new `ee-demo`, to assign `awx` role on `ee-demo` to `awx` serviceaccount on `awx` namespace.
+
+```bash
+$ kubectl -n awx get role awx -o json | jq '.metadata.namespace="ee-demo" | del(.metadata.ownerReferences)' | kubectl create -f -
+
+$ kubectl -n ee-demo get role
+NAME   CREATED AT
+awx    2021-07-21T15:59:45Z
+
+$ kubectl -n awx get rolebinding awx -o json | jq '.metadata.namespace="ee-demo" | del(.metadata.ownerReferences) | .subjects[0].namespace="awx"' | kubectl create -f -
+
+$ kubectl -n ee-demo describe rolebinding awx
+Name:         awx
+Labels:       <none>
+Annotations:  <none>
+Role:
+  Kind:  Role
+  Name:  awx
+Subjects:
+  Kind            Name  Namespace
+  ----            ----  ---------
+  ServiceAccount  awx   awx
+```
+
+Note that this is a little tricky but super useful way to duplicate resource between namespace. `jq` command is required.
+
+### Create Container Group
+
+You can create new Container Group by `Administration` > `Instance Group`.
+
+Chake `Customize pod specification` and define specification as following.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: ee-demo
+  labels:
+    app: ee-demo-pod
+spec:
+  containers:
+    - image: 'quay.io/ansible/awx-ee:0.5.0'
+      name: worker
+      args:
+        - ansible-runner
+        - worker
+        - '--private-data-dir=/runner'
+      resources:
+        requests:
+          cpu: 500m
+          memory: 100Mi
+        limits:
+          cpu: 1000m
+          memory: 200Mi
+      volumeMounts:
+        - name: demo-volume
+          mountPath: /etc/demo
+  nodeSelector:
+    awx-node-type: demo
+  volumes:
+    - name: demo-volume
+      persistentVolumeClaim:
+        claimName: demo-claim
+```
+
+This is the customized manifest to achieve;
+
+- Running in a different namespace `ee-demo` instead of default one
+- Having an additional label `app: ee-demo-pod`
+- Having `requests` and `limits` for CPU and Memory resources
+- Mounting PVC as `/etc/demo`
+- Running on the node with the label `awx-node-type: demo` using `nodeSelector`
+
+## Quick Testing
+
+The use of Container Group can be specified in the Job Template. After specifying and running the Job, you can see the result as follows.
+
+The Pod for the Job is running in `ee-demo` namespace.
+
+```bash
+$ kubectl -n ee-demo get pod
+NAME                      READY   STATUS    RESTARTS   AGE
+automation-job-50-qsjbp   1/1     Running   0          17s
+```
+
+The Pod has your own specification as defined above.
+
+```bash
+$ kubectl -n ee-demo get pod automation-job-50-qsjbp -o yaml
+...
+metadata:
+  ...
+  labels:
+    ...
+    app: ee-demo-pod
+...
+spec:
+  containers:
+    ...
+    image: registry.example.com/ansible/ee:2.10-custom
+    ...
+    resources:
+      limits:
+        cpu: "1"
+        memory: 200Mi
+      requests:
+        cpu: 500m
+        memory: 100Mi
+    ...
+    volumeMounts:
+    - mountPath: /etc/demo
+      name: demo-volume
+    ...
+  nodeSelector:
+    awx-node-type: demo
+  ...
+  volumes:
+  - name: demo-volume
+    persistentVolumeClaim:
+      claimName: demo-claim
+  ...
+```
