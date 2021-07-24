@@ -1,0 +1,23 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: galaxy
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+  - name: galaxy-secret-tls
+    type: kubernetes.io/tls
+    files:
+      - tls.crt
+      - tls.key
+
+resources:
+  - namespace.yaml
+  - pv.yaml
+  - pvc.yaml
+  - ingress.yaml
+  - service.yaml
+  - configmap.yaml
+  - deployment.yaml

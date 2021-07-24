@@ -206,6 +206,8 @@ sudo /usr/local/bin/crictl info
 sudo /usr/local/bin/crictl info | jq .config.registry
 ```
 
+Alternatively, creating a secret and passing as `imagePullSecrets` to the Pod should also work.
+
 ### Testing
 
 You can launch your Pod using an image from a private repository that requires authentication.

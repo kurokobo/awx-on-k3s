@@ -26,14 +26,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - [Restoring using AWX Operator](#restoring-using-awx-operator)
     - [Prepare for Restore](#prepare-for-restore)
     - [Invoke Manual Restore](#invoke-manual-restore)
-- [Deploy Private Git Repository](#deploy-private-git-repository)
-- [Deploy Private Container Registry](#deploy-private-container-registry)
-- [Use Ansible Builder](#use-ansible-builder)
-- [Use Ansible Runner](#use-ansible-runner)
-- [Additional Configuration for AWX](#additional-configuration-for-awx)
-  - [Configure AWX to use Git Repository with Self-Signed Certificate](#configure-awx-to-use-git-repository-with-self-signed-certificate)
-  - [Expose your /etc/hosts to Pods on K3s](#expose-your-etchosts-to-pods-on-k3s)
-  - [Use Customized Pod Specification for your Execution Environment](#use-customized-pod-specification-for-your-execution-environment)
+- [Additional Guides](#additional-guides)
 
 ## Environment
 
@@ -114,13 +107,13 @@ Modify two `password`s in `base/kustomization.yaml`.
       - port=5432
       - database=awx
       - username=awx
-      - password=Ansible123!!     👈👈👈
+      - password=Ansible123!     👈👈👈
       - type=managed
 
   - name: awx-admin-password
     type: Opaque
     literals:
-      - password=Ansible123!!     👈👈👈
+      - password=Ansible123!     👈👈👈
 ...
 ```
 
@@ -334,107 +327,28 @@ Then restore the Secret for TLS manually (or create newly using original certifi
 kubectl apply -f awx-secret-tls.yaml
 ```
 
-## Deploy Private Git Repository
+## Additional Guides
 
-To use AWX with SCM, this repository includes the manifests to deploy [Gitea](https://gitea.io/en-us/).
-
-See [📝`git/README.md`](git) for instructions.
-
-## Deploy Private Container Registry
-
-To use Execution Environments in AWX (AWX-EE), we have to push the container image built with `ansible-builder` to the container registry.
-
-If we don't want to push our container images to Docker Hub or other cloud services, we can deploy a private container registry on K3s.
-
-See [📝`registry/README.md`](registry) for instructions.
-
-## Use Ansible Builder
-
-See [📝`builder/README.md`](builder) for instructions.
-
-## Use Ansible Runner
-
-See [📝`runner/README.md`](runner) for instructions.
-
-## Additional Configuration for AWX
-
-### Configure AWX to use Git Repository with Self-Signed Certificate
-
-1. Add Credentials for SCM
-2. Allow Self-Signed Certificate such as this Gitea
-   - Open `Settings` > `Jobs settings` in AWX
-   - Press `Edit` and scroll down to `Extra Environment Variables`, then add `"GIT_SSL_NO_VERIFY": "True"` in `{}`
-   - Press `Save`
-
-### Expose your /etc/hosts to Pods on K3s
-
-If we don't have a DNS server and are using `/etc/hosts`, we will need to do some additional tasks to get the Pods on K3s to resolve names according to `/etc/hosts`.
-
-This is necessary for AWX to resolve the hostname for your Private Git Repository or pull images from the Container Registry.
-
-One easy way to do this is to use `dnsmasq`.
-
-1. Add entries to `/etc/hosts` on your K3s host. Note that the IP addresses have to be replaced with your K3s host's one.
-
-   ```bash
-   sudo tee -a /etc/hosts <<EOF
-   192.168.0.100 awx.example.com
-   192.168.0.100 registry.example.com
-   192.168.0.100 git.example.com
-   EOF
-   ```
-
-2. Install and start `dnsmasq` with default configuration.
-
-   ```bash
-   sudo dnf install dnsmasq
-   sudo systemctl enable dnsmasq --now
-   ```
-
-3. Create new `resolv.conf` to use K3s. Note that the IP addresses have to be replaced with your K3s host's one.
-
-   ```bash
-   sudo echo "nameserver 192.168.0.100" > /etc/rancher/k3s/resolv.conf
-   ```
-
-4. Add `--resolv-conf /etc/rancher/k3s/resolv.conf` as an argument for `k3s server` command.
-
-   ```bash
-   $ cat /etc/systemd/system/k3s.service
-   ...
-   ExecStart=/usr/local/bin/k3s \
-       server \
-           '--write-kubeconfig-mode' \
-           '644' \
-           '--resolv-conf' \     👈👈👈
-           '/etc/rancher/k3s/resolv.conf' \     👈👈👈
-   ```
-
-5. Restart K3s and CoreDNS. The K3s service can be safely restarted without affecting the running resources.
-
-   ```bash
-   sudo systemctl restart k3s
-   kubectl -n kube-system delete pod -l k8s-app=kube-dns
-   ```
-
-6. Ensure that your hostname can be resolved as defined in `/etc/hosts`.
-
-   ```bash
-   $ kubectl run -it --rm --restart=Never busybox --image=busybox:1.28 -- nslookup git.example.com
-   Server:    10.43.0.10
-   Address 1: 10.43.0.10 kube-dns.kube-system.svc.cluster.local
-
-   Name:      git.example.com
-   Address 1: 192.168.0.100
-   pod "busybox" deleted
-   ```
-
-7. If you update your `/etc/hosts`, restarting `dnsmasq` is required.
-
-   ```bash
-   sudo systemctl restart dnsmasq
-   ```
-
-### Use Customized Pod Specification for your Execution Environment
-
-See [📝`containergroup/README.md`](containergroup) for instructions.
+- [📁 **Deploy Private Git Repository on Kubernetes**](git)
+  - To use AWX with SCM, this repository includes the manifests to deploy [Gitea](https://gitea.io/en-us/).
+  - See [📝`git/README.md`](git) for instructions.
+- [📁 **Deploy Private Container Registry on Kubernetes**](registry)
+  - To use Execution Environments in AWX (AWX-EE), we have to push the container image built with `ansible-builder` to the container registry.
+  - If we don't want to push our container images to Docker Hub or other cloud services, we can deploy a private container registry on K3s.
+  - See [📝`registry/README.md`](registry) for instructions.
+- [📁 **Use Ansible Builder**](builder)
+  - Use Ansible Builder to build our own Execution Environment.
+  - See [📝`builder/README.md`](builder) for instructions.
+- [📁 **Use Ansible Runner**](runner)
+  - Use Ansible Runner to run playbook using Execution Environment.
+  - See [📝`runner/README.md`](runner) for instructions.
+- [📁 **Use Customized Pod Specification for your Execution Environment**](containergroup)
+  - We can customize the specification of the Pod of the Execution Environment using **Container Group**.
+  - See [📝`containergroup/README.md`](containergroup) for instructions.
+- [📁 **Deploy Private Galaxy NG on Docker or Kubernetes** (Experimental)](galaxy)
+  - Deploy our own Galaxy NG instance.
+  - **Note that the containerized implementation of Galaxy NG is not supported at this time.**
+  - **All information on the page is for development, testing and study purposes only.**
+  - See [📝`galaxy/README.md`](galaxy) for instructions.
+- [📁 **Tips**](tips)
+  - [📝Expose `/etc/hosts` to Pods on K3s](tips/expose-hosts.md)

@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: galaxy-configmap
+  labels:
+    app: galaxy
+data:
+  settings.py: |-
+    CONTENT_ORIGIN='https://galaxy.example.com'
+    ANSIBLE_API_HOSTNAME='https://galaxy.example.com'
+    ANSIBLE_CONTENT_HOSTNAME='https://galaxy.example.com/pulp/content'
+    TOKEN_AUTH_DISABLED=True

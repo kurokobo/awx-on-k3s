@@ -11,6 +11,7 @@ Note that this sample manifest does not include any databases, so the SQLite3 ha
 - [Procedure](#procedure)
   - [Prepare required files](#prepare-required-files)
   - [Deploy Private Git Repository](#deploy-private-git-repository)
+- [Configure AWX to use Git Repository with Self-Signed Certificate](#configure-awx-to-use-git-repository-with-self-signed-certificate)
 
 ## Procedure
 
@@ -74,3 +75,16 @@ Note that this sample manifest does not include any databases, so the SQLite3 ha
 | -------------- | -------------------------------------------------------- |
 | Database Type  | `SQLite3`                                                |
 | Gitea Base URL | `https://git.example.com/` or the hostname you specified |
+
+## Configure AWX to use Git Repository with Self-Signed Certificate
+
+1. Add Credentials for SCM
+2. Allow Self-Signed Certificate such as this Gitea
+   - Open `Settings` > `Jobs settings` in AWX
+   - Press `Edit` and scroll down to `Extra Environment Variables`, then add `"GIT_SSL_NO_VERIFY": "True"` in `{}`
+     ```json
+     {
+       "GIT_SSL_NO_VERIFY": "True"
+     }
+     ```
+   - Press `Save`

@@ -1,0 +1,21 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: galaxy-ingress
+spec:
+  tls:
+    - hosts:
+        - galaxy.example.com
+      secretName: galaxy-secret-tls
+  rules:
+    - host: galaxy.example.com
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: galaxy-service
+                port:
+                  number: 80

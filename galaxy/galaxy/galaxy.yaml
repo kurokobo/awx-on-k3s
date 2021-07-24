@@ -1,0 +1,35 @@
+apiVersion: pulp.pulpproject.org/v1beta1
+kind: Pulp
+metadata:
+  name: galaxy
+spec:
+  ingress_type: Ingress
+  ingress_tls_secret: galaxy-secret-tls
+  route_host: galaxy.example.com
+  hostname: galaxy.example.com
+  image: galaxy
+  image_web: galaxy-web
+  tag: "0.3.0"
+  pulp_settings:
+    GALAXY_FEATURE_FLAGS:
+      execution_environments: "True"
+    TOKEN_AUTH_DISABLED: "True"
+  admin_password_secret: galaxy-admin-password
+  storage_type: File
+  file_storage_storage_class: galaxy-pulp-volume
+  file_storage_access_mode: ReadWriteOnce
+  file_storage_size: 10Gi
+  postgres_storage_class: galaxy-postgres-volume
+  postgres_resource_requirements:
+    requests:
+      storage: 2Gi
+  api:
+    replicas: 1
+  content:
+    replicas: 1
+  worker:
+    replicas: 1
+  web:
+    replicas: 1
+  resource_manager:
+    replicas: 1
