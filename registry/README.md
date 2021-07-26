@@ -12,7 +12,7 @@ Deploying your private container registry on your K3s to use with AWX.
 - [Quick Testing](#quick-testing)
   - [Testing with Docker](#testing-with-docker)
   - [Digging into the Registry](#digging-into-the-registry)
-- [Use as Private Container Registry for K3s](#use-as-private-container-registry-for-k3s)
+- [Use as Private Container Registry for AWX or K3s](#use-as-private-container-registry-for-awx-or-k3s)
   - [Procedure](#procedure-1)
   - [Testing](#testing)
 
@@ -174,13 +174,17 @@ reg tags -k registry.example.com/reguser/whalesay
 reg rm -k registry.example.com/reguser/whalesay:latest
 ```
 
-## Use as Private Container Registry for K3s
+## Use as Private Container Registry for AWX or K3s
 
-This registry can also be registered as a private container registry for K3s. This is required procedure to use this registry to store images for AWX Execution Environment.
+This registry can be used not only as a registry to store Execution Environment for AWX, but also as a private registry for K3s.
 
 ### Procedure
 
 To achieve this, create a `registries.yaml` and restart K3s.
+
+Note that required `imagePullSecrets` will be automatically created by AWX once you register valid Credential for your registry on AWX. Therefore, the `auth` section is only necessary if Kubernetes pulls the image directly without AWX, as in the following [Testing](#testing) procedure.
+
+The `tls` section is required to disable SSL Verification as the endpoint is HTTPS with a Self-Signed Certificate.
 
 ```bash
 sudo tee /etc/rancher/k3s/registries.yaml <<EOF
@@ -206,7 +210,7 @@ sudo /usr/local/bin/crictl info
 sudo /usr/local/bin/crictl info | jq .config.registry
 ```
 
-Alternatively, creating a secret and passing as `imagePullSecrets` to the Pod should also work.
+If you want Kubernetes to be able to pull images directly from this private registry, alternatively you can also manually create `imagePullSecrets` for the Pod instead of writing your credentials in `auth` in `registries.yaml`.
 
 ### Testing
 

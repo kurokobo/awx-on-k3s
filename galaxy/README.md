@@ -521,15 +521,14 @@ Push files in `collection-demo` to your SCM, and create new Project in AWX in st
 
 To use your Execution Environment on your Galaxy NG through AWX, Kubernetes have to be able to pull images from your Galaxy NG.
 
-To achieve this, create new user on Galaxy NG (of course `admin` works but not recommemded), create a `registries.yaml`, and then restart K3s.
+If the endpoint of the Galaxy NG you created is HTTPS with a Self-Signed Certificate, you need to disable SSL validation for the registry.
+
+To achieve this, create a `registries.yaml`, and then restart K3s.
 
 ```bash
 sudo tee /etc/rancher/k3s/registries.yaml <<EOF
 configs:
   galaxy.example.com:
-    auth:
-      username: awx
-      password: Galaxy123!
     tls:
       insecure_skip_verify: true
 EOF
@@ -547,4 +546,11 @@ sudo /usr/local/bin/crictl info
 sudo /usr/local/bin/crictl info | jq .config.registry
 ```
 
-Now you can push your Execution Environment to your Galaxy NG (as described above), register new Execution Environment on AWX, and use Execution Environment by specifing it in Global Default, Project, or Job Template.
+Now you can use Execution Environment on Galaxy NG through AWX as following.
+
+1. Push your Execution Environment to your Galaxy NG (as described above)
+2. Create Credential with `Container Registry` type on AWX for your Galaxy NG
+3. Register new Execution Environment on AWX
+4. Specify it as Execution Environment for the Job Template, Project Default, or Global Default.
+
+Once you start the Job Template, `imagePullSecrets` will be created from Credentials and assinged to the Pod, the image will be pulled, and the playbook will run on the Execution Environment.
