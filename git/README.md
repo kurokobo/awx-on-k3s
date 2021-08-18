@@ -53,7 +53,7 @@ kubectl apply -k git
 Required resources has been deployed in `git` namespace.
 
 ```bash
-$ kubectl get all -n git
+$ kubectl -n git get all
 NAME                       READY   STATUS    RESTARTS   AGE
 pod/git-576868dc5b-z7z55   1/1     Running   0          31s
 

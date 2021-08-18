@@ -33,15 +33,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - Tested on:
   - CentOS 8 (Minimal)
 - Products that will be deployed:
-  - AWX-Operator 0.12.0
-  - AWX Version 19.2.2
+  - AWX-Operator 0.13.0
+  - AWX Version 19.3.0
   - PostgreSQL 12
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.2.2/INSTALL.md) @19.2.2
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.12.0/README.md) @0.12.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.3.0/INSTALL.md) @19.3.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.13.0/README.md) @0.13.0
 
 ## Procedure
 
@@ -66,7 +66,7 @@ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
 Install specified version of AWX Operator.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/ansible/awx-operator/0.12.0/deploy/awx-operator.yaml
+kubectl apply -f https://raw.githubusercontent.com/ansible/awx-operator/0.13.0/deploy/awx-operator.yaml
 ```
 
 ### Prepare required files
@@ -140,30 +140,46 @@ $ kubectl logs -f deployment/awx-operator
 ...
 --------------------------- Ansible Task Status Event StdOut  -----------------
 PLAY RECAP *********************************************************************
-localhost                  : ok=51   changed=2    unreachable=0    failed=0    skipped=32   rescued=0    ignored=0
+localhost                  : ok=54   changed=0    unreachable=0    failed=0    skipped=37   rescued=0    ignored=0 
 -------------------------------------------------------------------------------
 ```
 
 Required objects has been deployed in `awx` namespace.
 
 ```bash
-$ kubectl get all -n awx
+$ kubectl -n awx get awx,all,ingress,secrets
+NAME                      AGE
+awx.awx.ansible.com/awx   4m19s
+
 NAME                      READY   STATUS    RESTARTS   AGE
-pod/awx-postgres-0        1/1     Running   0          4m30s
-pod/awx-b47fd55cd-d8dqj   4/4     Running   0          4m22s
+pod/awx-postgres-0        1/1     Running   0          4m27s
+pod/awx-59ff55b5b-qdk9p   4/4     Running   0          4m19s
 
 NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-service/awx-postgres   ClusterIP   None            <none>        5432/TCP   4m30s
-service/awx-service    ClusterIP   10.43.159.187   <none>        80/TCP     4m24s
+service/awx-postgres   ClusterIP   None            <none>        5432/TCP   4m27s
+service/awx-service    ClusterIP   10.43.209.222   <none>        80/TCP     4m21s
 
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/awx   1/1     1            1           4m22s
+deployment.apps/awx   1/1     1            1           4m19s
 
 NAME                            DESIRED   CURRENT   READY   AGE
-replicaset.apps/awx-b47fd55cd   1         1         1       4m22s
+replicaset.apps/awx-59ff55b5b   1         1         1       4m19s
 
 NAME                            READY   AGE
-statefulset.apps/awx-postgres   1/1     4m30s
+statefulset.apps/awx-postgres   1/1     7m27s
+
+NAME                                    CLASS    HOSTS             ADDRESS         PORTS     AGE
+ingress.networking.k8s.io/awx-ingress   <none>   awx.example.com   192.168.0.100   80, 443   4m20s
+
+NAME                                TYPE                                  DATA   AGE
+secret/default-token-lxj9h          kubernetes.io/service-account-token   3      5m36s
+secret/awx-admin-password           Opaque                                1      4m45s
+secret/awx-broadcast-websocket      Opaque                                1      4m45s
+secret/awx-secret-tls               kubernetes.io/tls                     2      4m45s
+secret/awx-postgres-configuration   Opaque                                6      4m45s
+secret/awx-secret-key               Opaque                                1      4m45s
+secret/awx-app-credentials          Opaque                                3      4m23s
+secret/awx-token-6s7rj              kubernetes.io/service-account-token   3      4m22s
 ```
 
 Now AWX is available at `https://<awx-host>/`.
@@ -220,7 +236,7 @@ localhost                  : ok=4    changed=0    unreachable=0    failed=0    s
 This will create AWXBackup object in the namespace and also create backup files in the Persistent Volume. In this example those files are available at `/data/backup`.
 
 ```bash
-$ kubectl get awxbackup -n awx
+$ kubectl -n awx get awxbackup
 NAME                   AGE
 awxbackup-2021-06-06   6m47s
 ```
@@ -235,12 +251,6 @@ total 736
 -rw-r--r--. 1 root             root    749 Jun  6 06:51 awx_object
 -rw-r--r--. 1 root             root    482 Jun  6 06:51 secrets.yml
 -rw-------. 1 systemd-coredump root 745302 Jun  6 06:51 tower.db
-```
-
-Note that the contents of the Secret that passed through `ingress_tls_secret` parameter will not be included in this backup files. If necessary, get a dump of this Secret, or keep original certificate file and key file.
-
-```bash
-kubectl get secret awx-secret-tls -n awx -o yaml > awx-secret-tls.yaml
 ```
 
 ### Restoring using AWX Operator
@@ -309,22 +319,16 @@ Once this completed, the logs of `deployment/awx-operator` end with:
 $ kubectl logs -f deployment/awx-operator
 --------------------------- Ansible Task Status Event StdOut  -----------------
 PLAY RECAP *********************************************************************
-localhost                  : ok=53   changed=2    unreachable=0    failed=0    skipped=30   rescued=0    ignored=0
+localhost                  : ok=56   changed=0    unreachable=0    failed=0    skipped=35   rescued=0    ignored=0
 -------------------------------------------------------------------------------
 ```
 
-This will create AWXRestore object in the namespace.
+This will create AWXRestore object in the namespace, and now your AWX is restored.
 
 ```bash
-$ kubectl get awxrestore -n awx
+$ kubectl -n awx get awxrestore
 NAME                    AGE
 awxrestore-2021-06-06   137m
-```
-
-Then restore the Secret for TLS manually (or create newly using original certificate and key file).
-
-```bash
-kubectl apply -f awx-secret-tls.yaml
 ```
 
 ## Additional Guides

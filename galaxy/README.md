@@ -256,7 +256,7 @@ localhost                  : ok=51   changed=0    unreachable=0    failed=0    s
 And everything related to Galaxy NG are deployed in `galaxy` namespace.
 
 ```bash
-$ kubectl -n galaxy get all,pulp
+$ kubectl -n galaxy get pulp,all,ingress,secrets
 NAME                                          READY   STATUS    RESTARTS   AGE
 pod/pulp-operator-75668bb8c-kcwzc             1/1     Running   0          3m53s
 pod/galaxy-postgres-0                         1/1     Running   0          3m14s
