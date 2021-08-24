@@ -73,7 +73,7 @@ kubectl apply -k registry
 Required resources has been deployed in `registry` namespace.
 
 ```bash
-$ kubectl get all -n registry
+$ kubectl -n registry get all
 NAME                            READY   STATUS    RESTARTS   AGE
 pod/registry-5b4f874b77-9gb64   1/1     Running   0          27s
 

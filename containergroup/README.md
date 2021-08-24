@@ -32,7 +32,7 @@ sudo mkdir -p /data/demo
 Create Namespace, PV, and PVC.
 
 ```bash
-kubectl apply -k registry
+kubectl apply -k containergroup
 ```
 
 Add label to the node.
