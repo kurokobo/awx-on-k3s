@@ -33,8 +33,8 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - Tested on:
   - CentOS 8 (Minimal)
 - Products that will be deployed:
-  - AWX-Operator 0.13.0
-  - AWX Version 19.3.0
+  - AWX Operator 0.13.0
+  - AWX 19.3.0
   - PostgreSQL 12
 
 ## References
