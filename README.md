@@ -65,6 +65,10 @@ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
 
 Install specified version of AWX Operator.
 
+> **⚠️ NOTE ⚠️**  
+> An issue has been reported ([ansible/awx#10883](https://github.com/ansible/awx/issues/10883)) about LDAP authentication in AWX `19.3.0` which is mapped to AWX Operator `0.13.0`.
+> Use `0.12.0` (or a future release version with the problem fixed) instead of `0.13.0` if you plan to use LDAP authentication.
+
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/ansible/awx-operator/0.13.0/deploy/awx-operator.yaml
 ```
