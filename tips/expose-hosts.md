@@ -28,7 +28,9 @@ One easy way to do this is to use `dnsmasq`.
 3. Create new `resolv.conf` to use K3s. Note that the IP addresses have to be replaced with your K3s host's one.
 
    ```bash
-   sudo echo "nameserver 192.168.0.100" > /etc/rancher/k3s/resolv.conf
+   sudo tee /etc/rancher/k3s/resolv.conf <<EOF
+   nameserver 192.168.0.100
+   EOF
    ```
 
 4. Add `--resolv-conf /etc/rancher/k3s/resolv.conf` as an argument for `k3s server` command.
@@ -47,6 +49,7 @@ One easy way to do this is to use `dnsmasq`.
 5. Restart K3s and CoreDNS. The K3s service can be safely restarted without affecting the running resources.
 
    ```bash
+   sudo systemctl daemon-reload
    sudo systemctl restart k3s
    kubectl -n kube-system delete pod -l k8s-app=kube-dns
    ```
