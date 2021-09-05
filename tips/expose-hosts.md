@@ -1,4 +1,3 @@
-
 # Expose your `/etc/hosts` to Pods on K3s
 
 If we don't have a DNS server and are using `/etc/hosts`, we will need to do some additional tasks to get the Pods on K3s to resolve names according to `/etc/hosts`.

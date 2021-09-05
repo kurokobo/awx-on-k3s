@@ -375,3 +375,4 @@ kubectl apply -f awx-secret-tls.yaml
 - [📁 **Tips**](tips)
   - [📝Expose `/etc/hosts` to Pods on K3s](tips/expose-hosts.md)
   - [📝Redirect HTTP to HTTPS](tips/https-redirection.md)
+  - [📝Uninstall deployed resouces](tips/uninstall.md)
