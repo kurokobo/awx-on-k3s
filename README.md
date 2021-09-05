@@ -186,7 +186,9 @@ secret/awx-app-credentials          Opaque                                3     
 secret/awx-token-6s7rj              kubernetes.io/service-account-token   3      4m22s
 ```
 
-Now AWX is available at `https://<awx-host>/`.
+Now your AWX is available at `https://awx.example.com/` or the hostname you specified.
+
+At this point, however, AWX can be accessed via HTTP as well as HTTPS. If you want to redirect HTTP to HTTPS, see [the additional tips](tips/https-redirection.md).
 
 ## Backing up and Restoring using AWX Operator
 
@@ -255,6 +257,12 @@ total 736
 -rw-r--r--. 1 root             root    749 Jun  6 06:51 awx_object
 -rw-r--r--. 1 root             root    482 Jun  6 06:51 secrets.yml
 -rw-------. 1 systemd-coredump root 745302 Jun  6 06:51 tower.db
+```
+
+Note that if you are using AWX Operator `0.12.0` or earlier, the contents of the Secret that passed through `ingress_tls_secret` parameter will not be included in this backup files. If necessary, get a dump of this Secret, or keep original certificate file and key file. In `0.13.0` or later, this secret is included in the backup file.
+
+```bash
+kubectl get secret awx-secret-tls -n awx -o yaml > awx-secret-tls.yaml
 ```
 
 ### Restoring using AWX Operator
@@ -335,6 +343,12 @@ NAME                    AGE
 awxrestore-2021-06-06   137m
 ```
 
+Note that if you are using AWX Operator `0.12.0` or earlier, the Secret for TLS should be manually restored (or create newly using original certificate and key file). This is not required for `0.13.0` or later.
+
+```bash
+kubectl apply -f awx-secret-tls.yaml
+```
+
 ## Additional Guides
 
 - [📁 **Deploy Private Git Repository on Kubernetes**](git)
@@ -344,6 +358,11 @@ awxrestore-2021-06-06   137m
   - To use Execution Environments in AWX (AWX-EE), we have to push the container image built with `ansible-builder` to the container registry.
   - If we don't want to push our container images to Docker Hub or other cloud services, we can deploy a private container registry on K3s.
   - See [📝`registry/README.md`](registry) for instructions.
+- [📁 **Deploy Private Galaxy NG on Docker or Kubernetes** (Experimental)](galaxy)
+  - Deploy our own Galaxy NG instance.
+  - **Note that the containerized implementation of Galaxy NG is not supported at this time.**
+  - **All information on the page is for development, testing and study purposes only.**
+  - See [📝`galaxy/README.md`](galaxy) for instructions.
 - [📁 **Use Ansible Builder**](builder)
   - Use Ansible Builder to build our own Execution Environment.
   - See [📝`builder/README.md`](builder) for instructions.
@@ -353,10 +372,6 @@ awxrestore-2021-06-06   137m
 - [📁 **Use Customized Pod Specification for your Execution Environment**](containergroup)
   - We can customize the specification of the Pod of the Execution Environment using **Container Group**.
   - See [📝`containergroup/README.md`](containergroup) for instructions.
-- [📁 **Deploy Private Galaxy NG on Docker or Kubernetes** (Experimental)](galaxy)
-  - Deploy our own Galaxy NG instance.
-  - **Note that the containerized implementation of Galaxy NG is not supported at this time.**
-  - **All information on the page is for development, testing and study purposes only.**
-  - See [📝`galaxy/README.md`](galaxy) for instructions.
 - [📁 **Tips**](tips)
   - [📝Expose `/etc/hosts` to Pods on K3s](tips/expose-hosts.md)
+  - [📝Redirect HTTP to HTTPS](tips/https-redirection.md)
