@@ -267,6 +267,10 @@ kubectl get secret awx-secret-tls -n awx -o yaml > awx-secret-tls.yaml
 
 ### Restoring using AWX Operator
 
+To perfom restoration, you need to have AWX Operator running on Kubernetes. If you are planning to restore to a new environment, first prepare Kubernetes and AWX Operator by referring to the instructions on this page.
+
+It is strongly recommended that the version of AWX Operator is the same as the version when the backup was taken. This is because the structure of the backup files differs between versions and may not be compatible. If you have upgraded AWX Operator after taking the backup, it is recommended to downgrade it for the restore.
+
 #### Prepare for Restore
 
 If your PV, PVC, and Secret still exist, no preparation is required.
