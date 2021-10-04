@@ -38,9 +38,9 @@ kubectl apply -k containergroup
 Add label to the node.
 
 ```bash
-$ kubectl label nodes kuro-awx01.kuro.lab awx-node-type=demo
+$ kubectl label node kuro-awx01.kuro.lab awx-node-type=demo
 
-$ kubectl get nodes --show-labels
+$ kubectl get node --show-labels
 NAME                  STATUS   ROLES                  AGE    VERSION        LABELS
 kuro-awx01.kuro.lab   Ready    control-plane,master   3d7h   v1.21.2+k3s1   awx-node-type=demo,...
 ```
@@ -86,7 +86,7 @@ metadata:
     app: ee-demo-pod
 spec:
   containers:
-    - image: 'quay.io/ansible/awx-ee:0.5.0'
+    - image: 'quay.io/ansible/awx-ee:latest'
       name: worker
       args:
         - ansible-runner
@@ -117,6 +117,8 @@ This is the customized manifest to achieve;
 - Having `requests` and `limits` for CPU and Memory resources
 - Mounting PVC as `/etc/demo`
 - Running on the node with the label `awx-node-type: demo` using `nodeSelector`
+
+You can also change `image`, but it will be overridden by specifying Execution Environment for the Job Template, Project Default, or Global Default.
 
 ## Quick Testing
 

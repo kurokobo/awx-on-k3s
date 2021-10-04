@@ -131,7 +131,7 @@ Deploy Galaxy NG.
 kubectl apply -k galaxy/all-in-one
 ```
 
-Required resources has been deployed in `registry` namespace.
+Required resources has been deployed in `galaxy` namespace.
 
 ```bash
 $ kubectl -n galaxy get all

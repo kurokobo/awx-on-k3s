@@ -33,15 +33,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - Tested on:
   - CentOS 8 (Minimal)
 - Products that will be deployed:
-  - AWX Operator 0.13.0
-  - AWX 19.3.0
+  - AWX Operator 0.14.0
+  - AWX 19.4.0
   - PostgreSQL 12
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.3.0/INSTALL.md) @19.3.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.13.0/README.md) @0.13.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.4.0/INSTALL.md) @19.4.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.14.0/README.md) @0.14.0
 
 ## Procedure
 
@@ -51,6 +51,12 @@ Disable Firewalld. This is [recommended by K3s](https://rancher.com/docs/k3s/lat
 
 ```bash
 sudo systemctl disable firewalld --now
+```
+
+Install required packages to deploy AWX Operator and AWX.
+
+```bash
+sudo dnf install -y git make
 ```
 
 ### Install K3s
@@ -63,14 +69,37 @@ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
 
 ### Install AWX Operator
 
-Install specified version of AWX Operator.
-
-> **⚠️ NOTE ⚠️**  
-> An issue has been reported ([ansible/awx#10883](https://github.com/ansible/awx/issues/10883)) about LDAP authentication in AWX `19.3.0` which is mapped to AWX Operator `0.13.0`.
-> Use `0.12.0` (or a future release version with the problem fixed) instead of `0.13.0` if you plan to use LDAP authentication.
+Install specified version of AWX Operator. Note that this procedure is applicable only for AWX Operator `0.14.0` or later. If you want to deploy `0.13.0` or earlier version of AWX Operator, refer [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md)
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/ansible/awx-operator/0.13.0/deploy/awx-operator.yaml
+cd ~
+git clone https://github.com/ansible/awx-operator.git
+cd awx-operator
+git checkout 0.14.0
+```
+
+Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
+
+```bash
+export NAMESPACE=awx
+make deploy
+```
+
+The AWX Operator will be deployed to the namespace you specified.
+
+```bash
+$ kubectl -n awx get all
+NAME                                                   READY   STATUS    RESTARTS   AGE
+pod/awx-operator-controller-manager-68d787cfbd-kjfg7   2/2     Running   0          16s
+
+NAME                                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/awx-operator-controller-manager-metrics-service   ClusterIP   10.43.150.245   <none>        8443/TCP   16s
+
+NAME                                              READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/awx-operator-controller-manager   1/1     1            1           16s
+
+NAME                                                         DESIRED   CURRENT   READY   AGE
+replicaset.apps/awx-operator-controller-manager-68d787cfbd   1         1         1       16s
 ```
 
 ### Prepare required files
@@ -78,6 +107,7 @@ kubectl apply -f https://raw.githubusercontent.com/ansible/awx-operator/0.13.0/d
 Clone this repository and change directory.
 
 ```bash
+cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
 ```
@@ -137,58 +167,63 @@ Deploy AWX, this takes few minutes to complete.
 kubectl apply -k base
 ```
 
-Once this completed, the logs of `deployment/awx-operator` end with:
+Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
 
 ```txt
-$ kubectl logs -f deployment/awx-operator
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c manager
 ...
---------------------------- Ansible Task Status Event StdOut  -----------------
+----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=54   changed=0    unreachable=0    failed=0    skipped=37   rescued=0    ignored=0 
--------------------------------------------------------------------------------
+localhost                  : ok=54   changed=0    unreachable=0    failed=0    skipped=37   rescued=0    ignored=0   
+----------
 ```
 
-Required objects has been deployed in `awx` namespace.
+Required objects has been deployed next to AWX Operator in `awx` namespace.
 
 ```bash
 $ kubectl -n awx get awx,all,ingress,secrets
 NAME                      AGE
-awx.awx.ansible.com/awx   4m19s
+awx.awx.ansible.com/awx   4m17s
 
-NAME                      READY   STATUS    RESTARTS   AGE
-pod/awx-postgres-0        1/1     Running   0          4m27s
-pod/awx-59ff55b5b-qdk9p   4/4     Running   0          4m19s
+NAME                                                   READY   STATUS    RESTARTS   AGE
+pod/awx-operator-controller-manager-68d787cfbd-j6k7z   2/2     Running   0          7m43s
+pod/awx-postgres-0                                     1/1     Running   0          4m6s
+pod/awx-84d5c45999-h7xm4                               4/4     Running   0          3m59s
 
-NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-service/awx-postgres   ClusterIP   None            <none>        5432/TCP   4m27s
-service/awx-service    ClusterIP   10.43.209.222   <none>        80/TCP     4m21s
+NAME                                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/awx-operator-controller-manager-metrics-service   ClusterIP   10.43.134.67    <none>        8443/TCP   7m43s
+service/awx-postgres                                      ClusterIP   None            <none>        5432/TCP   4m6s
+service/awx-service                                       ClusterIP   10.43.232.137   <none>        80/TCP     4m
 
-NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/awx   1/1     1            1           4m19s
+NAME                                              READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/awx-operator-controller-manager   1/1     1            1           7m43s
+deployment.apps/awx                               1/1     1            1           3m59s
 
-NAME                            DESIRED   CURRENT   READY   AGE
-replicaset.apps/awx-59ff55b5b   1         1         1       4m19s
+NAME                                                         DESIRED   CURRENT   READY   AGE
+replicaset.apps/awx-operator-controller-manager-68d787cfbd   1         1         1       7m43s
+replicaset.apps/awx-84d5c45999                               1         1         1       3m59s
 
 NAME                            READY   AGE
-statefulset.apps/awx-postgres   1/1     7m27s
+statefulset.apps/awx-postgres   1/1     4m6s
 
 NAME                                    CLASS    HOSTS             ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/awx-ingress   <none>   awx.example.com   192.168.0.100   80, 443   4m20s
+ingress.networking.k8s.io/awx-ingress   <none>   awx.example.com   192.168.0.100   80, 443   4m
 
-NAME                                TYPE                                  DATA   AGE
-secret/default-token-lxj9h          kubernetes.io/service-account-token   3      5m36s
-secret/awx-admin-password           Opaque                                1      4m45s
-secret/awx-broadcast-websocket      Opaque                                1      4m45s
-secret/awx-secret-tls               kubernetes.io/tls                     2      4m45s
-secret/awx-postgres-configuration   Opaque                                6      4m45s
-secret/awx-secret-key               Opaque                                1      4m45s
-secret/awx-app-credentials          Opaque                                3      4m23s
-secret/awx-token-6s7rj              kubernetes.io/service-account-token   3      4m22s
+NAME                                                 TYPE                                  DATA   AGE
+secret/default-token-6tp55                           kubernetes.io/service-account-token   3      7m43s
+secret/awx-operator-controller-manager-token-sz6wq   kubernetes.io/service-account-token   3      7m43s
+secret/awx-admin-password                            Opaque                                1      4m17s
+secret/awx-postgres-configuration                    Opaque                                6      4m17s
+secret/awx-secret-tls                                kubernetes.io/tls                     2      4m17s
+secret/awx-app-credentials                           Opaque                                3      4m2s
+secret/awx-token-jfndh                               kubernetes.io/service-account-token   3      4m2s
+secret/awx-secret-key                                Opaque                                1      4m13s
+secret/awx-broadcast-websocket                       Opaque                                1      4m9s
 ```
 
 Now your AWX is available at `https://awx.example.com/` or the hostname you specified.
 
-At this point, however, AWX can be accessed via HTTP as well as HTTPS. If you want to redirect HTTP to HTTPS, see [the additional tips](tips/https-redirection.md).
+At this point, however, AWX can be accessed via HTTP as well as HTTPS. If you want to redirect HTTP to HTTPS, see [📝Tips: Redirect HTTP to HTTPS](tips/https-redirection.md).
 
 ## Backing up and Restoring using AWX Operator
 
@@ -229,14 +264,14 @@ Then invoke backup by applying this manifest file.
 kubectl apply -f backup/awxbackup.yaml
 ```
 
-Once this completed, the logs of `deployment/awx-operator` end with:
+Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
 
 ```txt
-$ kubectl logs -f deployment/awx-operator
---------------------------- Ansible Task Status Event StdOut  -----------------
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c manager
+----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWXBackup, awxbackup-2021-06-06/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=4    changed=0    unreachable=0    failed=0    skipped=7    rescued=0    ignored=0
--------------------------------------------------------------------------------
+localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=7    rescued=0    ignored=0
+----------
 ```
 
 This will create AWXBackup object in the namespace and also create backup files in the Persistent Volume. In this example those files are available at `/data/backup`.
@@ -259,7 +294,7 @@ total 736
 -rw-------. 1 systemd-coredump root 745302 Jun  6 06:51 tower.db
 ```
 
-Note that if you are using AWX Operator `0.12.0` or earlier, the contents of the Secret that passed through `ingress_tls_secret` parameter will not be included in this backup files. If necessary, get a dump of this Secret, or keep original certificate file and key file. In `0.13.0` or later, this secret is included in the backup file.
+Note that if you are using AWX Operator `0.12.0` or earlier, the contents of the Secret that passed through `ingress_tls_secret` parameter will not be included in this backup files. If necessary, get a dump of this Secret, or keep original certificate file and key file. In `0.13.0` or later, this secret is included in the backup file therefore you can ignore this step.
 
 ```bash
 kubectl get secret awx-secret-tls -n awx -o yaml > awx-secret-tls.yaml
@@ -269,7 +304,7 @@ kubectl get secret awx-secret-tls -n awx -o yaml > awx-secret-tls.yaml
 
 To perfom restoration, you need to have AWX Operator running on Kubernetes. If you are planning to restore to a new environment, first prepare Kubernetes and AWX Operator by referring to the instructions on this page.
 
-It is strongly recommended that the version of AWX Operator is the same as the version when the backup was taken. This is because the structure of the backup files differs between versions and may not be compatible. If you have upgraded AWX Operator after taking the backup, it is recommended to downgrade it for the restore.
+It is strongly recommended that the version of AWX Operator is the same as the version when the backup was taken. This is because the structure of the backup files differs between versions and may not be compatible. If you have upgraded AWX Operator after taking the backup, it is recommended to downgrade it for the restore. To deploy `0.13.0` or earlier version of AWX Operator, refer [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md)
 
 #### Prepare for Restore
 
@@ -329,14 +364,14 @@ Then invoke restore by applying this manifest file.
 kubectl apply -f restore/awxrestore.yaml
 ```
 
-Once this completed, the logs of `deployment/awx-operator` end with:
+Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
 
 ```txt
-$ kubectl logs -f deployment/awx-operator
---------------------------- Ansible Task Status Event StdOut  -----------------
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c manager
+----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
 localhost                  : ok=56   changed=0    unreachable=0    failed=0    skipped=35   rescued=0    ignored=0
--------------------------------------------------------------------------------
+----------
 ```
 
 This will create AWXRestore object in the namespace, and now your AWX is restored.
@@ -347,7 +382,7 @@ NAME                    AGE
 awxrestore-2021-06-06   137m
 ```
 
-Note that if you are using AWX Operator `0.12.0` or earlier, the Secret for TLS should be manually restored (or create newly using original certificate and key file). This is not required for `0.13.0` or later.
+Note that if you are using AWX Operator `0.12.0` or earlier, the Secret for TLS should be manually restored (or create newly using original certificate and key file). This step is not required for `0.13.0` or later.
 
 ```bash
 kubectl apply -f awx-secret-tls.yaml
@@ -380,3 +415,4 @@ kubectl apply -f awx-secret-tls.yaml
   - [📝Expose `/etc/hosts` to Pods on K3s](tips/expose-hosts.md)
   - [📝Redirect HTTP to HTTPS](tips/https-redirection.md)
   - [📝Uninstall deployed resouces](tips/uninstall.md)
+  - [📝Deploy older version of AWX Operator](tips/deploy-older-operator.md)
