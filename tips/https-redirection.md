@@ -80,15 +80,15 @@ persistentvolumeclaim/awx-projects-claim unchanged
 awx.awx.ansible.com/awx configured     👈👈👈
 ```
 
-Once this completed, the logs of `deployment/awx-operator` end with:
+Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
 
 ```txt
-$ kubectl logs -f deployment/awx-operator --tail=100
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c manager --tail=100
 ...
---------------------------- Ansible Task Status Event StdOut  -----------------
+----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=55   changed=0    unreachable=0    failed=0    skipped=37   rescued=0    ignored=0
--------------------------------------------------------------------------------
+localhost                  : ok=54   changed=0    unreachable=0    failed=0    skipped=37   rescued=0    ignored=0
+----------
 ```
 
 You can confirm that the annotations will be added to the Ingress resource.
@@ -112,15 +112,15 @@ kubectl -n awx patch awx awx --type=merge \
  -p '{"spec": {"ingress_annotations": "traefik.ingress.kubernetes.io/router.middlewares: default-redirect@kubernetescrd"}}'
 ```
 
-Once this completed, the logs of `deployment/awx-operator` end with:
+Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
 
 ```txt
-$ kubectl logs -f deployment/awx-operator --tail=100
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c manager --tail=100
 ...
---------------------------- Ansible Task Status Event StdOut  -----------------
+----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=55   changed=0    unreachable=0    failed=0    skipped=37   rescued=0    ignored=0
--------------------------------------------------------------------------------
+localhost                  : ok=54   changed=0    unreachable=0    failed=0    skipped=37   rescued=0    ignored=0
+----------
 ```
 
 You can confirm that the annotations will be added to the Ingress resource.

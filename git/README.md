@@ -82,9 +82,11 @@ Note that this sample manifest does not include any databases, so the SQLite3 ha
 2. Allow Self-Signed Certificate such as this Gitea
    - Open `Settings` > `Jobs settings` in AWX
    - Press `Edit` and scroll down to `Extra Environment Variables`, then add `"GIT_SSL_NO_VERIFY": "True"` in `{}`
+
      ```json
      {
        "GIT_SSL_NO_VERIFY": "True"
      }
      ```
+
    - Press `Save`

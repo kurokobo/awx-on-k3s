@@ -26,6 +26,7 @@ Your own Execution Environment can be used using `container_image` in [`env/sett
 The sample playbook will help you figure out the differences between Execution Environments, such as Ansible version, `pip list`, etc.
 
 ```bash
+cd runner
 ansible-runner run . -p demo.yml
 ```
 

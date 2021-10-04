@@ -26,6 +26,7 @@ The base image can be chosen from the tags from [http://quay.io/ansible/ansible-
 `ansible-builder build` command builds Execution Environment as a container image according to the definition in `execution-environment.yml`.
 
 ```bash
+cd builder
 ansible-builder build --tag registry.example.com/ansible/ee:2.10-custom --container-runtime docker --verbosity 3
 ```
 
