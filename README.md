@@ -416,3 +416,4 @@ kubectl apply -f awx-secret-tls.yaml
   - [📝Redirect HTTP to HTTPS](tips/https-redirection.md)
   - [📝Uninstall deployed resouces](tips/uninstall.md)
   - [📝Deploy older version of AWX Operator](tips/deploy-older-operator.md)
+  - [📝Upgrade AWX Operator to 0.14.0 or later](tips/upgrade-operator.md)
