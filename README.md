@@ -124,6 +124,7 @@ Modify `hostname` in `base/awx.yaml`.
 ```yaml
 ...
 spec:
+  ...
   ingress_type: ingress
   ingress_tls_secret: awx-secret-tls
   hostname: awx.example.com     👈👈👈
@@ -157,6 +158,19 @@ Prepare directories for Persistent Volumes defined in `base/pv.yaml`.
 sudo mkdir -p /data/postgres
 sudo mkdir -p /data/projects
 sudo chown 1000:0 /data/projects
+```
+
+Note that by default AWX can't be started unless your K3s node has at least 2 CPUs and 4 GB RAM available. If your K3s node is smaller than this and you want to remove this restriction, consider uncommenting the following three lines in `base/awx.yaml`.
+
+```yaml
+...
+spec:
+  ...
+  # To run AWX on a node that does not meet resource requirements,
+  # uncomment the following three lines
+  web_resource_requirements: {}     👈👈👈
+  task_resource_requirements: {}     👈👈👈
+  ee_resource_requirements: {}     👈👈👈
 ```
 
 ### Deploy AWX

@@ -26,3 +26,9 @@ spec:
 
   projects_persistence: true
   projects_existing_claim: awx-projects-claim
+
+  # To run AWX on a node that does not meet resource requirements,
+  # uncomment the following three lines
+  #web_resource_requirements: {}
+  #task_resource_requirements: {}
+  #ee_resource_requirements: {}
