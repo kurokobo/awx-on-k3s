@@ -1,5 +1,5 @@
 <!-- omit in toc -->
-# Upgrade AWX Operator to 0.14.0 or later
+# Upgrade AWX Operator from 0.13.0 or earlier to 0.14.0 or later
 
 [As described in the documentation](https://github.com/ansible/awx-operator/blob/0.14.0/README.md#v0140), AWX Operator changed from cluster scope to namespace scope in `0.14.0`. Also, the Operator SDK `1.x` is used.
 
@@ -110,7 +110,7 @@ Once AWX Operator is up and running, it will start rolling out a new version of 
 We can monitor the progress in the logs of `deployments/awx-operator-controller-manager`. Once this completed, the logs end with:
 
 ```txt
-$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c manager
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************

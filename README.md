@@ -33,15 +33,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - Tested on:
   - CentOS 8 (Minimal)
 - Products that will be deployed:
-  - AWX Operator 0.14.0
-  - AWX 19.4.0
+  - AWX Operator 0.15.0
+  - AWX 19.5.0
   - PostgreSQL 12
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.4.0/INSTALL.md) @19.4.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.14.0/README.md) @0.14.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.5.0/INSTALL.md) @19.5.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.15.0/README.md) @0.15.0
 
 ## Procedure
 
@@ -75,7 +75,7 @@ Install specified version of AWX Operator. Note that this procedure is applicabl
 cd ~
 git clone https://github.com/ansible/awx-operator.git
 cd awx-operator
-git checkout 0.14.0
+git checkout 0.15.0
 ```
 
 Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
@@ -184,7 +184,7 @@ kubectl apply -k base
 Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
 
 ```txt
-$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c manager
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
@@ -281,7 +281,7 @@ kubectl apply -f backup/awxbackup.yaml
 Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
 
 ```txt
-$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c manager
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWXBackup, awxbackup-2021-06-06/awx) -----
 PLAY RECAP *********************************************************************
 localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=7    rescued=0    ignored=0
@@ -381,7 +381,7 @@ kubectl apply -f restore/awxrestore.yaml
 Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
 
 ```txt
-$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c manager
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
 localhost                  : ok=56   changed=0    unreachable=0    failed=0    skipped=35   rescued=0    ignored=0
@@ -430,4 +430,4 @@ kubectl apply -f awx-secret-tls.yaml
   - [📝Redirect HTTP to HTTPS](tips/https-redirection.md)
   - [📝Uninstall deployed resouces](tips/uninstall.md)
   - [📝Deploy older version of AWX Operator](tips/deploy-older-operator.md)
-  - [📝Upgrade AWX Operator to 0.14.0 or later](tips/upgrade-operator.md)
+  - [📝Upgrade AWX Operator from 0.13.0 or earlier to 0.14.0 or later](tips/upgrade-operator.md)

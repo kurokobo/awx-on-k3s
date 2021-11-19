@@ -83,7 +83,7 @@ awx.awx.ansible.com/awx configured     👈👈👈
 Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
 
 ```txt
-$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c manager --tail=100
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager --tail=100
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
@@ -115,7 +115,7 @@ kubectl -n awx patch awx awx --type=merge \
 Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
 
 ```txt
-$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c manager --tail=100
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager --tail=100
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
