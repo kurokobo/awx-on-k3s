@@ -180,12 +180,14 @@ Deploy AWX, this takes few minutes to complete.
 ```bash
 kubectl apply -k base
 ```
-Then run 
+
+To monitor the progress of the deployment, check the logs of `deployments/awx-operator-controller-manager`:
+
 ```bash
 kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
 ```
 
-Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
+When the deployment completes successfully, the logs end with:
 
 ```txt
 $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
