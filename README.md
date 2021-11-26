@@ -112,7 +112,7 @@ git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
 ```
 
-Generate a Self-Signed Certificate. Note that IP address can't be specified.
+Generate a Self-Signed certificate. Note that IP address can't be specified. If you want to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate, follow the guide on [📁 **Use SSL Certificate from Public ACME CA**](acme) first and come back to this step when done.
 
 ```bash
 AWX_HOST="awx.example.com"
