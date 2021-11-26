@@ -422,6 +422,9 @@ kubectl apply -f awx-secret-tls.yaml
   - **Note that the containerized implementation of Galaxy NG is not supported at this time.**
   - **All information on the page is for development, testing and study purposes only.**
   - See [📝`galaxy/README.md`](galaxy) for instructions.
+- [📁 **Use SSL Certificate from Public ACME CA**](acme)
+  - To use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate.
+  - See [📝`acme/README.md`](acme) for instructions.
 - [📁 **Use Ansible Builder**](builder)
   - Use Ansible Builder to build our own Execution Environment.
   - See [📝`builder/README.md`](builder) for instructions.
