@@ -31,17 +31,18 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 ## Environment
 
 - Tested on:
-  - CentOS 8 (Minimal)
+  - CentOS Stream 8 (Minimal)
+  - K3s v1.22.6+k3s1
 - Products that will be deployed:
-  - AWX Operator 0.15.0
-  - AWX 19.5.0
+  - AWX Operator 0.16.1
+  - AWX 19.5.1
   - PostgreSQL 12
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.5.0/INSTALL.md) @19.5.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.15.0/README.md) @0.15.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.5.1/INSTALL.md) @19.5.1
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.16.1/README.md) @0.16.1
 
 ## Procedure
 
@@ -69,13 +70,15 @@ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
 
 ### Install AWX Operator
 
-Install specified version of AWX Operator. Note that this procedure is applicable only for AWX Operator `0.14.0` or later. If you want to deploy `0.13.0` or earlier version of AWX Operator, refer [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md)
+Install specified version of AWX Operator. Note that this procedure is applicable only for AWX Operator `0.14.0` or later. If you want to deploy `0.13.0` or earlier version of AWX Operator, refer [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md).
+
+Note that `0.16.0` doesn't work correctly due to [the issue (ansible/awx-operator#762)](https://github.com/ansible/awx-operator/issues/762), use `0.16.1` instead.
 
 ```bash
 cd ~
 git clone https://github.com/ansible/awx-operator.git
 cd awx-operator
-git checkout 0.15.0
+git checkout 0.16.1
 ```
 
 Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
@@ -160,19 +163,6 @@ sudo mkdir -p /data/projects
 sudo chown 1000:0 /data/projects
 ```
 
-Note that by default AWX can't be started unless your K3s node has at least 2 CPUs and 4 GB RAM available. If your K3s node is smaller than this and you want to remove this restriction, consider uncommenting the following three lines in `base/awx.yaml`.
-
-```yaml
-...
-spec:
-  ...
-  # To run AWX on a node that does not meet resource requirements,
-  # uncomment the following three lines
-  web_resource_requirements: {}     👈👈👈
-  task_resource_requirements: {}     👈👈👈
-  ee_resource_requirements: {}     👈👈👈
-```
-
 ### Deploy AWX
 
 Deploy AWX, this takes few minutes to complete.
@@ -194,7 +184,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-mana
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=54   changed=0    unreachable=0    failed=0    skipped=37   rescued=0    ignored=0   
+localhost                  : ok=64   changed=0    unreachable=0    failed=0    skipped=43   rescued=0    ignored=0
 ----------
 ```
 
@@ -284,11 +274,18 @@ Then invoke backup by applying this manifest file.
 kubectl apply -f backup/awxbackup.yaml
 ```
 
-Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
+To monitor the progress of the deployment, check the logs of `deployments/awx-operator-controller-manager`:
+
+```bash
+kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
+```
+
+When the backup completes successfully, the logs end with:
 
 ```txt
 $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
------ Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWXBackup, awxbackup-2021-06-06/awx) -----
+...
+----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
 localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=7    rescued=0    ignored=0
 ----------
@@ -384,13 +381,20 @@ Then invoke restore by applying this manifest file.
 kubectl apply -f restore/awxrestore.yaml
 ```
 
-Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
+To monitor the progress of the deployment, check the logs of `deployments/awx-operator-controller-manager`:
+
+```bash
+kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
+```
+
+When the restore complete successfully, the logs end with:
 
 ```txt
 $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
+...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=56   changed=0    unreachable=0    failed=0    skipped=35   rescued=0    ignored=0
+localhost                  : ok=66   changed=0    unreachable=0    failed=0    skipped=41   rescued=0    ignored=0
 ----------
 ```
 

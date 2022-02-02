@@ -5,10 +5,10 @@ metadata:
   name: awx
 spec:
   # These parameters are designed for use with:
-  # - AWX Operator: 0.15.0
-  #   https://github.com/ansible/awx-operator/blob/0.15.0/README.md
-  # - AWX: 19.5.0
-  #   https://github.com/ansible/awx/blob/19.5.0/INSTALL.md
+  # - AWX Operator: 0.16.1
+  #   https://github.com/ansible/awx-operator/blob/0.16.1/README.md
+  # - AWX: 19.5.1
+  #   https://github.com/ansible/awx/blob/19.5.1/INSTALL.md
 
   admin_user: admin
   admin_password_secret: awx-admin-password
@@ -27,8 +27,6 @@ spec:
   projects_persistence: true
   projects_existing_claim: awx-projects-claim
 
-  # To run AWX on a node that does not meet resource requirements,
-  # uncomment the following three lines
-  #web_resource_requirements: {}
-  #task_resource_requirements: {}
-  #ee_resource_requirements: {}
+  web_resource_requirements: {}
+  task_resource_requirements: {}
+  ee_resource_requirements: {}
