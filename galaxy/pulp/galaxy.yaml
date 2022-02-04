@@ -1,0 +1,48 @@
+apiVersion: pulp.pulpproject.org/v1beta1
+kind: Pulp
+metadata:
+  name: galaxy
+spec:
+  # These parameters are designed for use with:
+  # - Pulp Operator: 0.7.0
+  #   https://github.com/pulp/pulp-operator/blob/0.7.0/README.md
+  # - Galaxy NG: 4.4.1
+  #   https://github.com/ansible/galaxy_ng/tree/4.4.1
+
+  image: quay.io/pulp/galaxy
+  image_version: 4.4.1
+  image_web: quay.io/pulp/galaxy-web
+  image_web_version: 4.4.1
+
+  admin_password_secret: galaxy-admin-password
+
+  ingress_type: ingress
+  ingress_tls_secret: galaxy-secret-tls
+  hostname: galaxy.example.com
+
+  postgres_storage_class: galaxy-postgres-volume
+  postgres_storage_requirements:
+    requests:
+      storage: 2Gi
+  redis_storage_class: galaxy-redis-volume
+
+  storage_type: file
+  file_storage_storage_class: galaxy-pulp-volume
+  file_storage_access_mode: ReadWriteOnce
+  file_storage_size: 10Gi
+
+  pulp_settings:
+    GALAXY_FEATURE_FLAGS:
+      execution_environments: "True"
+    TOKEN_AUTH_DISABLED: "True"
+
+  api:
+    replicas: 1
+  content:
+    replicas: 1
+  worker:
+    replicas: 1
+  web:
+    replicas: 1
+  resource_manager:
+    replicas: 1
