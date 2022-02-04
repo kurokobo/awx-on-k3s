@@ -5,9 +5,9 @@
 
 ## Environment in This Example
 
-- CentOS 8.2
+- CentOS Stream 8 (Minimal)
 - Python 3.9
-- Docker 20.10.7
+- Docker 20.10.12
 
 ## Install
 

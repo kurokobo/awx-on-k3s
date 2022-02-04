@@ -27,3 +27,18 @@ spec:
   storageClassName: galaxy-pulp-volume
   hostPath:
     path: /data/galaxy/pulp
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: galaxy-redis-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 1Gi
+  storageClassName: galaxy-redis-volume
+  hostPath:
+    path: /data/galaxy/redis
