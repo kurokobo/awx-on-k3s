@@ -184,9 +184,9 @@ This project is still under active development and there is no support, however,
 
 ### Patch K3s
 
-If you use Traefik which is K3s' Ingress controller as completely default, the Pod may not be able to get the client's IP address (see [k3s-io/k3s#2997](https://github.com/k3s-io/k3s/discussions/2997) for detail). In the current implementation of Pulp, this causes problems with the web UI being unreachable.
+If you use Traefik which is K3s' Ingress controller as completely default, the Pod may not be able to get the client's IP address (see [k3s-io/k3s#2997](https://github.com/k3s-io/k3s/discussions/2997) for details). In the current implementation of Pulp, this causes problems with the web UI being unreachable.
 
-For this reason, fix the Traefik configuration. For a single node like doing in this repository, the following command is easy to use.
+For this reason, you should fix the Traefik configuration. For a single node like doing in this repository, the following command is easy to use.
 
 ```bash
 kubectl -n kube-system patch deployment traefik --patch '{"spec":{"template":{"spec":{"hostNetwork":true}}}}'
@@ -198,7 +198,7 @@ Then wait until your `traefik` by the following command is `1/1` `READY`.
 kubectl -n kube-system get deployment traefik
 ```
 
-Now your client's IP address can be passed correctly through X-Forwarded-For and X-Real-Ip headers.
+Now your client's IP address can be passed correctly through `X-Forwarded-For` and `X-Real-Ip` headers.
 
 ### Install Pulp Operator
 

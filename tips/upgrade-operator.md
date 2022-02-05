@@ -163,7 +163,7 @@ localhost                  : ok=54   changed=0    unreachable=0    failed=0    s
 
 ## ❓ Troubleshooting
 
-Some hists for when you got stuck during upgrade.
+Some hints for when you got stuck during upgrade.
 
 ### New Pod gets stuck in `Pending` state
 
