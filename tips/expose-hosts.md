@@ -35,6 +35,10 @@ One easy way to do this is to use `dnsmasq`.
 4. Add `--resolv-conf /etc/rancher/k3s/resolv.conf` as an argument for `k3s server` command.
 
    ```bash
+   # Change configuration using script:
+   $ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644 --resolv-conf /etc/rancher/k3s/resolv.conf
+
+   # If you don't want to use the script, modify /etc/systemd/system/k3s.service manually:
    $ cat /etc/systemd/system/k3s.service
    ...
    ExecStart=/usr/local/bin/k3s \
