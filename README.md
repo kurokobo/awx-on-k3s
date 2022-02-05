@@ -415,32 +415,25 @@ kubectl apply -f awx-secret-tls.yaml
 ## Additional Guides
 
 - [📁 **Deploy Private Git Repository on Kubernetes**](git)
-  - To use AWX with SCM, this repository includes the manifests to deploy [Gitea](https://gitea.io/en-us/).
-  - See [📝`git/README.md`](git) for instructions.
+  - The guide to use AWX with SCM. This repository includes the manifests to deploy [Gitea](https://gitea.io/en-us/).
 - [📁 **Deploy Private Container Registry on Kubernetes**](registry)
-  - To use Execution Environments in AWX (AWX-EE), we have to push the container image built with `ansible-builder` to the container registry.
-  - If we don't want to push our container images to Docker Hub or other cloud services, we can deploy a private container registry on K3s.
-  - See [📝`registry/README.md`](registry) for instructions.
+  - The guide to use Execution Environments in AWX (AWX-EE).
+  - If we want to use our own Execution Environment built with Ansible Builder and don't want to push it to the public container registry e.g. Docker Hub, we can deploy a private container registry on K3s.
 - [📁 **Deploy Private Galaxy NG on Docker or Kubernetes** (Experimental)](galaxy)
-  - Deploy our own Galaxy NG instance.
-  - **Note that the containerized implementation of Galaxy NG is not supported at this time.**
-  - **All information on the page is for development, testing and study purposes only.**
-  - See [📝`galaxy/README.md`](galaxy) for instructions.
+  - The guide to deploy our own Galaxy NG instance.
+  - **Note that the containerized implementation of Galaxy NG is not officialy supported at this time.**
+  - **All information on the guide is for development, testing and study purposes only.**
 - [📁 **Use SSL Certificate from Public ACME CA**](acme)
-  - To use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate.
-  - See [📝`acme/README.md`](acme) for instructions.
+  - The guide to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate.
 - [📁 **Use Ansible Builder**](builder)
-  - Use Ansible Builder to build our own Execution Environment.
-  - See [📝`builder/README.md`](builder) for instructions.
+  - The guide to use Ansible Builder to build our own Execution Environment.
 - [📁 **Use Ansible Runner**](runner)
-  - Use Ansible Runner to run playbook using Execution Environment.
-  - See [📝`runner/README.md`](runner) for instructions.
+  - The guide to use Ansible Runner to run playbook using Execution Environment.
 - [📁 **Use Customized Pod Specification for your Execution Environment**](containergroup)
-  - We can customize the specification of the Pod of the Execution Environment using **Container Group**.
-  - See [📝`containergroup/README.md`](containergroup) for instructions.
+  - The guide to use customized Pod of the Execution Environment using **Container Group**.
 - [📁 **Tips**](tips)
   - [📝Expose `/etc/hosts` to Pods on K3s](tips/expose-hosts.md)
   - [📝Redirect HTTP to HTTPS](tips/https-redirection.md)
   - [📝Uninstall deployed resouces](tips/uninstall.md)
   - [📝Deploy older version of AWX Operator](tips/deploy-older-operator.md)
-  - [📝Upgrade AWX Operator from 0.13.0 or earlier to 0.14.0 or later](tips/upgrade-operator.md)
+  - [📝Upgrade AWX Operator and AWX](tips/upgrade-operator.md)
