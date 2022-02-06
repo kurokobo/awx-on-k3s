@@ -432,6 +432,7 @@ kubectl apply -f awx-secret-tls.yaml
 - [📁 **Use Customized Pod Specification for your Execution Environment**](containergroup)
   - The guide to use customized Pod of the Execution Environment using **Container Group**.
 - [📁 **Tips**](tips)
+  - [📝Deploy AWX using external PostgreSQL database](tips/external-db.md)
   - [📝Expose `/etc/hosts` to Pods on K3s](tips/expose-hosts.md)
   - [📝Redirect HTTP to HTTPS](tips/https-redirection.md)
   - [📝Uninstall deployed resouces](tips/uninstall.md)
