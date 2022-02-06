@@ -64,7 +64,7 @@ sudo mkdir -p /data/registry
 
 ### Deploy Private Container Registry
 
-Deploy Private Container Registry.
+Deploy private container registry.
 
 ```bash
 kubectl apply -k registry

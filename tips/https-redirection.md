@@ -137,7 +137,7 @@ Now the redirection should be working. Go to `http://awx.example.com/` and make 
 
 ## Enable redirects for other services in this repository
 
-You can also enable HTTPS redirection for [Git Repository](../git/), [Container Registry](../registry) and [Galaxy NG](../galaxy), which are included in this repository, by configuring Ingress as well.
+You can also enable HTTPS redirection for [Git repository](../git/), [container registry](../registry) and [Galaxy NG](../galaxy), which are included in this repository, by configuring Ingress as well.
 
 Add the following lines to the `ingress.yaml` for each resource,
 

@@ -59,7 +59,7 @@ REPOSITORY                              TAG                 IMAGE ID       CREAT
 registry.example.com/ansible/ee         2.10-custom         6fb343319a80   2 minutes ago   871MB
 ```
 
-Now you can push this image to your [private container registry](../registry/README.md) to use as Execution Environment on AWX.
+Now you can push this image to the container registry to use as Execution Environment on AWX. If you want to deploy your own private container registry, refer [additional guide on this repository](../registry).
 
 ```bash
 $ docker push registry.example.com/ansible/ee:2.10-custom

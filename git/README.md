@@ -44,7 +44,7 @@ sudo mkdir -p /data/git
 
 ### Deploy Private Git Repository
 
-Deploy Private Git Repository.
+Deploy private Git repository.
 
 ```bash
 kubectl apply -k git

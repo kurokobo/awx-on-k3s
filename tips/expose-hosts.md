@@ -2,7 +2,7 @@
 
 If we don't have a DNS server and are using `/etc/hosts`, we will need to do some additional tasks to get the Pods on K3s to resolve names according to `/etc/hosts`.
 
-This is necessary for AWX to resolve the hostname for your Private Git Repository or pull images from the Container Registry.
+This is necessary for AWX to resolve the hostname for your private Git repository or pull images from the container registry.
 
 One easy way to do this is to use `dnsmasq`.
 
