@@ -21,7 +21,7 @@
       changed_when: false
       failed_when: false
       loop:
-        - hostname
+        - cat /etc/hostname
         - whoami
         - pwd
         - python3 -m pip list
