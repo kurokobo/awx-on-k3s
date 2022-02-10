@@ -422,7 +422,7 @@ ansible-galaxy collection init demo.collection
 mkdir -p demo/collection/meta
 cat <<EOF > demo/collection/meta/runtime.yml
 ---
-requires_ansible: "<=2.10"
+requires_ansible: ">=2.9"
 EOF
 
 # Create new Plugin
