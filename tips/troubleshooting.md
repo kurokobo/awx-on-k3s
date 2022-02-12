@@ -286,7 +286,7 @@ sudo systemctl restart k3s
 
 ### Provisioning Callback does not work
 
-If you use Traefik which is K3s' Ingress controller as completely default, the Pod may not be able to get the client's IP address (see [k3s-io/k3s#2997](https://github.com/k3s-io/k3s/discussions/2997) for details). Therefore, the feature called Provisioning Callback in AWX does not work properly sinse AWX can't determine actual IP address of the remote host who request callback.
+If you use Traefik which is K3s' Ingress controller as completely default, the Pod may not be able to get the client's IP address (see [k3s-io/k3s#2997](https://github.com/k3s-io/k3s/discussions/2997) for details). Therefore, the feature called Provisioning Callback in AWX does not work properly since AWX can't determine actual IP address of the remote host who request callback.
 
 For this reason, you should fix the Traefik configuration. For a single node like doing in this repository, the following command is easy to use.
 
@@ -357,7 +357,7 @@ fatal: [localhost]: FAILED! => {"changed": false, "msg": "Failed to import the r
 When the Job Template launched at AWX, the playbook runs on the Execution Environment, which is a containerized environment completely isolated from the K3s host. The default Execution Environment has few typical collections, Pip modules, and RPM packages by default, but if your playbooks require additional (non-default) modules or packages, there are two ways to achieve this.
 
 - **Place `collections/requirements.yml` in your project.**
-  - Note that this way is applicable for **adding Collections only**. If you want to add not only Collections but akso Pip modules or RPM Packages, follow the next method to build your own Execution Environment.
+  - Note that this way is applicable for **adding Collections only**. If you want to add not only Collections but also Pip modules or RPM Packages, follow the next method to build your own Execution Environment.
   - You can create and place your own `collections/requirements.yml` including collections which you want to use. The format is the same as [the `requirements.yml` for ansible-galaxy](
 https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#install-multiple-collections-with-a-requirements-file).
   - If `collections/requirements.yml` is present in your project, AWX will install the collections accordingly.
