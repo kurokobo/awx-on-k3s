@@ -438,4 +438,5 @@ kubectl apply -f awx-secret-tls.yaml
   - [📝Uninstall deployed resouces](tips/uninstall.md)
   - [📝Deploy older version of AWX Operator](tips/deploy-older-operator.md)
   - [📝Upgrade AWX Operator and AWX](tips/upgrade-operator.md)
+  - [📝Workaround for the rate limit on Docker Hub](tips/dockerhub-rate-limit.md)
   - [📝Troubleshooting Guide](tips/troubleshooting.md)

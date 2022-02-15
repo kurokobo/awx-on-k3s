@@ -210,7 +210,7 @@ sudo /usr/local/bin/crictl info
 sudo /usr/local/bin/crictl info | jq .config.registry
 ```
 
-If you want Kubernetes to be able to pull images directly from this private registry, alternatively you can also manually create `imagePullSecrets` for the Pod instead of writing your credentials in `auth` in `registries.yaml`.
+If you want Kubernetes to be able to pull images directly from this private registry, alternatively you can also manually create `imagePullSecrets` for the Pod instead of writing your credentials in `auth` in `registries.yaml`. [Another guide about rate limiting on Docker Hub](../tips/dockerhub-rate-limit.md) explains how to use `ImagePullSecrets`.
 
 ### Testing
 

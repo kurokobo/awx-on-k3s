@@ -10,6 +10,7 @@ Some hints and guides for when you got stuck during deployment and daily use of 
   - [First Step: Investigate your Situation](#first-step-investigate-your-situation)
     - [Investigate Status and Events of the Pods](#investigate-status-and-events-of-the-pods)
     - [Investigate Logs of the Containers inside the Pods](#investigate-logs-of-the-containers-inside-the-pods)
+  - [The Pod is `ErrImagePull` with "429 Too Many Requests"](#the-pod-is-errimagepull-with-429-too-many-requests)
   - [The Pod is `Pending` with "1 Insufficient cpu, 1 Insufficient memory." event](#the-pod-is-pending-with-1-insufficient-cpu-1-insufficient-memory-event)
   - [The Pod is `Pending` with "1 pod has unbound immediate PersistentVolumeClaims." event](#the-pod-is-pending-with-1-pod-has-unbound-immediate-persistentvolumeclaims-event)
   - [The Pod is `Running` but stucked with "[wait-for-migrations] Waiting for database migrations..." message](#the-pod-is-running-but-stucked-with-wait-for-migrations-waiting-for-database-migrations-message)
@@ -100,6 +101,27 @@ For AWX Operator and AWX, specifically, the following commands are helpful.
   - `kubectl -n awx logs -f deployment/awx -c redis`
 - Logs of PostgreSQL
   - `kubectl -n awx logs -f statefulset/awx-postgres`
+
+### The Pod is `ErrImagePull` with "429 Too Many Requests"
+
+If your Pod for PostgreSQL is in `ErrImagePull` and its `Events` shows following events, this is due to [the rate limit on Docker Hub](https://docs.docker.com/docker-hub/download-rate-limit/).
+
+```bash
+$ kubectl -n awx describe pod awx-postgres-0
+...
+Events:
+  Type     Reason            Age   From               Message
+  ----     ------            ----  ----               -------
+  Normal   Pulling           9s    kubelet            Pulling image "postgres:12"
+  Warning  Failed            2s    kubelet            Failed to pull image "postgres:12": rpc error: code = Unknown desc = failed to pull and unpack image "docker.io/library/postgres:12": failed to copy: httpReadSeeker: failed open: unexpected status code https://registry-1.docker.io/v2/library/postgres/manifests/sha256:505d023f030cdea84a42d580c2a4a0e17bbb3e91c30b2aea9c02f2dfb10325ba: 429 Too Many Requests - Server message: toomanyrequests: You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limit
+  Warning  Failed            2s    kubelet            Error: ErrImagePull
+  Normal   BackOff           1s    kubelet            Back-off pulling image "postgres:12"
+  Warning  Failed            1s    kubelet            Error: ImagePullBackOff
+```
+
+If you follow the steps in this repository to deploy you AWX, your pull request to Docker Hub will be identified as a free, anonymous account. Therefore, you will be limited to 200 requests in 6 hours. The message "429 Too Many Requests" indicates that it has been exceeded.
+
+To solve this, you can simply wait until the limit is freeed up, or [consider giving your Docker Hub credentials to K3s by follwing the guide on this page](dockerhub-rate-limit.md).
 
 ### The Pod is `Pending` with "1 Insufficient cpu, 1 Insufficient memory." event
 
