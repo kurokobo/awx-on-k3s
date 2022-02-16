@@ -34,15 +34,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 8 (Minimal)
   - K3s v1.22.6+k3s1
 - Products that will be deployed:
-  - AWX Operator 0.16.1
-  - AWX 19.5.1
+  - AWX Operator 0.17.0
+  - AWX 20.0.0
   - PostgreSQL 12
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/19.5.1/INSTALL.md) @19.5.1
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.16.1/README.md) @0.16.1
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/20.0.0/INSTALL.md) @20.0.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.17.0/README.md) @0.17.0
 
 ## Procedure
 
@@ -72,13 +72,11 @@ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
 
 Install specified version of AWX Operator. Note that this procedure is applicable only for AWX Operator `0.14.0` or later. If you want to deploy `0.13.0` or earlier version of AWX Operator, refer [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md).
 
-Note that `0.16.0` doesn't work correctly due to [the issue (ansible/awx-operator#762)](https://github.com/ansible/awx-operator/issues/762), use `0.16.1` instead.
-
 ```bash
 cd ~
 git clone https://github.com/ansible/awx-operator.git
 cd awx-operator
-git checkout 0.16.1
+git checkout 0.17.0
 ```
 
 Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
@@ -184,7 +182,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-mana
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=64   changed=0    unreachable=0    failed=0    skipped=43   rescued=0    ignored=0
+localhost                  : ok=65   changed=0    unreachable=0    failed=0    skipped=43   rescued=0    ignored=0
 ----------
 ```
 
@@ -285,7 +283,7 @@ When the backup completes successfully, the logs end with:
 ```txt
 $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
 ...
------ Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
+----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWXBackup, awxbackup-2021-06-06/awx) -----
 PLAY RECAP *********************************************************************
 localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=7    rescued=0    ignored=0
 ----------
@@ -394,7 +392,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-mana
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=66   changed=0    unreachable=0    failed=0    skipped=41   rescued=0    ignored=0
+localhost                  : ok=67   changed=0    unreachable=0    failed=0    skipped=41   rescued=0    ignored=0
 ----------
 ```
 

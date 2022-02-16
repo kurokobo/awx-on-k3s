@@ -5,10 +5,10 @@ metadata:
   name: awx
 spec:
   # These parameters are designed for use with:
-  # - AWX Operator: 0.16.1
-  #   https://github.com/ansible/awx-operator/blob/0.16.1/README.md
-  # - AWX: 19.5.1
-  #   https://github.com/ansible/awx/blob/19.5.1/INSTALL.md
+  # - AWX Operator: 0.17.0
+  #   https://github.com/ansible/awx-operator/blob/0.17.0/README.md
+  # - AWX: 20.0.0
+  #   https://github.com/ansible/awx/blob/20.0.0/INSTALL.md
 
   admin_user: admin
   admin_password_secret: awx-admin-password
