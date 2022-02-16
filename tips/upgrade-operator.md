@@ -11,6 +11,7 @@ Note that once you upgrade AWX Operator, your AWX will also be upgraded automati
 
 | AWX Operator | AWX |
 | - | - |
+| 0.17.0 | 20.0.0 |
 | 0.16.1 | 19.5.1 |
 | 0.15.0 | 19.5.0 |
 | 0.14.0 | 19.4.0 |
