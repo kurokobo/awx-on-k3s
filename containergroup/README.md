@@ -132,7 +132,7 @@ NAME                      READY   STATUS    RESTARTS   AGE
 automation-job-50-qsjbp   1/1     Running   0          17s
 ```
 
-The Pod has your own specification as defined above.
+The Pod has your own specification as defined above. Note that the `image` in example output below has been overridden by the Execution Environment which defined in Job Template.
 
 ```bash
 $ kubectl -n ee-demo get pod automation-job-50-qsjbp -o yaml
@@ -146,7 +146,7 @@ metadata:
 spec:
   containers:
     ...
-    image: registry.example.com/ansible/ee:2.10-custom
+    image: registry.example.com/ansible/ee:2.12-custom
     ...
     resources:
       limits:

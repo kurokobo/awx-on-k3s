@@ -1,7 +1,7 @@
 ---
 process_isolation: true
 process_isolation_executable: docker
-container_image: registry.example.com/ansible/ee:2.10-custom
+container_image: registry.example.com/ansible/ee:2.12-custom
 
 # Specify additional bind-mount points to an isolated Docker or Podman container.
 # Note that this is UNDOCUMENTED option.
