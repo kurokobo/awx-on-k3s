@@ -4,8 +4,8 @@ metadata:
   name: galaxy
 spec:
   # These parameters are designed for use with:
-  # - Pulp Operator: 0.7.0
-  #   https://github.com/pulp/pulp-operator/blob/0.7.0/README.md
+  # - Pulp Operator: 0.7.1
+  #   https://github.com/pulp/pulp-operator/blob/0.7.1/README.md
   # - Galaxy NG: 4.4.1
   #   https://github.com/ansible/galaxy_ng/tree/4.4.1
 

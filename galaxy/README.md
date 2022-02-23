@@ -180,7 +180,7 @@ There is a Kubernetes Operator for Pulp 3 named Pulp Operator.
 
 - [pulp/pulp-operator: Kubernetes Operator for Pulp 3](https://github.com/pulp/pulp-operator)
 
-This project is still under active development and there is no support, however, at least the code to create a new instance seems to be implemented. In this procedure, we use [Pulp Operator 0.7.0](https://github.com/pulp/pulp-operator/tree/0.7.0)
+This project is still under active development and there is no support, however, at least the code to create a new instance seems to be implemented. In this procedure, we use [Pulp Operator 0.7.1](https://github.com/pulp/pulp-operator/tree/0.7.1)
 
 ### Patch K3s
 
@@ -208,20 +208,20 @@ Install specified version of Pulp Operator.
 cd ~
 git clone https://github.com/pulp/pulp-operator.git
 cd pulp-operator
-git checkout 0.7.0
+git checkout 0.7.1
 ```
 
-Export `NAMESPACE` environment variable with `pulp-operator-system`, and then deploy Pulp Operator by `make deploy`. Note that the namespace where Pulp operator will be deployed can be changed by `NAMESPACE` environment variable, but some resources have hard-coded namespace with `pulp-operator-system` that do not work well.
+Export the name of the namespace where you want to deploy Pulp Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `pulp-operator-system`.
 
 ```bash
-export NAMESPACE=pulp-operator-system
+export NAMESPACE=galaxy
 make deploy
 ```
 
 The Pulp Operator will be deployed to the namespace you specified.
 
 ```bash
-$ kubectl -n pulp-operator-system get all
+$ kubectl -n galaxy get all
 NAME                                                   READY   STATUS    RESTARTS   AGE
 pod/pulp-operator-controller-manager-9b8644f46-rg2rl   2/2     Running   0          21s
 
@@ -304,23 +304,23 @@ kubectl apply -k pulp
 To monitor the progress of the deployment, check the logs of `deployments/awx-operator-controller-manager`:
 
 ```bash
-kubectl -n pulp-operator-system logs -f deployments/pulp-operator-controller-manager -c pulp-manager
+kubectl -n galaxy logs -f deployments/pulp-operator-controller-manager -c pulp-manager
 ```
 
 When the deployment completes successfully, the logs end with:
 
 ```txt
-$ kubectl -n pulp-operator-system logs -f deployments/pulp-operator-controller-manager -c pulp-manager
+$ kubectl -n galaxy logs -f deployments/pulp-operator-controller-manager -c pulp-manager
 ...
------ Ansible Task Status Event StdOut (pulp.pulpproject.org/v1beta1, Kind=Pulp, galaxy/pulp-operator-system) -----
+----- Ansible Task Status Event StdOut (pulp.pulpproject.org/v1beta1, Kind=Pulp, galaxy/galaxy) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=75   changed=0    unreachable=0    failed=0    skipped=62   rescued=0    ignored=0   
+localhost                  : ok=75   changed=0    unreachable=0    failed=0    skipped=62   rescued=0    ignored=0
 ```
 
-Required objects has been deployed next to Pulp Operator in `pulp-operator-system` namespace.
+Required objects has been deployed next to Pulp Operator in `galaxy` namespace.
 
 ```bash
-$ kubectl -n pulp-operator-system get pulp,all,ingress,secrets
+$ kubectl -n galaxy get pulp,all,ingress,secrets
 NAME                               AGE
 pulp.pulp.pulpproject.org/galaxy   3m58s
 
