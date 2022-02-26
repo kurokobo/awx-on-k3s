@@ -1,7 +1,9 @@
 # Examples of Ansible Builder
 
+This repository includes ready-to-use files as an example to use Ansible Builder.
+
 - [ansible/ansible-builder](https://github.com/ansible/ansible-builder)
-- [Introduction — ansible-builder documentation](https://ansible-builder.readthedocs.io/en/latest/index.html)
+- [Introduction — ansible-builder documentation](https://ansible-builder.readthedocs.io/en/latest/)
 
 ## Environment in This Example
 
