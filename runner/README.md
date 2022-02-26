@@ -1,7 +1,9 @@
 # Examples of Ansible Runner
 
+This repository includes ready-to-use files as an example to run Ansible Runner.
+
 - [ansible/ansible-runner](https://github.com/ansible/ansible-runner)
-- [Ansible Runner — ansible-runner 2.0.1 documentation](https://ansible-runner.readthedocs.io/en/stable/index.html)
+- [Ansible Runner — ansible-runner documentation](https://ansible-runner.readthedocs.io/en/stable/)
 
 ## Environment in This Example
 
@@ -17,13 +19,13 @@ python3 -m pip install ansible-runner
 
 ## Prepare Required Files
 
-Refer [`projects/demo.yml`](projects/demo.yml) and [`env/settings`](env/settings).
+Refer [`projects/demo.yml`](projects/demo.yml) and [`env/settings`](env/settings) to review existing playbook and configuration.
 
-Your own Execution Environment can be used using `container_image` in [`env/settings`](env/settings).
+Your own Execution Environment can be used using `container_image` in [`env/settings`](env/settings). Refer [the guide for Ansible Builder](../builder) to build your own Execution Environment.
 
 ## Invoke Ansible Runner
 
-The sample playbook will help you figure out the differences between Execution Environments, such as Ansible version, `pip list`, etc.
+The sample playbook in this repository will help you figure out the differences between Execution Environments, such as Ansible version, `pip list`, etc.
 
 ```bash
 cd runner
