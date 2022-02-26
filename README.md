@@ -13,8 +13,9 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - [Environment](#environment)
 - [References](#references)
+- [Requirements](#requirements)
 - [Procedure](#procedure)
-  - [Prepare CentOS 8 host](#prepare-centos-8-host)
+  - [Prepare CentOS Stream 8 host](#prepare-centos-stream-8-host)
   - [Install K3s](#install-k3s)
   - [Install AWX Operator](#install-awx-operator)
   - [Prepare required files](#prepare-required-files)
@@ -44,9 +45,21 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/20.0.0/INSTALL.md) @20.0.0
 - [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.17.0/README.md) @0.17.0
 
+## Requirements
+
+- **Computing resources**
+  - **2 CPUs and 4 GiB RAM minimum**.
+  - It's recommended to add more CPUs and RAM (like 4 CPUs and 8 GiB RAM or more) to avoid performance issue and job scheduling issue.
+  - The files in this repository are configured to ignore resource requirements which specified by AWX Operator by default.
+- **Storage resources**
+  - At least **10 GiB for `/var/lib/rancher`** and **10 GiB for `/data`** are safe for fresh install.
+  - **Both will be grown during lifetime** and **actual consumption highly depends on your environment and your usecase**, so you should to pay attention to the consumption and add more capacity if required.
+  - `/var/lib/rancher` will be created and consumed by K3s and related data like container images and overlayfs.
+  - `/data` will be created in this guide and used to store AWX-related databases and files.
+
 ## Procedure
 
-### Prepare CentOS 8 host
+### Prepare CentOS Stream 8 host
 
 Disable Firewalld. This is [recommended by K3s](https://rancher.com/docs/k3s/latest/en/advanced/#additional-preparation-for-red-hat-centos-enterprise-linux).
 
@@ -153,11 +166,12 @@ Modify two `password`s in `base/kustomization.yaml`.
 ...
 ```
 
-Prepare directories for Persistent Volumes defined in `base/pv.yaml`.
+Prepare directories for Persistent Volumes defined in `base/pv.yaml`. These directories will be used to store your databases and project files.
 
 ```bash
 sudo mkdir -p /data/postgres
 sudo mkdir -p /data/projects
+sudo chmod 755 /data/postgres
 sudo chown 1000:0 /data/projects
 ```
 
