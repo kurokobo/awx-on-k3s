@@ -11,10 +11,29 @@ Refer [the official documentation](https://github.com/ansible/awx-operator#trust
 <!-- omit in toc -->
 ## Table of Contents
 
+- [Overview](#overview)
 - [Prepare required CA certificatess](#prepare-required-ca-certificatess)
 - [Modify `base/kustomization.yaml`](#modify-basekustomizationyaml)
 - [Modify `base/awx.yaml`](#modify-baseawxyaml)
 - [Apply configuration](#apply-configuration)
+
+## Overview
+
+Trusting custom Certificate Authority can be achieved by following steps:
+
+1. Creating new Secret which includes your certificates
+2. Passing it to your AWX by specifying the name of the Secret as your AWX's specification
+
+There are two kinds of certificate, one is used to trust LDAP server, and the other is used as the CA bundle.
+
+| Fields in the specification for AWX | Keys in Secret | Containers in AWX pod that the certificate will be mounted | Paths that the certificate will be mounted as |
+|-|-|-|-|
+| `ldap_cacert_secret` | `ldap-ca.crt` | `awx-web` | `/etc/openldap/certs/ldap-ca.crt` |
+| `bundle_cacert_secret` | `bundle-ca.crt` | `awx-web`, `awx-task`, and `awx-ee` | `/etc/pki/ca-trust/source/anchors/bundle-ca.crt` |
+
+Note that the `awx-ee` container is used to run management jobs only, not EE which runs your playbooks. If the EE running your playbook needs a certificate, you will need to [customize the pod specification](../containergroup).
+
+If you want to mount the certificate to the additional containers in AWX pod or the additional path other than above, you shoud add extra volumes and extra mounts using `extra_volumes` and `_extra_volume_mounts` field, but this is not covered in this guide. Refer to [the official documentation](https://github.com/ansible/awx-operator#custom-volume-and-volume-mount-options).
 
 ## Prepare required CA certificatess
 
