@@ -344,6 +344,7 @@ If you are restoring the entire AWX to a new environment, create the PVs and PVC
 ```bash
 sudo mkdir -p /data/postgres
 sudo mkdir -p /data/projects
+sudo chmod 755 /data/postgres
 sudo chown 1000:0 /data/projects
 ```
 

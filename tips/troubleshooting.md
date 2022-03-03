@@ -229,7 +229,7 @@ This problem occurs when the AWX pod and the PostgreSQL pod cannot communicate p
 To solve this, check or try the following:
 
 - **Ensure your PostgreSQL (typically the Pod named `awx-postgres-0`)is in `Running` state.**
-- **Ensure your `firewalld` or `ufw` has been disabled on your K3s host.**
+- **Ensure your `firewalld`, `ufw` or any kind of firewall has been disabled on your K3s host.**
 - **Ensure your `awx-postgres-configuration` has correct values, especially if you're using external PostgreSQL.**
 - **Uninstall K3s and install it again.**
 
