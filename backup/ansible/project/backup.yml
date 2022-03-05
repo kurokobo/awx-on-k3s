@@ -1,0 +1,115 @@
+---
+- name: Backing up AWX using AWX Operator
+  gather_facts: no
+  hosts: localhost
+
+  tasks:
+    - name: Construct variables
+      block:
+        - name: Construct default variables
+          ansible.builtin.set_fact:
+            _awxbackup_default:
+              api_version: awx.ansible.com/v1beta1
+              kind: AWXBackup
+              namespace: awx
+              name: "awxbackup-{{ lookup('pipe', 'date +%Y-%m-%d-%H-%M-%S') }}"
+              spec:
+                deployment_name: awx
+                backup_pvc: awx-backup-claim
+              timeout: 600
+              keep_days: 30
+
+        - name: Construct custom variables
+          ansible.builtin.set_fact:
+            _awxbackup_config:
+              api_version: "{{ awxbackup_api_version | default(_awxbackup_default.api_version, true) }}"
+              kind: "{{ awxbackup_kind | default(_awxbackup_default.kind, true) }}"
+              namespace: "{{ awxbackup_namespace | default(_awxbackup_default.namespace, true) }}"
+              name: "{{ awxbackup_name | default(_awxbackup_default.name, true) }}"
+              spec: "{{ awxbackup_spec | default(_awxbackup_default.spec, true) }}"
+              timeout: "{{ awxbackup_timeout | default(_awxbackup_default.timeout, true) }}"
+              keep_days: "{{ awxbackup_keep_days | default(_awxbackup_default.keep_days) }}"
+
+        - name: Print active variables
+          ansible.builtin.debug:
+            var: _awxbackup_config
+
+    - name: Construct manifest
+      block:
+        - name: Construct new manifest for AWXBackup resource
+          ansible.builtin.set_fact:
+            _awxbackup_manifest:
+              apiVersion: "{{ _awxbackup_config.api_version }}"
+              kind: "{{ _awxbackup_config.kind }}"
+              metadata:
+                name: "{{ _awxbackup_config.name }}"
+                namespace: "{{ _awxbackup_config.namespace }}"
+              spec: "{{ _awxbackup_config.spec }}"
+
+        - name: Print manifest to be created
+          ansible.builtin.debug:
+            var: _awxbackup_manifest
+
+    - name: Create new backup
+      block:
+        - name: Create new AWXBackup resource and wait for complete
+          kubernetes.core.k8s:
+            state: present
+            definition: "{{ _awxbackup_manifest }}"
+            wait: yes
+            wait_condition:
+              reason: "Successful"
+              status: "True"
+              type: "Running"
+            wait_timeout: "{{ _awxbackup_config.timeout | int }}"
+          register: _awxbackup_created
+
+        - name: Print created AWXBackup
+          ansible.builtin.debug:
+            var: _awxbackup_created_info
+          vars:
+            _awxbackup_created_info:
+              name: "{{ _awxbackup_created.result.metadata.name }}"
+              creation_timestamp: "{{ _awxbackup_created.result.metadata.creationTimestamp }}"
+              deploument_name: "{{ _awxbackup_created.result.spec.deployment_name }}"
+              backup_pvc: "{{ _awxbackup_created.result.status.backupClaim }}"
+              backup_directory: "{{ _awxbackup_created.result.status.backupDirectory }}"
+
+      rescue:
+        - name: Clean up failed AWXBackup resource
+          kubernetes.core.k8s:
+            state: absent
+            definition: "{{ _awxbackup_manifest }}"
+            wait: yes
+
+        - name: Force to fail if the backup was failed
+          ansible.builtin.fail:
+
+    - name: Creanup outdated backups
+      block:
+        - name: Store current datetime
+          ansible.builtin.set_fact:
+            _awxbackup_now: "{{ lookup('pipe', 'date +%s') }}"
+
+        - name: Gather existing backups
+          kubernetes.core.k8s_info:
+            namespace: "{{ _awxbackup_config.namespace }}"
+            api_version: "{{ _awxbackup_config.api_version }}"
+            kind: "{{ _awxbackup_config.kind }}"
+          register: _awxbackup_all_backups
+
+        - name: Remove outdated backups
+          kubernetes.core.k8s:
+            api_version: "{{ _awxbackup_config.api_version }}"
+            kind: "{{ _awxbackup_config.kind }}"
+            namespace: "{{ _awxbackup_config.namespace }}"
+            name: "{{ item.name }}"
+            state: absent
+          loop: "{{ _awxbackup_all_backups.resources }}"
+          loop_control:
+            label: "{{ item.name }}"
+          when: >
+            (_awxbackup_now | int)
+            - ((item.metadata.creationTimestamp | to_datetime('%Y-%m-%dT%H:%M:%S%z')).strftime('%s') | int)
+            > ((_awxbackup_config.keep_days | int) * 86400)
+      when: (_awxbackup_config.keep_days | int) > 0

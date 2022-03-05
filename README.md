@@ -14,19 +14,13 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - [Environment](#environment)
 - [References](#references)
 - [Requirements](#requirements)
-- [Procedure](#procedure)
+- [Deployment Instruction](#deployment-instruction)
   - [Prepare CentOS Stream 8 host](#prepare-centos-stream-8-host)
   - [Install K3s](#install-k3s)
   - [Install AWX Operator](#install-awx-operator)
   - [Prepare required files](#prepare-required-files)
   - [Deploy AWX](#deploy-awx)
-- [Backing up and Restoring using AWX Operator](#backing-up-and-restoring-using-awx-operator)
-  - [Backing up using AWX Operator](#backing-up-using-awx-operator)
-    - [Prepare for Backup](#prepare-for-backup)
-    - [Invoke Manual Backup](#invoke-manual-backup)
-  - [Restoring using AWX Operator](#restoring-using-awx-operator)
-    - [Prepare for Restore](#prepare-for-restore)
-    - [Invoke Manual Restore](#invoke-manual-restore)
+- [Back up and Restore AWX using AWX Operator](#back-up-and-restore-awx-using-awx-operator)
 - [Additional Guides](#additional-guides)
 
 ## Environment
@@ -57,7 +51,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - `/var/lib/rancher` will be created and consumed by K3s and related data like container images and overlayfs.
   - `/data` will be created in this guide and used to store AWX-related databases and files.
 
-## Procedure
+## Deployment Instruction
 
 ### Prepare CentOS Stream 8 host
 
@@ -166,7 +160,7 @@ Modify two `password`s in `base/kustomization.yaml`.
 ...
 ```
 
-Prepare directories for Persistent Volumes defined in `base/pv.yaml`. These directories will be used to store your databases and project files.
+Prepare directories for Persistent Volumes defined in `base/pv.yaml`. These directories will be used to store your databases and project files. Note that the size of the PVs and PVCs are specified in some of the files in this repository, but since their backends are `hostPath`, its value is just like a label and there is no actual capacity limitation.
 
 ```bash
 sudo mkdir -p /data/postgres
@@ -247,186 +241,19 @@ Now your AWX is available at `https://awx.example.com/` or the hostname you spec
 
 At this point, however, AWX can be accessed via HTTP as well as HTTPS. If you want to redirect HTTP to HTTPS, see [📝Tips: Redirect HTTP to HTTPS](tips/https-redirection.md).
 
-## Backing up and Restoring using AWX Operator
+## Back up and Restore AWX using AWX Operator
 
-The AWX Operator `0.10.0` or later has the ability to backup and restore AWX in easy way.
+The AWX Operator `0.10.0` or later has the ability to back up and restore AWX in easy way.
 
-### Backing up using AWX Operator
-
-#### Prepare for Backup
-
-Prepare directories for Persistent Volumes to store backup files that defined in `backup/pv.yaml`.
-
-```bash
-sudo mkdir -p /data/backup
-```
-
-Then deploy Persistent Volume and Persistent Volume Claim.
-
-```bash
-kubectl apply -k backup
-```
-
-#### Invoke Manual Backup
-
-Modify the name of the AWXBackup object in `backup/awxbackup.yaml`.
-
-```yaml
-...
-kind: AWXBackup
-metadata:
-  name: awxbackup-2021-06-06     👈👈👈
-  namespace: awx
-...
-```
-
-Then invoke backup by applying this manifest file.
-
-```bash
-kubectl apply -f backup/awxbackup.yaml
-```
-
-To monitor the progress of the deployment, check the logs of `deployments/awx-operator-controller-manager`:
-
-```bash
-kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
-```
-
-When the backup completes successfully, the logs end with:
-
-```txt
-$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
-...
------ Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWXBackup, awxbackup-2021-06-06/awx) -----
-PLAY RECAP *********************************************************************
-localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=7    rescued=0    ignored=0
-----------
-```
-
-This will create AWXBackup object in the namespace and also create backup files in the Persistent Volume. In this example those files are available at `/data/backup`.
-
-```bash
-$ kubectl -n awx get awxbackup
-NAME                   AGE
-awxbackup-2021-06-06   6m47s
-```
-
-```bash
-$ ls -l /data/backup/
-total 0
-drwxr-xr-x. 2 root root 59 Jun  5 06:51 tower-openshift-backup-2021-06-06-10:51:49
-
-$ ls -l /data/backup/tower-openshift-backup-2021-06-06-10\:51\:49/
-total 736
--rw-r--r--. 1 root             root    749 Jun  6 06:51 awx_object
--rw-r--r--. 1 root             root    482 Jun  6 06:51 secrets.yml
--rw-------. 1 systemd-coredump root 745302 Jun  6 06:51 tower.db
-```
-
-Note that if you are using AWX Operator `0.12.0` or earlier, the contents of the Secret that passed through `ingress_tls_secret` parameter will not be included in this backup files. If necessary, get a dump of this Secret, or keep original certificate file and key file. In `0.13.0` or later, this secret is included in the backup file therefore you can ignore this step.
-
-```bash
-kubectl get secret awx-secret-tls -n awx -o yaml > awx-secret-tls.yaml
-```
-
-### Restoring using AWX Operator
-
-To perfom restoration, you need to have AWX Operator running on Kubernetes. If you are planning to restore to a new environment, first prepare Kubernetes and AWX Operator by referring to the instructions on this page.
-
-It is strongly recommended that the version of AWX Operator is the same as the version when the backup was taken. This is because the structure of the backup files differs between versions and may not be compatible. If you have upgraded AWX Operator after taking the backup, it is recommended to downgrade it for the restore. To deploy `0.13.0` or earlier version of AWX Operator, refer [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md)
-
-#### Prepare for Restore
-
-If your PV, PVC, and Secret still exist, no preparation is required.
-
-If you are restoring the entire AWX to a new environment, create the PVs and PVCs first to be restored.
-
-```bash
-sudo mkdir -p /data/postgres
-sudo mkdir -p /data/projects
-sudo chmod 755 /data/postgres
-sudo chown 1000:0 /data/projects
-```
-
-Then deploy Persistent Volume and Persistent Volume Claim.
-
-```bash
-kubectl apply -k restore
-```
-
-#### Invoke Manual Restore
-
-Modify the name of the AWXRestore object in `restore/awxrestore.yaml`.
-
-```yaml
-...
-kind: AWXRestore
-metadata:
-  name: awxrestore-2021-06-06     👈👈👈
-  namespace: awx
-...
-```
-
-If you want to restore from AWXBackup object, specify its name in `restore/awxrestore.yaml`.
-
-```yaml
-...
-  # Parameters to restore from AWXBackup object
-  backup_pvc_namespace: awx
-  backup_name: awxbackup-2021-06-06     👈👈👈
-...
-```
-
-If the AWXBackup object no longer exists, place the backup files and specify the name of the PVC and directory in `restore/awxrestore.yaml`.
-
-```yaml
-...
-  # Parameters to restore from existing files on PVC (without AWXBackup object)
-  backup_pvc_namespace: awx
-  backup_pvc: awx-backup-claim     👈👈👈
-  backup_dir: /backups/tower-openshift-backup-2021-06-06-10:51:49     👈👈👈
-...
-```
-
-Then invoke restore by applying this manifest file.
-
-```bash
-kubectl apply -f restore/awxrestore.yaml
-```
-
-To monitor the progress of the deployment, check the logs of `deployments/awx-operator-controller-manager`:
-
-```bash
-kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
-```
-
-When the restore complete successfully, the logs end with:
-
-```txt
-$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
-...
------ Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
-PLAY RECAP *********************************************************************
-localhost                  : ok=67   changed=0    unreachable=0    failed=0    skipped=41   rescued=0    ignored=0
-----------
-```
-
-This will create AWXRestore object in the namespace, and now your AWX is restored.
-
-```bash
-$ kubectl -n awx get awxrestore
-NAME                    AGE
-awxrestore-2021-06-06   137m
-```
-
-Note that if you are using AWX Operator `0.12.0` or earlier, the Secret for TLS should be manually restored (or create newly using original certificate and key file). This step is not required for `0.13.0` or later.
-
-```bash
-kubectl apply -f awx-secret-tls.yaml
-```
+Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX using AWX Operator**](restore) for details.
 
 ## Additional Guides
 
+- [📁 **Back up AWX using AWX Operator**](backup)
+  - The guide to make backup of your AWX using AWX Operator.
+  - This guide includes not only the way to make backup manually, but also an example simple playbook for Ansible, which can be use with scheduling feature on AWX.
+- [📁 **Restore AWX using AWX Operator**](restore)
+  - The guide to restore your AWX using AWX Operator.
 - [📁 **Deploy Private Git Repository on Kubernetes**](git)
   - The guide to use AWX with SCM. This repository includes the manifests to deploy [Gitea](https://gitea.io/en-us/).
 - [📁 **Deploy Private Container Registry on Kubernetes**](registry)
