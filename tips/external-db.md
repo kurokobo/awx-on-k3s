@@ -57,7 +57,7 @@ spec:
   # postgres_storage_class: awx-postgres-volume     👈👈👈
   # postgres_storage_requirements:     👈👈👈
   #   requests:     👈👈👈
-  #     storage: 2Gi     👈👈👈
+  #     storage: 8Gi     👈👈👈
 
   projects_persistence: true
   projects_existing_claim: awx-projects-claim
@@ -100,7 +100,7 @@ Comment out following unnecessary lines which related to `awx-postgres-volume` i
 #     - ReadWriteOnce     👈👈👈
 #   persistentVolumeReclaimPolicy: Retain     👈👈👈
 #   capacity:     👈👈👈
-#     storage: 2Gi     👈👈👈
+#     storage: 8Gi     👈👈👈
 #   storageClassName: awx-postgres-volume     👈👈👈
 #   hostPath:     👈👈👈
 #     path: /data/postgres     👈👈👈

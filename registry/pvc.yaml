@@ -9,5 +9,5 @@ spec:
   volumeMode: Filesystem
   resources:
     requests:
-      storage: 5Gi
+      storage: 8Gi
   storageClassName: registry-volume
