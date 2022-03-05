@@ -8,7 +8,7 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   capacity:
-    storage: 5Gi
+    storage: 4Gi
   storageClassName: demo-volume
   hostPath:
     path: /data/demo

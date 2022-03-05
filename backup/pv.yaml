@@ -8,7 +8,7 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   capacity:
-    storage: 2Gi
+    storage: 4Gi
   storageClassName: awx-backup-volume
   hostPath:
     path: /data/backup

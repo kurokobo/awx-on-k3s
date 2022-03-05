@@ -23,13 +23,13 @@ spec:
   postgres_storage_class: galaxy-postgres-volume
   postgres_storage_requirements:
     requests:
-      storage: 2Gi
+      storage: 8Gi
   redis_storage_class: galaxy-redis-volume
 
   storage_type: file
   file_storage_storage_class: galaxy-pulp-volume
   file_storage_access_mode: ReadWriteOnce
-  file_storage_size: 10Gi
+  file_storage_size: 8Gi
 
   pulp_settings:
     GALAXY_FEATURE_FLAGS:

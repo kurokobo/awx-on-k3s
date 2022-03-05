@@ -8,7 +8,7 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   capacity:
-    storage: 2Gi
+    storage: 8Gi
   storageClassName: galaxy-postgres-volume
   hostPath:
     path: /data/galaxy/postgres
@@ -23,7 +23,7 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   capacity:
-    storage: 10Gi
+    storage: 8Gi
   storageClassName: galaxy-pulp-volume
   hostPath:
     path: /data/galaxy/pulp

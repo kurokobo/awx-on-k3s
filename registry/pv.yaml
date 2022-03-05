@@ -8,7 +8,7 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   capacity:
-    storage: 5Gi
+    storage: 8Gi
   storageClassName: registry-volume
   hostPath:
     path: /data/registry

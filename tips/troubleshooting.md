@@ -175,7 +175,7 @@ Check the `STATUS` of your PVs and ensure your PVs doesn't have `Available` or `
 $ kubectl get pv
 NAME                     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM                         STORAGECLASS             REASON   AGE
 awx-projects-volume      2Gi        RWO            Retain           Released   awx/awx-projects-claim        awx-projects-volume               17h
-awx-postgres-volume      2Gi        RWO            Retain           Released   awx/postgres-awx-postgres-0   awx-postgres-volume               17h
+awx-postgres-volume      8Gi        RWO            Retain           Released   awx/postgres-awx-postgres-0   awx-postgres-volume               17h
 ```
 
 Probably this is the second (or more) time to deploy AWX for you. These PVs which have `Released` state are tied to your old (and probably no longer exists now) PVCs you created in the past.
