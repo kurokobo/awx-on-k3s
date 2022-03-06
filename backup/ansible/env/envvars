@@ -1,0 +1,4 @@
+---
+K8S_AUTH_VERIFY_SSL: no
+K8S_AUTH_HOST: https://<Your K3s Host>:6443/
+K8S_AUTH_API_KEY: <Your API Token>

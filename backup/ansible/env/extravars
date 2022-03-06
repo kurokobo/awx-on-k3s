@@ -1,0 +1,8 @@
+---
+awxbackup_namespace: awx
+awxbackup_name: awxbackup-{{ lookup('pipe', 'date +%Y-%m-%d-%H-%M-%S') }}
+awxbackup_spec:
+  deployment_name: awx
+  backup_pvc: awx-backup-claim
+awxbackup_timeout: 600
+awxbackup_keep_days: 30

@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: awx-backup
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: awx-backup
+rules:
+  - apiGroups:
+      - awx.ansible.com
+    resources:
+      - awxbackups
+      - awxrestores
+    verbs:
+      - "*"
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: awx-backup
+subjects:
+  - kind: ServiceAccount
+    name: awx-backup
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: awx-backup
