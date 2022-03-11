@@ -139,7 +139,7 @@ spec:
 ...
 ```
 
-Modify two `password`s in `base/kustomization.yaml`.
+Modify two `password`s in `base/kustomization.yaml`. Note that some special charactors like `&`, `$`, etc. in `password` under `awx-postgres-configuration` might cause the deployment issue. Not tested all charactors, but `!` is safe to use at least.
 
 ```yaml
 ...
@@ -239,7 +239,9 @@ secret/awx-broadcast-websocket                       Opaque                     
 
 Now your AWX is available at `https://awx.example.com/` or the hostname you specified.
 
-At this point, however, AWX can be accessed via HTTP as well as HTTPS. If you want to redirect HTTP to HTTPS, see [📝Tips: Redirect HTTP to HTTPS](tips/https-redirection.md).
+Note that you have to access via hostname that you specified in `base/awx.yaml`, instead of IP address, since this guide uses Ingress. So you should configure your DNS or `hosts` file on your client where the brower is running.
+
+At this point, AWX can be accessed via HTTP as well as HTTPS. If you want to redirect HTTP to HTTPS, see [📝Tips: Redirect HTTP to HTTPS](tips/https-redirection.md).
 
 ## Back up and Restore AWX using AWX Operator
 
