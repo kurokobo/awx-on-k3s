@@ -10,6 +10,7 @@ This repository includes ready-to-use files as an example to use Ansible Builder
 - CentOS Stream 8 (Minimal)
 - Python 3.9
 - Docker 20.10.12
+- Ansible Builder 1.0.1
 
 ## Install
 

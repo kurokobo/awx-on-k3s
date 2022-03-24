@@ -10,6 +10,7 @@ This repository includes ready-to-use files as an example to run Ansible Runner.
 - CentOS Stream 8 (Minimal)
 - Python 3.9
 - Docker 20.10.12
+- Ansible Runner 2.1.3
 
 ## Install
 

@@ -153,7 +153,7 @@ Typical solutions are one of the following:
       ee_resource_requirements: {}     👈👈👈
     ```
 
-  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/0.18.0/README.md#containers-resource-requirements) for details.
+  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/0.19.0/README.md#containers-resource-requirements) for details.
   - In this way you can run AWX with fewer resources, but you may encounter performance issues.
 
 ### The Pod is `Pending` with "1 pod has unbound immediate PersistentVolumeClaims." event
@@ -222,16 +222,20 @@ kubectl -n awx logs -f deployment/awx -c awx-web
 [wait-for-migrations] Attempt 4 of 30
 [wait-for-migrations] Waiting 4 seconds before next attempt
 ...
+[wait-for-migrations] Attempt 28 of 30
+[wait-for-migrations] Waiting 30 seconds before next attempt
+[wait-for-migrations] Attempt 29 of 30
+[wait-for-migrations] Waiting 30 seconds before next attempt
+...
 ```
 
 This problem occurs when the AWX pod and the PostgreSQL pod cannot communicate properly. In most cases, the cause of this is the network on your K3s.
 
 To solve this, check or try the following:
 
-- Ensure your PostgreSQL (typically the Pod named `awx-postgres-0`)is in `Running` state.
+- Ensure your PostgreSQL (typically the Pod named `awx-postgres-0`) is in `Running` state.
 - Ensure your `firewalld`, `ufw` or any kind of firewall has been disabled on your K3s host.
 - Ensure your `awx-postgres-configuration` has correct values, especially if you're using external PostgreSQL.
-- Ensure your `password` in `awx-postgres-configuration` does not contain any special charactors like '&', '$', etc..
 - Uninstall K3s and install it again.
 
 ### The Pod for PostgreSQL is in `CrashLoopBackOff` state and shows "Permission denied" log

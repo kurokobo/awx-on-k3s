@@ -88,7 +88,6 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-mana
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
 localhost                  : ok=54   changed=0    unreachable=0    failed=0    skipped=37   rescued=0    ignored=0
-----------
 ```
 
 You can confirm that the annotations will be added to the Ingress resource.
@@ -120,7 +119,6 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-mana
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
 localhost                  : ok=54   changed=0    unreachable=0    failed=0    skipped=37   rescued=0    ignored=0
-----------
 ```
 
 You can confirm that the annotations will be added to the Ingress resource.
