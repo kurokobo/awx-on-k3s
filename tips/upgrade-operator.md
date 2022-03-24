@@ -11,6 +11,7 @@ Note that once you upgrade AWX Operator, your AWX will also be upgraded automati
 
 | AWX Operator | AWX |
 | - | - |
+| 0.19.0 | 20.0.1 |
 | 0.18.0 | 20.0.1 |
 | 0.17.0 | 20.0.0 |
 | 0.16.1 | 19.5.1 |
@@ -75,7 +76,6 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-mana
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
 localhost                  : ok=56   changed=0    unreachable=0    failed=0    skipped=35   rescued=0    ignored=0
-----------
 ```
 
 ## 📝 Upgrade from `0.13.0` (e.g. from `0.13.0` to `0.14.0`)
@@ -132,7 +132,6 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-mana
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
 localhost                  : ok=56   changed=0    unreachable=0    failed=0    skipped=35   rescued=0    ignored=0
-----------
 ```
 
 ## 📝 Upgrade from `0.12.0` or earlier (e.g. from `0.12.0` to `0.13.0`)
