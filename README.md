@@ -29,15 +29,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 8 (Minimal)
   - K3s v1.22.7+k3s1
 - Products that will be deployed:
-  - AWX Operator 0.19.0
-  - AWX 20.0.1
+  - AWX Operator 0.20.0
+  - AWX 20.1.0
   - PostgreSQL 12
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/20.0.1/INSTALL.md) @20.0.1
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.19.0/README.md) @0.19.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/20.1.0/INSTALL.md) @20.1.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.20.0/README.md) @0.20.0
 
 ## Requirements
 
@@ -83,7 +83,7 @@ Install specified version of AWX Operator. Note that this procedure is applicabl
 cd ~
 git clone https://github.com/ansible/awx-operator.git
 cd awx-operator
-git checkout 0.19.0
+git checkout 0.20.0
 ```
 
 Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
