@@ -207,10 +207,10 @@ sudo systemctl restart k3s
 If this is successfully applied, you can check the applied configuration in the `config.registry` section of the following command.
 
 ```bash
-sudo /usr/local/bin/crictl info
+sudo /usr/local/bin/k3s crictl info
 
 # With jq
-sudo /usr/local/bin/crictl info | jq .config.registry
+sudo /usr/local/bin/k3s crictl info | jq .config.registry
 ```
 
 If you want Kubernetes to be able to pull images directly from this private registry, alternatively you can also manually create `imagePullSecrets` for the Pod instead of writing your credentials in `auth` in `registries.yaml`. [Another guide about rate limiting on Docker Hub](../tips/dockerhub-rate-limit.md) explains how to use `ImagePullSecrets`.
