@@ -30,7 +30,7 @@ An example simple playbook for Ansible is also provided in this repository. This
 | - | - | - |
 | `awxbackup_namespace` | The name of the NameSpace where the `AWXBackup` resource will be created. | `awx` |
 | `awxbackup_name` | The name of the `AWXBackup` resource. Dynamically generated using execution time by default. | `awxbackup-{{ lookup('pipe', 'date +%Y-%m-%d-%H-%M-%S') }}` |
-| `awxbackup_spec` | The `spec` of the `AWXBackup` resource. Refer [official documentation](https://github.com/ansible/awx-operator/tree/0.20.0/roles/backup) for acceptable fields. | `{'deployment_name':'awx','backup_pvc':'awx-backup-claim'}` |
+| `awxbackup_spec` | The `spec` of the `AWXBackup` resource. Refer [official documentation](https://github.com/ansible/awx-operator/tree/0.20.1/roles/backup) for acceptable fields. | `{'deployment_name':'awx','backup_pvc':'awx-backup-claim'}` |
 | `awxbackup_timeout` | Time to wait for backup to complete, in seconds. If exceeded, the playbook will fail. | `600` |
 | `awxbackup_keep_days` | Number of days to keep `AWXBackup` resources. `AWXBackup` resources older than this value will be deleted by this playbook. Set `0` to keep forever. **Note that the actual backup data will remain in the PVC after the `AWXBackup` resource is deleted.** | `30` |
 
@@ -108,9 +108,10 @@ It is also possible to making the backup of the AWX itself where the Job Templat
    - Specify your API Token as `API authentication bearer token`.
    - Toggle `Verify SSL` if needed.
 2. Add new Project including the playbook.
-   - You can specify this repository (`https://github.com/kurokobo/awx-on-k3s.git`) directly, but use with caution. The playbook in this repository is subject to change without notice.
+   - You can specify this repository (`https://github.com/kurokobo/awx-on-k3s.git`) directly, but use with caution. The playbook in this repository is subject to change without notice. You can use [Tag](https://github.com/kurokobo/awx-on-k3s/tags) or [Commit](https://github.com/kurokobo/awx-on-k3s/commits/main) to fix the version to be used.
 3. Add new Job Template which use the playbook.
-   - Select your `backup.yml` as `Playbook`.
    - Select appropriate `Execution Environment`. The default `AWX EE (latest)` (`quay.io/ansible/awx-ee:latest`) contains required collections and modules by defaut, so it's good for the first choice.
+   - Select your `backup.yml` as `Playbook`.
+   - Select your Credentials created in the above step.
    - Specify `Variables` as needed.
 4. (Optional) Add new Schedules for periodic backups.

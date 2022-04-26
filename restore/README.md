@@ -22,9 +22,14 @@ It is strongly recommended that the version of AWX Operator is the same as the v
 
 ### Prepare for Restore
 
-If your PV, PVC, and Secret still exist, no preparation is required.
+If your AWX instance is running, it is recommended that it be deleted along with any data in the PV for the PostgreSQL first, in order to restore to be succeeded.
 
-If you are restoring the entire AWX to a new environment, create the PVs and PVCs first to be restored.
+```bash
+kubectl -n awx delete awx awx
+sudo rm -rf /data/postgres
+```
+
+Then prepare directories for your PVs. `/data/projects` is required if you are restoring the entire AWX to a new environment.
 
 ```bash
 sudo mkdir -p /data/postgres
@@ -92,7 +97,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-mana
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=68   changed=0    unreachable=0    failed=0    skipped=41   rescued=0    ignored=0
+localhost                  : ok=67   changed=0    unreachable=0    failed=0    skipped=41   rescued=0    ignored=0
 ```
 
 This will create AWXRestore object in the namespace, and now your AWX is restored.
