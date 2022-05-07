@@ -29,7 +29,6 @@ secretGenerator:
       - password=Ansible123!
 
 resources:
-  - namespace.yaml
   - pv.yaml
   - pvc.yaml
   - awx.yaml

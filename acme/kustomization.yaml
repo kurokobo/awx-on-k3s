@@ -13,5 +13,4 @@ secretGenerator:
       - client-secret=0000000000000000000000000000000000
 
 resources:
-  - namespace.yaml
   - issuer.yaml
