@@ -29,7 +29,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 8 (Minimal)
   - K3s v1.22.7+k3s1
 - Products that will be deployed:
-  - AWX Operator 0.20.2
+  - AWX Operator 0.21.0
   - AWX 21.0.0
   - PostgreSQL 12
 
@@ -37,7 +37,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
 - [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/21.0.0/INSTALL.md) @21.0.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.20.2/README.md) @0.20.2
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.21.0/README.md) @0.21.0
 
 ## Requirements
 
@@ -83,7 +83,7 @@ Install specified version of AWX Operator. Note that this procedure is applicabl
 cd ~
 git clone https://github.com/ansible/awx-operator.git
 cd awx-operator
-git checkout 0.20.2
+git checkout 0.21.0
 ```
 
 Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
@@ -281,4 +281,5 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
   - [📝Deploy older version of AWX Operator](tips/deploy-older-operator.md)
   - [📝Upgrade AWX Operator and AWX](tips/upgrade-operator.md)
   - [📝Workaround for the rate limit on Docker Hub](tips/dockerhub-rate-limit.md)
+  - [📝Version Mapping between AWX Operator and AWX](tips/version-mapping.md)
   - [📝Troubleshooting Guide](tips/troubleshooting.md)

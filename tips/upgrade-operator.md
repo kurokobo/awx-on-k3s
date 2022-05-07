@@ -7,27 +7,7 @@ This guide provides the procedure for the following three types of upgrading AWX
 - Upgrade from `0.13.0` (e.g. from `0.13.0` to `0.14.0`)
 - Upgrade from `0.12.0` or earlier (e.g. from `0.12.0` to `0.13.0`)
 
-Note that once you upgrade AWX Operator, your AWX will also be upgraded automatically to the version bundled with the upgraded AWX Operator as shown below.
-
-| AWX Operator | AWX |
-| - | - |
-| 0.20.2 | 21.0.0 |
-| 0.20.1 | 21.0.0 |
-| 0.20.0 | 20.1.0 |
-| 0.19.0 | 20.0.1 |
-| 0.18.0 | 20.0.1 |
-| 0.17.0 | 20.0.0 |
-| 0.16.1 | 19.5.1 |
-| 0.15.0 | 19.5.0 |
-| 0.14.0 | 19.4.0 |
-| 0.13.0 | 19.3.0 |
-| 0.12.0 | 19.2.2 |
-| 0.11.0 | 19.2.1 |
-| 0.10.0 | 19.2.0 |
-| 0.9.0 | 19.1.0 |
-| 0.8.0 | 19.0.0 |
-| 0.7.0 | 18.0.0 |
-| 0.6.0 | 15.0.0 |
+Note that once you upgrade AWX Operator, your AWX will also be upgraded automatically to the version bundled with the upgraded AWX Operator as shown in [📝Version Mapping between AWX Operator and AWX](version-mapping.md).
 
 [There is `image_version` parameter for AWX resource to change which image will be used](https://github.com/ansible/awx-operator#deploying-a-specific-version-of-awx), but it appears that using a version of AWX other than the one bundled with the AWX Operator [is currently not supported](https://github.com/ansible/awx-operator#deploying-a-specific-version-of-awx). Conversely, if you want to upgrade AWX, you need to plan to upgrade AWX Operator first.
 

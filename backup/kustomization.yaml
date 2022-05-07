@@ -7,6 +7,5 @@ generatorOptions:
   disableNameSuffixHash: true
 
 resources:
-  - namespace.yaml
   - pv.yaml
   - pvc.yaml

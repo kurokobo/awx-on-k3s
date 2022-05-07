@@ -14,6 +14,5 @@ generatorOptions:
 #      - tls.key
 
 resources:
-  - namespace.yaml
   - pv.yaml
   - pvc.yaml

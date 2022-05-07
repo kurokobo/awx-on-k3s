@@ -30,7 +30,7 @@ An example simple playbook for Ansible is also provided in this repository. This
 | - | - | - |
 | `awxbackup_namespace` | The name of the NameSpace where the `AWXBackup` resource will be created. | `awx` |
 | `awxbackup_name` | The name of the `AWXBackup` resource. Dynamically generated using execution time by default. | `awxbackup-{{ lookup('pipe', 'date +%Y-%m-%d-%H-%M-%S') }}` |
-| `awxbackup_spec` | The `spec` of the `AWXBackup` resource. Refer [official documentation](https://github.com/ansible/awx-operator/tree/0.20.2/roles/backup) for acceptable fields. | `{'deployment_name':'awx','backup_pvc':'awx-backup-claim'}` |
+| `awxbackup_spec` | The `spec` of the `AWXBackup` resource. Refer [official documentation](https://github.com/ansible/awx-operator/tree/0.21.0/roles/backup) for acceptable fields. | `{'deployment_name':'awx','backup_pvc':'awx-backup-claim'}` |
 | `awxbackup_timeout` | Time to wait for backup to complete, in seconds. If exceeded, the playbook will fail. | `600` |
 | `awxbackup_keep_days` | Number of days to keep `AWXBackup` resources. `AWXBackup` resources older than this value will be deleted by this playbook. Set `0` to keep forever. **Note that the actual backup data will remain in the PVC after the `AWXBackup` resource is deleted.** | `30` |
 

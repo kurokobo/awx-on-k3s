@@ -22,10 +22,15 @@ It is strongly recommended that the version of AWX Operator is the same as the v
 
 ### Prepare for Restore
 
-If your AWX instance is running, it is recommended that it be deleted along with any data in the PV for the PostgreSQL first, in order to restore to be succeeded.
+If your AWX instance is running, it is recommended that it be deleted along with PVC and PV for the PostgreSQL first, in order to restore to be succeeded.
 
 ```bash
+# Delete AWX resource, PVC, and PV
 kubectl -n awx delete awx awx
+kubectl -n awx delete pvc postgres-awx-postgres-0
+kubectl delete pv awx-postgres-volume
+
+# Delete any data in the PV
 sudo rm -rf /data/postgres
 ```
 
@@ -38,7 +43,7 @@ sudo chmod 755 /data/postgres
 sudo chown 1000:0 /data/projects
 ```
 
-Then deploy Persistent Volume and Persistent Volume Claim. It is recommended that making the size of PVs and PVCs same as the PVs which your AWX used when the backup was taken.
+Then deploy PV and PVC. It is recommended that making the size of PVs and PVCs same as the PVs which your AWX used when the backup was taken.
 
 ```bash
 kubectl apply -k restore
