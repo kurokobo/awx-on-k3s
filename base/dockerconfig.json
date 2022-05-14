@@ -1,0 +1,8 @@
+{
+    "auths": {
+        "dummy.example.com": {
+            "username": "you_do_not_need_to_edit_this_file",
+            "password": "this_file_is_used_in_workaround_to_suppress_certain_errors"
+        }
+    }
+}
