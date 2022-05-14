@@ -28,6 +28,13 @@ secretGenerator:
     literals:
       - password=Ansible123!
 
+  # Temporary workaround to suppress errors from AWX Operator 0.21.0.
+  # Refer: https://github.com/kurokobo/awx-on-k3s/issues/74
+  - name: redhat-operators-pull-secret
+    files:
+      - .dockerconfigjson=dockerconfig.json
+    type: kubernetes.io/dockerconfigjson
+
 resources:
   - pv.yaml
   - pvc.yaml
