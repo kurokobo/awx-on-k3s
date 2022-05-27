@@ -277,7 +277,7 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
   - [📝Trust custom Certificate Authority](tips/trust-custom-ca.md)
   - [📝Expose `/etc/hosts` to Pods on K3s](tips/expose-hosts.md)
   - [📝Redirect HTTP to HTTPS](tips/https-redirection.md)
-  - [📝Add HTTP Proxy](add-http-proxy.md)
+  - [📝Add HTTP Proxy](tips/add-http-proxy.md)
   - [📝Uninstall deployed resouces](tips/uninstall.md)
   - [📝Deploy older version of AWX Operator](tips/deploy-older-operator.md)
   - [📝Upgrade AWX Operator and AWX](tips/upgrade-operator.md)
