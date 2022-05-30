@@ -12,7 +12,7 @@ extra_settings: |
   - setting: AWX_TASK_ENV['HTTPS_PROXY']
     value: "'http://proxy.example.com:3128'"
   - setting: AWX_TASK_ENV['NO_PROXY']
-    value: "'10.43.0.1,ansible03,localhost,.example.com,127.0.0.1'"
+    value: "'localhost,.example.com,127.0.0.1'"
 ```
 
 You may have to adjust your settings to match your environment.
@@ -25,5 +25,5 @@ kubectl apply -k base
 
 Now you need to wait some time until K3S has restarted all your pods.
 
-After logging in you can navigate to `Settings` -> `Jobs Settings` and find your proxy settings in the `Extra Environment Variables` block:
+After logging in you can navigate to `Settings` -> `Jobs Settings` and find your proxy settings in the `Extra Environment Variables` block.
 
