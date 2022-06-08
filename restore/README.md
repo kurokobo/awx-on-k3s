@@ -112,9 +112,3 @@ $ kubectl -n awx get awxrestore
 NAME                    AGE
 awxrestore-2021-06-06   137m
 ```
-
-Note that if you are using AWX Operator `0.12.0` or earlier, the Secret for TLS should be manually restored (or create newly using original certificate and key file). This step is not required for `0.13.0` or later.
-
-```bash
-kubectl apply -f awx-secret-tls.yaml
-```
