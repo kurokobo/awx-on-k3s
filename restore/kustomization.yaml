@@ -6,13 +6,6 @@ namespace: awx
 generatorOptions:
   disableNameSuffixHash: true
 
-#secretGenerator:
-#  - name: awx-secret-tls
-#    type: kubernetes.io/tls
-#    files:
-#      - tls.crt
-#      - tls.key
-
 resources:
   - pv.yaml
   - pvc.yaml

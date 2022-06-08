@@ -16,7 +16,7 @@ secretGenerator:
   - name: galaxy-postgres-configuration
     type: Opaque
     literals:
-      - host=galaxy-postgres-svc
+      - host=galaxy-postgres-13
       - port=5432
       - database=galaxy
       - username=galaxy
@@ -29,6 +29,5 @@ secretGenerator:
       - password=Galaxy123!
 
 resources:
-  - namespace.yaml
   - pv.yaml
   - galaxy.yaml

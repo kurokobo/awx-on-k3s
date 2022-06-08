@@ -86,12 +86,6 @@ total 736
 -rw-------. 1 systemd-coredump root 745302 Jun  6 06:51 tower.db
 ```
 
-Note that if you are using AWX Operator `0.12.0` or earlier, the contents of the Secret that passed through `ingress_tls_secret` parameter will not be included in this backup files. If necessary, get a dump of this Secret, or keep original certificate file and key file. In `0.13.0` or later, this secret is included in the backup file therefore you can ignore this step.
-
-```bash
-kubectl get secret awx-secret-tls -n awx -o yaml > awx-secret-tls.yaml
-```
-
 ## Appendix: Back up AWX using Ansible
 
 An example simple playbook for Ansible is also provided in this repository. This can be used with `ansible-playbook`, `ansible-runner`, and AWX. It can be also used with the scheduling feature on AWX too.

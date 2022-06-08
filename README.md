@@ -27,17 +27,17 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - Tested on:
   - CentOS Stream 8 (Minimal)
-  - K3s v1.22.7+k3s1
+  - K3s v1.23.6+k3s1
 - Products that will be deployed:
-  - AWX Operator 0.21.0
-  - AWX 21.0.0
+  - AWX Operator 0.22.0
+  - AWX 21.1.0
   - PostgreSQL 12
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/21.0.0/INSTALL.md) @21.0.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.21.0/README.md) @0.21.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/21.1.0/INSTALL.md) @21.1.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.22.0/README.md) @0.22.0
 
 ## Requirements
 
@@ -83,7 +83,7 @@ Install specified version of AWX Operator. Note that this procedure is applicabl
 cd ~
 git clone https://github.com/ansible/awx-operator.git
 cd awx-operator
-git checkout 0.21.0
+git checkout 0.22.0
 ```
 
 Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
@@ -230,6 +230,7 @@ secret/awx-operator-controller-manager-token-sz6wq   kubernetes.io/service-accou
 secret/awx-admin-password                            Opaque                                1      4m17s
 secret/awx-postgres-configuration                    Opaque                                6      4m17s
 secret/awx-secret-tls                                kubernetes.io/tls                     2      4m17s
+secret/redhat-operators-pull-secret                  kubernetes.io/dockerconfigjson        1      4m17s
 secret/awx-app-credentials                           Opaque                                3      4m2s
 secret/awx-token-jfndh                               kubernetes.io/service-account-token   3      4m2s
 secret/awx-secret-key                                Opaque                                1      4m13s
@@ -277,7 +278,7 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
   - [📝Trust custom Certificate Authority](tips/trust-custom-ca.md)
   - [📝Expose `/etc/hosts` to Pods on K3s](tips/expose-hosts.md)
   - [📝Redirect HTTP to HTTPS](tips/https-redirection.md)
-  - [📝Add HTTP Proxy](tips/add-http-proxy.md)
+  - [📝Use HTTP proxy](tips/use-http-proxy.md)
   - [📝Uninstall deployed resouces](tips/uninstall.md)
   - [📝Deploy older version of AWX Operator](tips/deploy-older-operator.md)
   - [📝Upgrade AWX Operator and AWX](tips/upgrade-operator.md)
