@@ -180,16 +180,26 @@ There is a Kubernetes Operator for Pulp 3 named Pulp Operator.
 
 - [pulp/pulp-operator: Kubernetes Operator for Pulp 3](https://github.com/pulp/pulp-operator)
 
-This project is still under active development and there is no support, however, at least the code to create a new instance seems to be implemented. In this procedure, we use [Pulp Operator 0.11.0](https://github.com/pulp/pulp-operator/tree/0.11.0)
+This project is still under active development and there is no support, however, at least the code to create a new instance seems to be implemented. In this procedure, we use [Pulp Operator 0.11.1](https://github.com/pulp/pulp-operator/tree/0.11.1)
 
 ### Patch K3s
 
 If you use Traefik which is K3s' Ingress controller as completely default, the Pod may not be able to get the client's IP address (see [k3s-io/k3s#2997](https://github.com/k3s-io/k3s/discussions/2997) for details). In the current implementation of Pulp, this causes problems with the web UI being unreachable.
 
-For this reason, you should fix the Traefik configuration. For a single node like doing in this repository, the following command is easy to use.
+For this reason, you should fix the Traefik configuration. For a single node like doing in this repository, reconfiguring your Traefik by creating YAML file is the easy way.
 
 ```bash
-kubectl -n kube-system patch deployment traefik --patch '{"spec":{"template":{"spec":{"hostNetwork":true}}}}'
+sudo tee /var/lib/rancher/k3s/server/manifests/traefik-config.yaml <<EOF
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    hostNetwork: true
+EOF
 ```
 
 Then wait until your `traefik` by the following command is `1/1` `READY`.
@@ -208,7 +218,7 @@ Install specified version of Pulp Operator.
 cd ~
 git clone https://github.com/pulp/pulp-operator.git
 cd pulp-operator
-git checkout 0.11.0
+git checkout 0.11.1
 ```
 
 Export the name of the namespace where you want to deploy Pulp Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `pulp-operator-system`.
