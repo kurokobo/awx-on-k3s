@@ -391,14 +391,4 @@ fatal: [localhost]: FAILED! => {"changed": false, "msg": "Failed to import the r
 ...
 ```
 
-When the Job Template launched at AWX, the playbook runs on the Execution Environment, which is a containerized environment completely isolated from the K3s host. The default Execution Environment has few typical collections, Pip modules, and RPM packages by default, but if your playbooks require additional (non-default) modules or packages, there are two ways to achieve this.
-
-- **Place `collections/requirements.yml` in your project.**
-  - Note that this way is applicable for **adding Collections only**. If you want to add not only Collections but also Pip modules or RPM Packages, follow the next method to build your own Execution Environment.
-  - You can create and place your own `collections/requirements.yml` including collections which you want to use. The format is the same as [the `requirements.yml` for ansible-galaxy](
-https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#install-multiple-collections-with-a-requirements-file).
-  - If `collections/requirements.yml` is present in your project, AWX will install the collections accordingly.
-- **Build your own Execution Environment.**
-  - You can build your own Execution Environment. This method can be used for adding Collections, Pip modules and RPM packages.
-  - [There is a guide to use Ansible Builder on this repository](https://github.com/kurokobo/awx-on-k3s/tree/main/builder) to build Execution Environment. You can customize `requirements.yml` for Collections, `requirements.txt` for Pip modules, and `bindep.txt` for RPM packages.
-  - This method also requires Docker or Podman, and container registry. If you want to deploy your own private container registry on your K3s, refer [the guide on this repository](../registry).
+To solve this, refer [the guide about Execution Environment on this repository](../builder).
