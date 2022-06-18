@@ -256,6 +256,8 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
   - This guide includes not only the way to make backup manually, but also an example simple playbook for Ansible, which can be use with scheduling feature on AWX.
 - [📁 **Restore AWX using AWX Operator**](restore)
   - The guide to restore your AWX using AWX Operator.
+- [📁 **Build and Use your own Execution Environment**](builder)
+  - The guide to use Ansible Builder to build our own Execution Environment.
 - [📁 **Deploy Private Git Repository on Kubernetes**](git)
   - The guide to use AWX with SCM. This repository includes the manifests to deploy [Gitea](https://gitea.io/en-us/).
 - [📁 **Deploy Private Container Registry on Kubernetes**](registry)
@@ -267,8 +269,6 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
   - **All information on the guide is for development, testing and study purposes only.**
 - [📁 **Use SSL Certificate from Public ACME CA**](acme)
   - The guide to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate.
-- [📁 **Use Ansible Builder**](builder)
-  - The guide to use Ansible Builder to build our own Execution Environment.
 - [📁 **Use Ansible Runner**](runner)
   - The guide to use Ansible Runner to run playbook using Execution Environment.
 - [📁 **Use Customized Pod Specification for your Execution Environment**](containergroup)
