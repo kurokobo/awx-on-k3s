@@ -28,7 +28,7 @@ secretGenerator:
     literals:
       - password=Ansible123!
 
-  # Temporary workaround to suppress errors from AWX Operator 0.22.0.
+  # Temporary workaround to suppress errors from AWX Operator 0.23.0.
   # Refer: https://github.com/kurokobo/awx-on-k3s/issues/74
   - name: redhat-operators-pull-secret
     files:
