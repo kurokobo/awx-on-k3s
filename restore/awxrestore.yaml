@@ -15,3 +15,6 @@ spec:
   #backup_pvc_namespace: awx
   #backup_pvc: awx-backup-claim
   #backup_dir: /backups/tower-openshift-backup-2021-06-06-10:51:49
+
+  # Uncomment to reveal "censored" logs
+  #no_log: "false"

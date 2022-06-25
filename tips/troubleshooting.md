@@ -10,6 +10,7 @@ Some hints and guides for when you got stuck during deployment and daily use of 
   - [First Step: Investigate your Situation](#first-step-investigate-your-situation)
     - [Investigate Status and Events of the Pods](#investigate-status-and-events-of-the-pods)
     - [Investigate Logs of the Containers inside the Pods](#investigate-logs-of-the-containers-inside-the-pods)
+  - [Reveal "censored" output in the AWX Operator's log](#reveal-censored-output-in-the-awx-operators-log)
   - [The Pod is `ErrImagePull` with "429 Too Many Requests"](#the-pod-is-errimagepull-with-429-too-many-requests)
   - [The Pod is `Pending` with "1 Insufficient cpu, 1 Insufficient memory." event](#the-pod-is-pending-with-1-insufficient-cpu-1-insufficient-memory-event)
   - [The Pod is `Pending` with "1 pod has unbound immediate PersistentVolumeClaims." event](#the-pod-is-pending-with-1-pod-has-unbound-immediate-persistentvolumeclaims-event)
@@ -101,6 +102,31 @@ For AWX Operator and AWX, specifically, the following commands are helpful.
   - `kubectl -n awx logs -f deployment/awx -c redis`
 - Logs of PostgreSQL
   - `kubectl -n awx logs -f statefulset/awx-postgres`
+
+### Reveal "censored" output in the AWX Operator's log
+
+If you've found the `FAILED` tasks while investigating AWX Operator's log, sadly sometimes it's marked as `censored` and you can't get actual log.
+
+```bash
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
+...
+TASK [Restore database dump to the new postgresql container] ********************************
+fatal: [localhost]: FAILED! => {"censored": "the output has been hidden due to the fact that 'no_log: true' was specified for this result", "changed": true}
+...
+```
+
+AWX Operator 0.23.0 or later supports making this revealed.
+
+To achieve this, you can uncomment `no_log: "false"` manually under `spec` for your `awx.yaml`, `awxbackup.yaml`, or `awxrestore.yaml`, and then re-run your deployment, backup, or restoration.
+
+```yaml
+...
+spec:
+  ...
+  # Uncomment to reveal "censored" logs
+  no_log: "false"     👈👈👈
+  ...
+```
 
 ### The Pod is `ErrImagePull` with "429 Too Many Requests"
 

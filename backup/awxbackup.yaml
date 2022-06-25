@@ -7,3 +7,6 @@ metadata:
 spec:
   deployment_name: awx
   backup_pvc: awx-backup-claim
+
+  # Uncomment to reveal "censored" logs
+  #no_log: "false"
