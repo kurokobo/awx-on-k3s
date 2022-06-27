@@ -367,15 +367,17 @@ Now your client's IP address can be passed correctly through `X-Forwarded-For` a
 
 The last step is modifying AWX. By default, AWX uses only `REMOTE_ADDR` and `REMOTE_HOST` headers to determine the remote host (means HTTP client). Therefore, you have to make AWX to use `X-Forwarded-For` header.
 
-Modify your `base/awx.yaml` and add following three lines.
+This can be achieved by modifying your `base/awx.yaml` and apply it, or simply configure `Remote Host Headers` via AWX UI.
 
-```bash
+If you want to use `base/awx.yaml` to achieve this, add following three lines to your `base/awx.yaml`.
+
+```yaml
 ...
 spec:
-    ...
-    extra_settings:     👈👈👈
+  ...
+  extra_settings:     👈👈👈
     - setting: REMOTE_HOST_HEADERS     👈👈👈
-        value: "['HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR', 'REMOTE_HOST']"     👈👈👈
+      value: "['HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR', 'REMOTE_HOST']"     👈👈👈
 ```
 
 Then apply this change and wait for your AWX will be reconfigured.
@@ -388,6 +390,16 @@ You can watch its progress by following command as did when you deploy AWX at th
 
 ```bash
 kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
+```
+
+Alternatively you can modify this settings via AWX UI. Move on to `Settings` > `Miscellaneous System settings` > `Edit` page, then and put following JSON strings as `Remote Host Headers`.
+
+```json
+[
+  "HTTP_X_FORWARDED_FOR",
+  "REMOTE_ADDR",
+  "REMOTE_HOST"
+]
 ```
 
 Now your Provisioning Callback should work. In my environment, the name of the host in the inventory have to be defined using IP address instead of DNS hostname.
