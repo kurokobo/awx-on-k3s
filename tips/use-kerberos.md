@@ -150,6 +150,7 @@ This is my minimal example. Note that some domain names under `[realms]` and `[d
 
 [domain_realm]
   .kurokobo.internal = KUROKOBO.INTERNAL
+  kurokobo.internal = KUROKOBO.INTERNAL
 ```
 
 #### Create ConfigMap for `krb5.conf`
