@@ -44,8 +44,7 @@ This is my example environment for this guide. Replace these values in this guid
 | Domain | `kurokobo.internal` |
 | Domain Controller | `kuro-ad01.kurokobo.internal` |
 | KDC Server | `kuro-ad01.kurokobo.internal` |
-| Ansible Target Host | `kuro-win01.kurokobo.internal` .kurokobo.internal|, instead of IP address. This is mandatory requirement.
-
+| Ansible Target Host | `kuro-win01.kurokobo.internal` |
 | Ansible User | `awx@kurokobo.internal` |
 
 ## Procedure
