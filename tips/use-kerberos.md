@@ -31,9 +31,9 @@ This page shows you how to use Kerberos authentication for running job templates
   - [Ensure `kinit` can be succeeded manually](#ensure-kinit-can-be-succeeded-manually)
   - [Common issues and workarounds](#common-issues-and-workarounds)
     - [Error creating pod](#error-creating-pod)
-  - [kinit: Cannot find KDC for realm "\<DOMAINNAME\>" while getting initial credentials](#kinit-cannot-find-kdc-for-realm-domainname-while-getting-initial-credentials)
-  - [kerberos: the specified credentials were rejected by the server](#kerberos-the-specified-credentials-were-rejected-by-the-server)
-  - [kerberos: Access is denied. Bad HTTP response returned from server. Code 500](#kerberos-access-is-denied-bad-http-response-returned-from-server-code-500)
+    - [kinit: Cannot find KDC for realm "\<DOMAINNAME\>" while getting initial credentials](#kinit-cannot-find-kdc-for-realm-domainname-while-getting-initial-credentials)
+    - [kerberos: the specified credentials were rejected by the server](#kerberos-the-specified-credentials-were-rejected-by-the-server)
+    - [kerberos: Access is denied. Bad HTTP response returned from server. Code 500](#kerberos-access-is-denied-bad-http-response-returned-from-server-code-500)
 
 ## Example environment for this guide
 
@@ -134,7 +134,7 @@ Create new file `krb5.conf` on the host that `kubectl` for your Kubernetes clust
 There are some official documentation about `krb5.conf`:
 
 - Ansible documentation
-  - [Windows Remote Management - Configuring Host Kerberos](https://docs.ansible.com/automation-controller/latest/html/administration/kerberos_auth.html)
+  - [Windows Remote Management - Configuring Host Kerberos](https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html#configuring-host-kerberos)
 - Ansible Automation Controller documentation
   - [23. User Authentication with Kerberos](https://docs.ansible.com/automation-controller/latest/html/administration/kerberos_auth.html)
 
@@ -179,6 +179,7 @@ data:
 
     [domain_realm]
       .kurokobo.internal = KUROKOBO.INTERNAL
+      kurokobo.internal = KUROKOBO.INTERNAL
 kind: ConfigMap
 metadata:
   ...
@@ -361,6 +362,7 @@ bash-4.4$ cat /etc/krb5.conf
 
 [domain_realm]
   .kurokobo.internal = KUROKOBO.INTERNAL
+  kurokobo.internal = KUROKOBO.INTERNAL
 ```
 
 If your `krb5.conf` is missing, ensure your custom pod spec for Container Group and ConfigMap for your `krb5.conf` are correct.
@@ -429,6 +431,8 @@ Valid starting     Expires            Service principal
 
 Some common issues during this guide and workaround for those errors.
 
+The ["Troubleshooting Kerberos" section in Ansible documentation](https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html#troubleshooting-kerberos) can also be helpful.
+
 #### Error creating pod
 
 The job had been failed immediately after running the job. The log shows following.
@@ -439,7 +443,7 @@ Error creating pod: container failed with exit code 128: failed to create contai
 
 This is usually caused by misconfigured custom pod spec of your Container Group or ConfigMap for your `krb5.conf`.
 
-### kinit: Cannot find KDC for realm "\<DOMAINNAME\>" while getting initial credentials
+#### kinit: Cannot find KDC for realm "\<DOMAINNAME\>" while getting initial credentials
 
 `kinit` inside the EE or job failed with following error.
 
@@ -465,7 +469,7 @@ If this occurred, ensure:
 - The username for `kinit` is correct. Especially, note that the domain name in the username have to be capitalized like `awx@KUROKOBO.INTERNAL`
 - If manually invoked `kinit` is succeeded but `kinit` inside the job failed, ensure the username in your Credential in AWX is correct. Note that the domain name in the username have to be capitalized like `awx@KUROKOBO.INTERNAL`
 
-### kerberos: the specified credentials were rejected by the server
+#### kerberos: the specified credentials were rejected by the server
 
 The job failed with following error.
 
@@ -480,7 +484,7 @@ fatal: [...]: UNREACHABLE! => {
 
 Ensure your domain user that used to connect to WinRM on the target host is the member of local `Administrators` group on the target host, or has permissions for `Read` and `Execute` for WinRM.
 
-### kerberos: Access is denied. Bad HTTP response returned from server. Code 500
+#### kerberos: Access is denied. Bad HTTP response returned from server. Code 500
 
 The job failed with following error.
 
@@ -492,3 +496,5 @@ fatal: [...]: UNREACHABLE! => {
     "unreachable": true
 }
 ```
+
+Ensure your domain user that used to connect to WinRM on the target host is the member of local `Administrators` group on the target host, or has permissions for `Read` and `Execute` for WinRM. In this case, `Execute` might be missing.
