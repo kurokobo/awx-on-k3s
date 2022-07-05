@@ -3,13 +3,15 @@
 
 You can customize the specification of the Pod of the Execution Environment using **Container Group**.
 
-In this example, we make the Execution Environment to work with the Pod with following specification .
+In this example, we make the Execution Environment to work with the Pod with following specification.
 
 - Run in a different namespace `ee-demo` instead of default one
 - Have an additional label `app: ee-demo-pod`
 - Have `requests` and `limits` for CPU and Memory resources
 - Mount PVC as `/etc/demo`
 - Run on the node with the label `awx-node-type: demo` using `nodeSelector`
+- Have custom environment variable `MY_CUSTOM_ENV`
+- Use custom DNS server `192.168.0.100` in addition to the default DNS servers
 
 <!-- omit in toc -->
 ## Table of Contents
@@ -73,9 +75,9 @@ Note that this is a little tricky but super useful way to duplicate resource bet
 
 ### Create Container Group
 
-You can create new Container Group by `Administration` > `Instance Group`.
+You can create new Container Group by `Administration` > `Instance Group` > `Add`.
 
-Chake `Customize pod specification` and define specification as following.
+Enable `Customize pod specification` and define specification as following.
 
 ```yaml
 apiVersion: v1
@@ -85,6 +87,8 @@ metadata:
   labels:
     app: ee-demo-pod
 spec:
+  serviceAccountName: default
+  automountServiceAccountToken: false
   containers:
     - image: 'quay.io/ansible/awx-ee:latest'
       name: worker
@@ -92,6 +96,9 @@ spec:
         - ansible-runner
         - worker
         - '--private-data-dir=/runner'
+      env:
+        - name: MY_CUSTOM_ENV
+          value: 'This is my custom environment variable'
       resources:
         requests:
           cpu: 500m
@@ -104,6 +111,9 @@ spec:
           mountPath: /etc/demo
   nodeSelector:
     awx-node-type: demo
+  dnsConfig:
+    nameservers:
+      - 192.168.0.100
   volumes:
     - name: demo-volume
       persistentVolumeClaim:
@@ -117,12 +127,14 @@ This is the customized manifest to achieve;
 - Having `requests` and `limits` for CPU and Memory resources
 - Mounting PVC as `/etc/demo`
 - Running on the node with the label `awx-node-type: demo` using `nodeSelector`
+- Having custom environment variable `MY_CUSTOM_ENV`
+- Using custom DNS server `192.168.0.100` in addition to the default DNS servers
 
 You can also change `image`, but it will be overridden by specifying Execution Environment for the Job Template, Project Default, or Global Default.
 
 ## Quick Testing
 
-The use of Container Group can be specified in the Job Template. After specifying and running the Job, you can see the result as follows.
+The Container Group that to be used can be specified as `Instance Groups` in the Job Template. After specifying and running the Job, you can see the result as follows.
 
 The Pod for the Job is running in `ee-demo` namespace.
 
@@ -146,6 +158,9 @@ metadata:
 spec:
   containers:
     ...
+    env:
+    - name: MY_CUSTOM_ENV
+      value: This is my custom environment variable
     image: registry.example.com/ansible/ee:2.12-custom
     ...
     resources:
@@ -160,6 +175,9 @@ spec:
     - mountPath: /etc/demo
       name: demo-volume
     ...
+  dnsConfig:
+    nameservers:
+    - 192.168.0.100
   nodeSelector:
     awx-node-type: demo
   ...
