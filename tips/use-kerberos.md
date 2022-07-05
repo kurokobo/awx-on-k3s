@@ -34,6 +34,7 @@ This page shows you how to use Kerberos authentication for running job templates
     - [kinit: Cannot find KDC for realm "\<DOMAINNAME\>" while getting initial credentials](#kinit-cannot-find-kdc-for-realm-domainname-while-getting-initial-credentials)
     - [kerberos: the specified credentials were rejected by the server](#kerberos-the-specified-credentials-were-rejected-by-the-server)
     - [kerberos: Access is denied. Bad HTTP response returned from server. Code 500](#kerberos-access-is-denied-bad-http-response-returned-from-server-code-500)
+- [Alternative solution (not recommended)](#alternative-solution-not-recommended)
 
 ## Example environment for this guide
 
@@ -498,3 +499,22 @@ fatal: [...]: UNREACHABLE! => {
 ```
 
 Ensure your domain user that used to connect to WinRM on the target host is the member of local `Administrators` group on the target host, or has permissions for `Read` and `Execute` for WinRM. In this case, `Execute` might be missing.
+
+## Alternative solution (not recommended)
+
+To replace `/etc/krb5.conf` in EE with your customized `krb5.conf`, you can also use `AWX_ISOLATION_SHOW_PATHS` settings in AWX. This is a setting to expose any path on the host to EE. If this setting is activated, it's no longer required to create a Container Group on AWX or ConfigMap on Kubernetes, that described in this guide.
+
+However, this feature will internally mount `krb5.conf` via `hostPath`, so a customized `krb5.conf` must be placed on all Kubernetes nodes where the EE will run.
+
+Also, side-effects and security concerns must be taken into consideration, as all EE jobs running on AWX will mount `krb5.conf` via `hostPath`, weather the job is for Windows hosts or not.
+
+Therefore, I don't recommend this method in this guide.
+
+If you want to use this feature, you can do so by following these steps.
+
+1. Place your `krb5.conf` on any path on your Kubernetes node, e.g. `/data/kerberos/krb5.conf`, instead of creating a Container Group on AWX or ConfigMap on Kubernetes
+2. Enable `Expose host paths for Container Groups` in AWX under `Settings` > `Job settings`.
+   - This equals to set `AWX_MOUNT_ISOLATED_PATHS_ON_K8S` to `true`.
+3. Add `/data/kerberos/krb5.conf:/etc/krb5.conf:O` to `Paths to expose to isolated jobs` in AWX under `Settings` > `Job settings`.
+   - This equals to append string to `AWX_ISOLATION_SHOW_PATHS`.
+4. Run your Job Template that without any Container Group.
