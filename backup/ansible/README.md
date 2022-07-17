@@ -26,13 +26,19 @@ An example simple playbook for Ansible is also provided in this repository. This
 
 [This example playbook](project/backup.yml) is designed to allow you to customize your backup with variables.
 
+<!-- markdownlint-disable MD033 -->
+
 | Variables | Description | Default |
 | - | - | - |
 | `awxbackup_namespace` | The name of the NameSpace where the `AWXBackup` resource will be created. | `awx` |
 | `awxbackup_name` | The name of the `AWXBackup` resource. Dynamically generated using execution time by default. | `awxbackup-{{ lookup('pipe', 'date +%Y-%m-%d-%H-%M-%S') }}` |
-| `awxbackup_spec` | The `spec` of the `AWXBackup` resource. Refer [official documentation](https://github.com/ansible/awx-operator/tree/0.23.0/roles/backup) for acceptable fields. | `{'deployment_name':'awx','backup_pvc':'awx-backup-claim'}` |
+| `awxbackup_spec` | The `spec` of the `AWXBackup` resource. Refer [official documentation](https://github.com/ansible/awx-operator/tree/0.24.0/roles/backup) for acceptable fields. | `deployment_name: awx`<br>`backup_pvc: awx-backup-claim`<br>`clean_backup_on_delete: true` |
 | `awxbackup_timeout` | Time to wait for backup to complete, in seconds. If exceeded, the playbook will fail. | `600` |
-| `awxbackup_keep_days` | Number of days to keep `AWXBackup` resources. `AWXBackup` resources older than this value will be deleted by this playbook. Set `0` to keep forever. **Note that the actual backup data will remain in the PVC after the `AWXBackup` resource is deleted.** | `30` |
+| `awxbackup_keep_days` | Number of days to keep `AWXBackup` resources. `AWXBackup` resources older than this value will be deleted by this playbook. Set `0` to keep forever. | `30` |
+
+<!-- markdownlint-enable MD033 -->
+
+Note that this playbook enables `clean_backup_on_delete` by default that only works with AWX Operator `0.24.0` and later. This option makes that your actual backup data in your PVC is deleted at the same time the AWXBackup resource is deleted. You can disable this feature by explicitly specifying `clean_backup_on_delete: false`. Refer [the official documentation](https://github.com/ansible/awx-operator/tree/devel/roles/backup) for detail.
 
 ## Preparation
 
@@ -76,7 +82,7 @@ export K8S_AUTH_API_KEY="<Your API Token>"
 ```bash
 # Modify variables using "-e" as needed
 ansible-playbook project/backup.yml \
-  -e awxbackup_spec="{'deployment_name':'awx','backup_pvc':'awx-backup-claim'}" \
+  -e awxbackup_spec="{'deployment_name':'awx','backup_pvc':'awx-backup-claim','clean_backup_on_delete':'true'}" \
   -e keep_days=90
 ```
 

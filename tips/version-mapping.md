@@ -10,6 +10,7 @@ The table below maps the AWX Operator versions and bundled AWX versions.
 
 | AWX Operator | AWX |
 | - | - |
+| 0.24.0 | 21.3.0 |
 | 0.23.0 | 21.2.0 |
 | 0.22.0 | 21.1.0 |
 | 0.21.0 | 21.0.0 |
@@ -35,6 +36,10 @@ The table below maps the AWX Operator versions and bundled AWX versions.
 In the current version of AWX Operator, [there is `image_version` parameter for AWX resource to change which image will be used](https://github.com/ansible/awx-operator#deploying-a-specific-version-of-awx), but it appears that using a version of AWX other than the one bundled with the AWX Operator [is currently not supported](https://github.com/ansible/awx-operator#deploying-a-specific-version-of-awx).
 
 ## Appendix: Gather bundled AWX version from AWX Operator
+
+For AWX Operator 0.23.0 or later (AWX 21.2.0 or later), you can find the bundled version in the release notes on GitHub. See [release notes for AWX Operator](https://github.com/ansible/awx-operator/releases) or [release notes for AWX](https://github.com/ansible/awx/releases).
+
+If you want to get the bundled version for older versions or by means other than accessing the release notes, try following commands.
 
 - For AWX Operator **0.15.0 or later**
 
