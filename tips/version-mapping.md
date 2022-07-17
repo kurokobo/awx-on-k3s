@@ -37,6 +37,10 @@ In the current version of AWX Operator, [there is `image_version` parameter for 
 
 ## Appendix: Gather bundled AWX version from AWX Operator
 
+For AWX Operator 0.23.0 or later (AWX 21.2.0 or later), you can find the bundled version in the release notes on GitHub. See [release notes for AWX Operator](https://github.com/ansible/awx-operator/releases) or [release notes for AWX](https://github.com/ansible/awx/releases).
+
+If you want to get the bundled version for older versions or by means other than accessing the release notes, try following commands.
+
 - For AWX Operator **0.15.0 or later**
 
   ```bash
