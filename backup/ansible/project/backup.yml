@@ -1,6 +1,6 @@
 ---
 - name: Backing up AWX using AWX Operator
-  gather_facts: no
+  gather_facts: false
   hosts: localhost
 
   tasks:
@@ -16,6 +16,7 @@
               spec:
                 deployment_name: awx
                 backup_pvc: awx-backup-claim
+                clean_backup_on_delete: true
               timeout: 600
               keep_days: 30
 
@@ -56,11 +57,11 @@
           kubernetes.core.k8s:
             state: present
             definition: "{{ _awxbackup_manifest }}"
-            wait: yes
+            wait: true
             wait_condition:
-              reason: "Successful"
+              reason: Successful
               status: "True"
-              type: "Running"
+              type: Running
             wait_timeout: "{{ _awxbackup_config.timeout | int }}"
           register: _awxbackup_created
 
@@ -71,7 +72,7 @@
             _awxbackup_created_info:
               name: "{{ _awxbackup_created.result.metadata.name }}"
               creation_timestamp: "{{ _awxbackup_created.result.metadata.creationTimestamp }}"
-              deploument_name: "{{ _awxbackup_created.result.spec.deployment_name }}"
+              deployment_name: "{{ _awxbackup_created.result.spec.deployment_name }}"
               backup_pvc: "{{ _awxbackup_created.result.status.backupClaim }}"
               backup_directory: "{{ _awxbackup_created.result.status.backupDirectory }}"
 
@@ -80,12 +81,12 @@
           kubernetes.core.k8s:
             state: absent
             definition: "{{ _awxbackup_manifest }}"
-            wait: yes
+            wait: true
 
         - name: Force to fail if the backup was failed
           ansible.builtin.fail:
 
-    - name: Creanup outdated backups
+    - name: Cleanup outdated backups
       block:
         - name: Store current datetime
           ansible.builtin.set_fact:
@@ -105,10 +106,12 @@
             namespace: "{{ _awxbackup_config.namespace }}"
             name: "{{ item.name }}"
             state: absent
+            wait_timeout: "{{ _awxbackup_config.timeout | int }}"
+            wait: true
           loop: "{{ _awxbackup_all_backups.resources }}"
           loop_control:
             label: "{{ item.name }}"
-          when: >
+          when: >-
             (_awxbackup_now | int)
             - ((item.metadata.creationTimestamp | to_datetime('%Y-%m-%dT%H:%M:%S%z')).strftime('%s') | int)
             > ((_awxbackup_config.keep_days | int) * 86400)
