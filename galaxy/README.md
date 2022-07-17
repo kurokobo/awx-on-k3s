@@ -180,7 +180,7 @@ There is a Kubernetes Operator for Pulp 3 named Pulp Operator.
 
 - [pulp/pulp-operator: Kubernetes Operator for Pulp 3](https://github.com/pulp/pulp-operator)
 
-This project is still under active development and there is no support, however, at least the code to create a new instance seems to be implemented. In this procedure, we use [Pulp Operator 0.12.0](https://github.com/pulp/pulp-operator/tree/0.12.0)
+This project is still under active development and there is no support, however, at least the code to create a new instance seems to be implemented. In this procedure, we use [Pulp Operator 0.13.0](https://github.com/pulp/pulp-operator/tree/0.13.0)
 
 ### Patch K3s
 
@@ -218,7 +218,7 @@ Install specified version of Pulp Operator.
 cd ~
 git clone https://github.com/pulp/pulp-operator.git
 cd pulp-operator
-git checkout 0.12.0
+git checkout 0.13.0
 ```
 
 Export the name of the namespace where you want to deploy Pulp Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `pulp-operator-system`.
