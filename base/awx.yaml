@@ -5,8 +5,8 @@ metadata:
   name: awx
 spec:
   # These parameters are designed for use with:
-  # - AWX Operator: 0.24.0
-  #   https://github.com/ansible/awx-operator/blob/0.24.0/README.md
+  # - AWX Operator: 0.25.0
+  #   https://github.com/ansible/awx-operator/blob/0.25.0/README.md
   # - AWX: 21.3.0
   #   https://github.com/ansible/awx/blob/21.3.0/INSTALL.md
 
