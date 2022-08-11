@@ -58,11 +58,14 @@ rolebinding.rbac.authorization.k8s.io/awx-backup created
 Obtain the API Token which required to authenticate the Kubernetes API. This token will be used later.
 
 ```bash
-# Kubernetes 1.24 or later
+# For Kubernetes 1.24 or later:
+# This will generate new token that valid for 87600 hours (10 years).
+# Of course you can modify the value since "87600h" is just an example.
 $ kubectl -n awx create token awx-backup --duration=87600h
 eyJhbGciOiJSUzI...hcGsPI5MzmaMHQvw
 
-# Kubernetes 1.23 or earlier
+# For Kubernetes 1.23 or earlier:
+# Obtain and decode token from Secret that automatically generated for the Service Account.
 $ SECRET=$(kubectl -n ${NAMESPACE} get sa awx-backup -o jsonpath='{.secrets[0].name}')
 $ kubectl -n ${NAMESPACE} get secret ${SECRET} -o jsonpath='{.data.token}' | base64 -d
 eyJhbGciOiJSUzI...hcGsPI5MzmaMHQvw
