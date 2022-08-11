@@ -8,11 +8,9 @@ spec:
   deployment_name: awx
 
   # Parameters to restore from AWXBackup object
-  #backup_pvc_namespace: awx
   #backup_name: awxbackup-2021-06-06
 
   # Parameters to restore from existing files on PVC (without AWXBackup object)
-  #backup_pvc_namespace: awx
   #backup_pvc: awx-backup-claim
   #backup_dir: /backups/tower-openshift-backup-2021-06-06-10:51:49
 

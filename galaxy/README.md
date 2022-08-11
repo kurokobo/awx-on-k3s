@@ -298,7 +298,7 @@ Modify two `password`s in `pulp/kustomization.yaml`.
 Prepare directories for Persistent Volumes defined in `pulp/pv.yaml`.
 
 ```bash
-sudo mkdir -p /data/galaxy/postgres
+sudo mkdir -p /data/galaxy/postgres-13
 sudo mkdir -p /data/galaxy/redis
 sudo mkdir -p /data/galaxy/pulp
 ```

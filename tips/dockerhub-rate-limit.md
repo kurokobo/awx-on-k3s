@@ -4,13 +4,13 @@
 If your Pod for PostgreSQL is in `ErrImagePull` and its `Events` shows following events, this is due to [the Rate Limit on Docker Hub](https://docs.docker.com/docker-hub/download-rate-limit/).
 
 ```bash
-$ kubectl -n awx describe pod awx-postgres-0
+$ kubectl -n awx describe pod awx-postgres-13-0
 ...
 Events:
   Type     Reason            Age   From               Message
   ----     ------            ----  ----               -------
   ...
-  Warning  Failed            2s    kubelet            Failed to pull image "postgres:12": rpc error: code = Unknown desc = failed to pull and unpack image "docker.io/library/postgres:12": failed to copy: httpReadSeeker: failed open: unexpected status code https://registry-1.docker.io/v2/library/postgres/manifests/sha256:...: 429 Too Many Requests - Server message: toomanyrequests: You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limit
+  Warning  Failed            2s    kubelet            Failed to pull image "postgres:13": rpc error: code = Unknown desc = failed to pull and unpack image "docker.io/library/postgres:13": failed to copy: httpReadSeeker: failed open: unexpected status code https://registry-1.docker.io/v2/library/postgres/manifests/sha256:...: 429 Too Many Requests - Server message: toomanyrequests: You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limit
   ...
 ```
 

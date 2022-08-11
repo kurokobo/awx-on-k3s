@@ -5,8 +5,8 @@ metadata:
   name: awx
 spec:
   # These parameters are designed for use with:
-  # - AWX Operator: 0.25.0
-  #   https://github.com/ansible/awx-operator/blob/0.25.0/README.md
+  # - AWX Operator: 0.26.0
+  #   https://github.com/ansible/awx-operator/blob/0.26.0/README.md
   # - AWX: 21.3.0
   #   https://github.com/ansible/awx/blob/21.3.0/INSTALL.md
 
@@ -27,6 +27,8 @@ spec:
   projects_persistence: true
   projects_existing_claim: awx-projects-claim
 
+  postgres_init_container_resource_requirements: {}
+  postgres_resource_requirements: {}
   web_resource_requirements: {}
   task_resource_requirements: {}
   ee_resource_requirements: {}

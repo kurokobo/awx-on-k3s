@@ -27,19 +27,19 @@ If your AWX instance is running, it is recommended that it be deleted along with
 ```bash
 # Delete AWX resource, PVC, and PV
 kubectl -n awx delete awx awx
-kubectl -n awx delete pvc postgres-awx-postgres-0
-kubectl delete pv awx-postgres-volume
+kubectl -n awx delete pvc postgres-13-awx-postgres-13-0
+kubectl delete pv awx-postgres-13-volume
 
 # Delete any data in the PV
-sudo rm -rf /data/postgres
+sudo rm -rf /data/postgres-13
 ```
 
 Then prepare directories for your PVs. `/data/projects` is required if you are restoring the entire AWX to a new environment.
 
 ```bash
-sudo mkdir -p /data/postgres
+sudo mkdir -p /data/postgres-13
 sudo mkdir -p /data/projects
-sudo chmod 755 /data/postgres
+sudo chmod 755 /data/postgres-13
 sudo chown 1000:0 /data/projects
 ```
 
@@ -67,7 +67,6 @@ If you want to restore from AWXBackup object, specify its name in `restore/awxre
 ```yaml
 ...
   # Parameters to restore from AWXBackup object
-  backup_pvc_namespace: awx
   backup_name: awxbackup-2021-06-06     👈👈👈
 ...
 ```
@@ -77,7 +76,6 @@ If the AWXBackup object no longer exists, place the backup files and specify the
 ```yaml
 ...
   # Parameters to restore from existing files on PVC (without AWXBackup object)
-  backup_pvc_namespace: awx
   backup_pvc: awx-backup-claim     👈👈👈
   backup_dir: /backups/tower-openshift-backup-2021-06-06-10:51:49     👈👈👈
 ...
@@ -102,7 +100,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-mana
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=69   changed=0    unreachable=0    failed=0    skipped=42   rescued=0    ignored=0
+localhost                  : ok=73   changed=0    unreachable=0    failed=0    skipped=46   rescued=0    ignored=0
 ```
 
 This will create AWXRestore object in the namespace, and now your AWX is restored.

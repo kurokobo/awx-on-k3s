@@ -25,7 +25,7 @@ version: "3"
 
 services:
   postgres:
-    image: postgres:12
+    image: postgres:13
     ports:
       - 5432:5432
     restart: always
@@ -87,14 +87,14 @@ Note that the `type=unmanaged` is the important configuration to use external da
 
 ### Modify `base/pv.yaml`
 
-Comment out following unnecessary lines which related to `awx-postgres-volume` in `base/pv.yaml`.
+Comment out following unnecessary lines which related to `awx-postgres-13-volume` in `base/pv.yaml`.
 
 ```yaml
 # ---     👈👈👈
 # apiVersion: v1     👈👈👈
 # kind: PersistentVolume     👈👈👈
 # metadata:     👈👈👈
-#   name: awx-postgres-volume     👈👈👈
+#   name: awx-postgres-13-volume     👈👈👈
 # spec:     👈👈👈
 #   accessModes:     👈👈👈
 #     - ReadWriteOnce     👈👈👈
@@ -103,7 +103,7 @@ Comment out following unnecessary lines which related to `awx-postgres-volume` i
 #     storage: 8Gi     👈👈👈
 #   storageClassName: awx-postgres-volume     👈👈👈
 #   hostPath:     👈👈👈
-#     path: /data/postgres     👈👈👈
+#     path: /data/postgres-13     👈👈👈
 
 ---
 apiVersion: v1
@@ -115,7 +115,7 @@ metadata:
 
 ### Prepare directories
 
-You do not need to create the `/data/postgres` directory that the main guide instructs you to create.
+You do not need to create the `/data/postgres-13` directory that the main guide instructs you to create.
 
 ## The next steps
 

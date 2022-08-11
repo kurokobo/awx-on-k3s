@@ -29,7 +29,34 @@ Refer [📝README: Backing up using AWX Operator](../README.md#backing-up-using-
 
 ## 📝 Upgrade from `0.14.0` or later (e.g. from `0.14.0` to `0.15.0`)
 
-If you are using AWX Operator `0.14.0` or later and want to upgrade to newer version, simply, deploy the new version of AWX Operator to the same namespace where the old AWX Operator is running.
+If you are using AWX Operator `0.14.0` or later and want to upgrade to newer version, basically upgrade is done by deploying the new version of AWX Operator to the same namespace where the old AWX Operator is running.
+
+Note that only when upgrading **from `0.25.0` or earlier to `0.26.0` or later**, since the bundled PostgreSQL version will be changed to 13, so the following additional tasks are required.
+
+```bash
+# Required only when upgrading from 0.25.0 or earlier to 0.26.0 or later
+sudo mkdir -p /data/postgres-13
+sudo chmod 755 /data/postgres-13
+cat <<EOF > pv-postgres-13.yaml
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: awx-postgres-13-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 8Gi
+  storageClassName: awx-postgres-volume
+  hostPath:
+    path: /data/postgres-13
+EOF
+kubectl apply -f pv-postgres-13.yaml
+```
+
+To upgrade your AWX Operator, perform following steps.
 
 ```bash
 # Prepare required files
@@ -59,6 +86,14 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-mana
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
 localhost                  : ok=56   changed=0    unreachable=0    failed=0    skipped=35   rescued=0    ignored=0
+```
+
+If your AWX Operator has upgraded from `0.25.0` or earlier to `0.26.0` or later, old PV for PostgreSQL 12 can be removed since new AWX is running with new PV for PostgreSQL 13.
+
+```bash
+# Recommended only when upgraded from 0.25.0 or earlier to 0.26.0 or later
+kubectl delete pv awx-postgres-volume
+sudo rm -rf /data/postgres
 ```
 
 ## 📝 Upgrade from `0.13.0` (e.g. from `0.13.0` to `0.14.0`)
@@ -179,17 +214,12 @@ During the AWX upgrade, a rollout of the Deployment resource will be performed a
 For this reason, if we do not have enough free resources on our K3s node, we can manually delete the old AWX instance beforehand in order to free up resources. Note that the rollout history will be lost with this step.
 
 ```bash
-kubectl -n awx delete deployment awx
-```
+$ kubectl -n awx delete deployment awx
+deployment.apps "awx" deleted
 
-Ensure that it is not the `awx` resource that should be deleted, but the `deployment` resource. If we accidentally delete the `awx` resource or any Secrets, we will not be able to upgrade successfully.
-
-After a few minutes of waiting, our AWX Operator will successfully launch the new Deployment and the Pod for AWX.
-
-```bash
 $ kubectl -n awx get all
-NAME                 READY   STATUS    RESTARTS   AGE
-pod/awx-postgres-0   1/1     Running   0          8m57s
+NAME                    READY   STATUS    RESTARTS   AGE
+pod/awx-postgres-13-0   1/1     Running   0          8m57s
 
 NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
 service/awx-postgres   ClusterIP   None            <none>        5432/TCP   8m57s
@@ -198,3 +228,7 @@ service/awx-service    ClusterIP   10.43.248.150   <none>        80/TCP     8m51
 NAME                            READY   AGE
 statefulset.apps/awx-postgres   1/1     8m58s
 ```
+
+Ensure that it is not the `awx` resource that should be deleted, but the `deployment` resource. If we accidentally delete the `awx` resource or any Secrets, we will not be able to upgrade successfully.
+
+After a few minutes of waiting, our AWX Operator will successfully launch the new Deployment and the Pod for AWX.
