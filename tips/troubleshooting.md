@@ -44,7 +44,7 @@ If the Pods are working properly, its `STATUS` are `Running`. If your Pods are n
 $ kubectl -n awx get pod
 NAME                                               READY   STATUS    RESTARTS   AGE
 awx-operator-controller-manager-68d787cfbd-j6k7z   2/2     Running   0          7m43s
-awx-postgres-0                                     1/1     Running   0          4m6s
+awx-postgres-13-0                                  1/1     Running   0          4m6s
 awx-84d5c45999-h7xm4                               0/4     Pending   0          3m59s
 ```
 
@@ -101,7 +101,7 @@ For AWX Operator and AWX, specifically, the following commands are helpful.
   - `kubectl -n awx logs -f deployment/awx -c awx-ee`
   - `kubectl -n awx logs -f deployment/awx -c redis`
 - Logs of PostgreSQL
-  - `kubectl -n awx logs -f statefulset/awx-postgres`
+  - `kubectl -n awx logs -f statefulset/awx-postgres-13`
 
 ### Reveal "censored" output in the AWX Operator's log
 
@@ -133,15 +133,15 @@ spec:
 If your Pod for PostgreSQL is in `ErrImagePull` and its `Events` shows following events, this is due to [the rate limit on Docker Hub](https://docs.docker.com/docker-hub/download-rate-limit/).
 
 ```bash
-$ kubectl -n awx describe pod awx-postgres-0
+$ kubectl -n awx describe pod awx-postgres-13-0
 ...
 Events:
   Type     Reason            Age   From               Message
   ----     ------            ----  ----               -------
-  Normal   Pulling           9s    kubelet            Pulling image "postgres:12"
-  Warning  Failed            2s    kubelet            Failed to pull image "postgres:12": rpc error: code = Unknown desc = failed to pull and unpack image "docker.io/library/postgres:12": failed to copy: httpReadSeeker: failed open: unexpected status code https://registry-1.docker.io/v2/library/postgres/manifests/sha256:505d023f030cdea84a42d580c2a4a0e17bbb3e91c30b2aea9c02f2dfb10325ba: 429 Too Many Requests - Server message: toomanyrequests: You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limit
+  Normal   Pulling           9s    kubelet            Pulling image "postgres:13"
+  Warning  Failed            2s    kubelet            Failed to pull image "postgres:13": rpc error: code = Unknown desc = failed to pull and unpack image "docker.io/library/postgres:13": failed to copy: httpReadSeeker: failed open: unexpected status code https://registry-1.docker.io/v2/library/postgres/manifests/sha256:...: 429 Too Many Requests - Server message: toomanyrequests: You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limit
   Warning  Failed            2s    kubelet            Error: ErrImagePull
-  Normal   BackOff           1s    kubelet            Back-off pulling image "postgres:12"
+  Normal   BackOff           1s    kubelet            Back-off pulling image "postgres:13"
   Warning  Failed            1s    kubelet            Error: ImagePullBackOff
 ```
 
@@ -179,7 +179,7 @@ Typical solutions are one of the following:
       ee_resource_requirements: {}     👈👈👈
     ```
 
-  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/0.25.0/README.md#containers-resource-requirements) for details.
+  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/0.26.0/README.md#containers-resource-requirements) for details.
   - In this way you can run AWX with fewer resources, but you may encounter performance issues.
 
 ### The Pod is `Pending` with "1 pod has unbound immediate PersistentVolumeClaims." event
@@ -199,9 +199,9 @@ Check the `STATUS` of your PVs and ensure your PVs doesn't have `Available` or `
 
 ```bash
 $ kubectl get pv
-NAME                     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM                         STORAGECLASS             REASON   AGE
-awx-projects-volume      2Gi        RWO            Retain           Released   awx/awx-projects-claim        awx-projects-volume               17h
-awx-postgres-volume      8Gi        RWO            Retain           Released   awx/postgres-awx-postgres-0   awx-postgres-volume               17h
+NAME                     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM                               STORAGECLASS             REASON   AGE
+awx-projects-volume      2Gi        RWO            Retain           Released   awx/awx-projects-claim              awx-projects-volume               17h
+awx-postgres-13-volume   8Gi        RWO            Retain           Released   awx/postgres-13-awx-postgres-13-0   awx-postgres-volume               17h
 ```
 
 Probably this is the second (or more) time to deploy AWX for you. These PVs which have `Released` state are tied to your old (and probably no longer exists now) PVCs you created in the past.
@@ -259,8 +259,11 @@ This problem occurs when the AWX pod and the PostgreSQL pod cannot communicate p
 
 To solve this, check or try the following:
 
-- Ensure your PostgreSQL (typically the Pod named `awx-postgres-0`) is in `Running` state.
+- Ensure your PostgreSQL (typically the Pod named `awx-postgres-0` or `awx-postgres-13-0`) is in `Running` state.
+- Ensure `host` under `awx-postgres-configuration` in `base/kustomizaton.yaml` has correct value.
+  - Specify `awx-postgres` for AWX Operator 0.25.0 or earlier, `awx-postgres-13` for `0.26.0`.
 - Ensure your `firewalld`, `ufw` or any kind of firewall has been disabled on your K3s host.
+- Ensure your `nm-cloud-setup` service on your K3s host is disabled if exists.
 - Ensure your `awx-postgres-configuration` has correct values, especially if you're using external PostgreSQL.
 - Uninstall K3s and install it again.
 
@@ -272,33 +275,33 @@ In this situation, your Pod for PostgreSQL is in `CrashLoopBackOff` state and it
 $ kubectl -n awx get pod
 NAME                                               READY   STATUS             RESTARTS   AGE
 awx-operator-controller-manager-68d787cfbd-j6k7z   2/2     Running            0          7m43s
-awx-postgres-0                                     1/1     CrashLoopBackOff   3          4m6s
+awx-postgres-13-0                                  1/1     CrashLoopBackOff   3          4m6s
 awx-84d5c45999-h7xm4                               4/4     Running            0          3m59s
 
 $ kubectl -n awx logs statefulset/awx-postgres
 mkdir: cannot create directory '/var/lib/postgresql/data': Permission denied
 ```
 
-You should check the permissions and the owner of directories where used as PV on your K3s host. If you followed my guide, it would be `/data/postgres`. There is additional `data` directory created by K3s under `/data/postgres`.
+You should check the permissions and the owner of directories where used as PV on your K3s host. If you followed my guide, it would be `/data/postgres-13`. There is additional `data` directory created by K3s under `/data/postgres-13`.
 
 ```bash
-$ ls -ld /data/postgres /data/postgres/data
-drwxr-xr-x. 2 root root 18 Aug 20 10:09 /data/postgres
-drwxr-xr-x. 3 root root 20 Aug 20 10:09 /data/postgres/data
+$ ls -ld /data/postgres-13 /data/postgres-13/data
+drwxr-xr-x. 2 root root 18 Aug 20 10:09 /data/postgres-13
+drwxr-xr-x. 3 root root 20 Aug 20 10:09 /data/postgres-13/data
 ```
 
 In my environment, `755` and `root:root` (`0:0`) works correctly. So you can try:
 
 ```bash
-sudo chmod 755 /data/postgres /data/postgres/data
-sudo chown 0:0 /data/postgres /data/postgres/data
+sudo chmod 755 /data/postgres-13 /data/postgres-13/data
+sudo chown 0:0 /data/postgres-13 /data/postgres-13/data
 ```
 
 Or, you can also try `999:0` as owner/group for the directory.
 
 ```bash
-sudo chmod 755 /data/postgres /data/postgres/data
-sudo chown 999:0 /data/postgres /data/postgres/data
+sudo chmod 755 /data/postgres-13 /data/postgres-13/data
+sudo chown 999:0 /data/postgres-13 /data/postgres-13/data
 ```
 
 `999` is [the UID of the `postgres` user which used in the container](https://github.com/docker-library/postgres/blob/master/12/bullseye/Dockerfile#L23).

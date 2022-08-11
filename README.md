@@ -8,6 +8,8 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - Fixed (configurable) passwords for AWX and PostgreSQL
 - Fixed (configurable) versions of AWX and PostgreSQL
 
+**If you want to view the guide for the specific version of AWX Operator, switch the page to the desired tag instead of the `main` branch.**
+
 <!-- omit in toc -->
 ## Table of Contents
 
@@ -27,17 +29,17 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - Tested on:
   - CentOS Stream 8 (Minimal)
-  - K3s v1.23.8+k3s2
+  - K3s v1.24.3+k3s1
 - Products that will be deployed:
-  - AWX Operator 0.25.0
+  - AWX Operator 0.26.0
   - AWX 21.3.0
-  - PostgreSQL 12
+  - PostgreSQL 13
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
 - [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/21.3.0/INSTALL.md) @21.3.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.25.0/README.md) @0.25.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.26.0/README.md) @0.26.0
 
 ## Requirements
 
@@ -55,10 +57,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 ### Prepare CentOS Stream 8 host
 
-Disable Firewalld. This is [recommended by K3s](https://rancher.com/docs/k3s/latest/en/advanced/#additional-preparation-for-red-hat-centos-enterprise-linux).
+Disable Firewalld and nm-cloud-setup if enabled. This is [recommended by K3s](https://rancher.com/docs/k3s/latest/en/advanced/#additional-preparation-for-red-hat-centos-enterprise-linux).
 
 ```bash
+# Disable Firewalld
 sudo systemctl disable firewalld --now
+
+# Disable nm-cloud-setup if exists and enabled
+systemctl disable nm-cloud-setup.service nm-cloud-setup.timer
+reboot
 ```
 
 Install required packages to deploy AWX Operator and AWX.
@@ -83,7 +90,7 @@ Install specified version of AWX Operator. Note that this procedure is applicabl
 cd ~
 git clone https://github.com/ansible/awx-operator.git
 cd awx-operator
-git checkout 0.25.0
+git checkout 0.26.0
 ```
 
 Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
@@ -114,10 +121,13 @@ replicaset.apps/awx-operator-controller-manager-68d787cfbd   1         1        
 
 Clone this repository and change directory.
 
+If you want to use files suitable for the specific version of AWX Operator, [refer tags in this repository](https://github.com/kurokobo/awx-on-k3s/tags) and specify desired tag in `git checkout`.
+
 ```bash
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
+git checkout 0.26.0
 ```
 
 Generate a Self-Signed certificate. Note that IP address can't be specified. If you want to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate, follow the guide on [📁 **Use SSL Certificate from Public ACME CA**](acme) first and come back to this step when done.
@@ -146,7 +156,7 @@ Modify two `password`s in `base/kustomization.yaml`. Note that the `password` un
   - name: awx-postgres-configuration
     type: Opaque
     literals:
-      - host=awx-postgres
+      - host=awx-postgres-13
       - port=5432
       - database=awx
       - username=awx
@@ -163,9 +173,9 @@ Modify two `password`s in `base/kustomization.yaml`. Note that the `password` un
 Prepare directories for Persistent Volumes defined in `base/pv.yaml`. These directories will be used to store your databases and project files. Note that the size of the PVs and PVCs are specified in some of the files in this repository, but since their backends are `hostPath`, its value is just like a label and there is no actual capacity limitation.
 
 ```bash
-sudo mkdir -p /data/postgres
+sudo mkdir -p /data/postgres-13
 sudo mkdir -p /data/projects
-sudo chmod 755 /data/postgres
+sudo chmod 755 /data/postgres-13
 sudo chown 1000:0 /data/projects
 ```
 
@@ -190,7 +200,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-mana
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=67   changed=0    unreachable=0    failed=0    skipped=44   rescued=0    ignored=0
+localhost                  : ok=71   changed=0    unreachable=0    failed=0    skipped=48   rescued=0    ignored=0
 ```
 
 Required objects has been deployed next to AWX Operator in `awx` namespace.
@@ -202,12 +212,12 @@ awx.awx.ansible.com/awx   4m17s
 
 NAME                                                   READY   STATUS    RESTARTS   AGE
 pod/awx-operator-controller-manager-68d787cfbd-j6k7z   2/2     Running   0          7m43s
-pod/awx-postgres-0                                     1/1     Running   0          4m6s
+pod/awx-postgres-13-0                                  1/1     Running   0          4m6s
 pod/awx-84d5c45999-h7xm4                               4/4     Running   0          3m59s
 
 NAME                                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
 service/awx-operator-controller-manager-metrics-service   ClusterIP   10.43.134.67    <none>        8443/TCP   7m43s
-service/awx-postgres                                      ClusterIP   None            <none>        5432/TCP   4m6s
+service/awx-postgres-13                                   ClusterIP   None            <none>        5432/TCP   4m6s
 service/awx-service                                       ClusterIP   10.43.232.137   <none>        80/TCP     4m
 
 NAME                                              READY   UP-TO-DATE   AVAILABLE   AGE
@@ -218,21 +228,18 @@ NAME                                                         DESIRED   CURRENT  
 replicaset.apps/awx-operator-controller-manager-68d787cfbd   1         1         1       7m43s
 replicaset.apps/awx-84d5c45999                               1         1         1       3m59s
 
-NAME                            READY   AGE
-statefulset.apps/awx-postgres   1/1     4m6s
+NAME                               READY   AGE
+statefulset.apps/awx-postgres-13   1/1     4m6s
 
 NAME                                    CLASS    HOSTS             ADDRESS         PORTS     AGE
 ingress.networking.k8s.io/awx-ingress   <none>   awx.example.com   192.168.0.100   80, 443   4m
 
 NAME                                                 TYPE                                  DATA   AGE
-secret/default-token-6tp55                           kubernetes.io/service-account-token   3      7m43s
-secret/awx-operator-controller-manager-token-sz6wq   kubernetes.io/service-account-token   3      7m43s
 secret/awx-admin-password                            Opaque                                1      4m17s
 secret/awx-postgres-configuration                    Opaque                                6      4m17s
 secret/awx-secret-tls                                kubernetes.io/tls                     2      4m17s
 secret/redhat-operators-pull-secret                  kubernetes.io/dockerconfigjson        1      4m17s
 secret/awx-app-credentials                           Opaque                                3      4m2s
-secret/awx-token-jfndh                               kubernetes.io/service-account-token   3      4m2s
 secret/awx-secret-key                                Opaque                                1      4m13s
 secret/awx-broadcast-websocket                       Opaque                                1      4m9s
 ```

@@ -11,7 +11,7 @@ spec:
     storage: 8Gi
   storageClassName: galaxy-postgres-volume
   hostPath:
-    path: /data/galaxy/postgres
+    path: /data/galaxy/postgres-13
 
 ---
 apiVersion: v1

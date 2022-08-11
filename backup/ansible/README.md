@@ -32,7 +32,7 @@ An example simple playbook for Ansible is also provided in this repository. This
 | - | - | - |
 | `awxbackup_namespace` | The name of the NameSpace where the `AWXBackup` resource will be created. | `awx` |
 | `awxbackup_name` | The name of the `AWXBackup` resource. Dynamically generated using execution time by default. | `awxbackup-{{ lookup('pipe', 'date +%Y-%m-%d-%H-%M-%S') }}` |
-| `awxbackup_spec` | The `spec` of the `AWXBackup` resource. Refer [official documentation](https://github.com/ansible/awx-operator/tree/0.25.0/roles/backup) for acceptable fields. | `deployment_name: awx`<br>`backup_pvc: awx-backup-claim`<br>`clean_backup_on_delete: true` |
+| `awxbackup_spec` | The `spec` of the `AWXBackup` resource. Refer [official documentation](https://github.com/ansible/awx-operator/tree/0.26.0/roles/backup) for acceptable fields. | `deployment_name: awx`<br>`backup_pvc: awx-backup-claim`<br>`clean_backup_on_delete: true` |
 | `awxbackup_timeout` | Time to wait for backup to complete, in seconds. If exceeded, the playbook will fail. | `600` |
 | `awxbackup_keep_days` | Number of days to keep `AWXBackup` resources. `AWXBackup` resources older than this value will be deleted by this playbook. Set `0` to keep forever. | `30` |
 
@@ -58,6 +58,11 @@ rolebinding.rbac.authorization.k8s.io/awx-backup created
 Obtain the API Token which required to authenticate the Kubernetes API. This token will be used later.
 
 ```bash
+# Kubernetes 1.24 or later
+$ kubectl -n awx create token awx-backup --duration=87600h
+eyJhbGciOiJSUzI...hcGsPI5MzmaMHQvw
+
+# Kubernetes 1.23 or earlier
 $ SECRET=$(kubectl -n ${NAMESPACE} get sa awx-backup -o jsonpath='{.secrets[0].name}')
 $ kubectl -n ${NAMESPACE} get secret ${SECRET} -o jsonpath='{.data.token}' | base64 -d
 eyJhbGciOiJSUzI...hcGsPI5MzmaMHQvw
