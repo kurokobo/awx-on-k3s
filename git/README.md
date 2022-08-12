@@ -70,11 +70,11 @@ NAME                                    CLASS    HOSTS             ADDRESS      
 ingress.networking.k8s.io/git-ingress   <none>   git.example.com   192.168.0.100   80, 443   11s
 ```
 
-Now your Git repository is accesible through `https://git.example.com/` or the hostname you specified. Visit the URL and follow the installation wizard.
+Now your Git repository is accessible through `https://git.example.com/` or the hostname you specified. Visit the URL and follow the installation wizard.
 
 Note that this sample manifest does not include any databases, so the SQLite3 has to be selected as `Database Type` for Gitea.
 
-| Configration   | Recommemded Value                                        |
+| Configuration  | Recommended Value                                        |
 | -------------- | -------------------------------------------------------- |
 | Database Type  | `SQLite3`                                                |
 | Gitea Base URL | `https://git.example.com/` or the hostname you specified |

@@ -1,7 +1,7 @@
 <!-- omit in toc -->
 # [Experimental] Deploy Galaxy NG
 
-Deploying your private Galaxy NG a.k.a. upstream version of Ansible Automatuin Hub.
+Deploying your private Galaxy NG a.k.a. upstream version of Ansible Automation Hub.
 
 **Note that the containerized implementation of Galaxy NG is not supported at this time. See the official installation guide for supported procedure.**
 
@@ -69,7 +69,7 @@ TOKEN_AUTH_DISABLED=True
 EOF
 ```
 
-Then inovoke `docker run`.
+Then invoke `docker run`.
 
 ```bash
 docker run --detach \
@@ -393,7 +393,7 @@ Basic configuration and usage of Galaxy NG.
 
 ### Sync Collections with Public Galaxy
 
-Create a list of Collections to be syncronized as YAML file.
+Create a list of Collections to be synchronized as YAML file.
 
 ```yaml
 ---
@@ -500,7 +500,7 @@ Optionally, this approval process can be disabled by adding `galaxy_require_cont
 
 ### Install Collections Locally from Galaxy NG
 
-Modify your `ansible.cfg` to speficy which Galaxy Instance will be used in which order. Note that you can get appropriate configuration from `Collections` > `Repository Management` > `Local` > `CLI configuration` per distributions. Your token is available at `Collections` > `API Token`.
+Modify your `ansible.cfg` to specify which Galaxy Instance will be used in which order. Note that you can get appropriate configuration from `Collections` > `Repository Management` > `Local` > `CLI configuration` per distributions. Your token is available at `Collections` > `API Token`.
 
 ```init
 [galaxy]
@@ -645,4 +645,4 @@ Now you can use Execution Environment on Galaxy NG through AWX as following.
 3. Register new Execution Environment on AWX
 4. Specify it as Execution Environment for the Job Template, Project Default, or Global Default.
 
-Once you start the Job Template, `imagePullSecrets` will be created from Credentials and assinged to the Pod, the image will be pulled, and the playbook will run on the Execution Environment.
+Once you start the Job Template, `imagePullSecrets` will be created from Credentials and assigned to the Pod, the image will be pulled, and the playbook will run on the Execution Environment.

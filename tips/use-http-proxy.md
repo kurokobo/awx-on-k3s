@@ -23,7 +23,7 @@ Ensure your `/etc/systemd/system/k3s.service.env` has correct environment variab
 sudo cat /etc/systemd/system/k3s.service.env
 ```
 
-If your `/etc/systemd/system/k3s.service.env` already has correct envirnment variables for your proxy, there is nothing to do for your K3s.
+If your `/etc/systemd/system/k3s.service.env` already has correct environment variables for your proxy, there is nothing to do for your K3s.
 
 If not, export environment variables and re-run installation script,
 

@@ -1,10 +1,10 @@
 <!-- omit in toc -->
 # Version Mapping between AWX Operator and AWX
 
-- [Default version mapping betwern AWX Operator and AWX](#default-version-mapping-betwern-awx-operator-and-awx)
+- [Default version mapping between AWX Operator and AWX](#default-version-mapping-between-awx-operator-and-awx)
 - [Appendix: Gather bundled AWX version from AWX Operator](#appendix-gather-bundled-awx-version-from-awx-operator)
 
-## Default version mapping betwern AWX Operator and AWX
+## Default version mapping between AWX Operator and AWX
 
 The table below maps the AWX Operator versions and bundled AWX versions.
 

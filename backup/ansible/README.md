@@ -124,7 +124,7 @@ It is also possible to making the backup of the AWX itself where the Job Templat
 2. Add new Project including the playbook.
    - You can specify this repository (`https://github.com/kurokobo/awx-on-k3s.git`) directly, but use with caution. The playbook in this repository is subject to change without notice. You can use [Tag](https://github.com/kurokobo/awx-on-k3s/tags) or [Commit](https://github.com/kurokobo/awx-on-k3s/commits/main) to fix the version to be used.
 3. Add new Job Template which use the playbook.
-   - Select appropriate `Execution Environment`. The default `AWX EE (latest)` (`quay.io/ansible/awx-ee:latest`) contains required collections and modules by defaut, so it's good for the first choice.
+   - Select appropriate `Execution Environment`. The default `AWX EE (latest)` (`quay.io/ansible/awx-ee:latest`) contains required collections and modules by default, so it's good for the first choice.
    - Select your `backup.yml` as `Playbook`.
    - Select your Credentials created in the above step.
    - Specify `Variables` as needed.

@@ -143,7 +143,7 @@ Add the following lines to the `ingress.yaml` for each resource,
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: <resouce name>
+  name: <resource name>
   annotations:     👈👈👈
     traefik.ingress.kubernetes.io/router.middlewares: default-redirect@kubernetescrd     👈👈👈
 ...
@@ -158,6 +158,6 @@ kubectl apply -k <path>
 Or you can also patch Ingress resources directly.
 
 ```bash
-kubectl -n <namespace> patch ingress <resouce name> --type=merge \
+kubectl -n <namespace> patch ingress <resource name> --type=merge \
  -p '{"metadata": {"annotations": {"traefik.ingress.kubernetes.io/router.middlewares": "default-redirect@kubernetescrd"}}}'
 ```

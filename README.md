@@ -3,7 +3,7 @@
 
 An example implementation of AWX on single node K3s using AWX Operator, with easy-to-use simplified configuration with ownership of data and passwords.
 
-- Accesible over HTTPS from remote host
+- Accessible over HTTPS from remote host
 - All data will be stored under `/data`
 - Fixed (configurable) passwords for AWX and PostgreSQL
 - Fixed (configurable) versions of AWX and PostgreSQL
@@ -49,7 +49,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - The files in this repository are configured to ignore resource requirements which specified by AWX Operator by default.
 - **Storage resources**
   - At least **10 GiB for `/var/lib/rancher`** and **10 GiB for `/data`** are safe for fresh install.
-  - **Both will be grown during lifetime** and **actual consumption highly depends on your environment and your usecase**, so you should to pay attention to the consumption and add more capacity if required.
+  - **Both will be grown during lifetime** and **actual consumption highly depends on your environment and your use case**, so you should to pay attention to the consumption and add more capacity if required.
   - `/var/lib/rancher` will be created and consumed by K3s and related data like container images and overlayfs.
   - `/data` will be created in this guide and used to store AWX-related databases and files.
 
@@ -57,10 +57,10 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 ### Prepare CentOS Stream 8 host
 
-Disable Firewalld and nm-cloud-setup if enabled. This is [recommended by K3s](https://rancher.com/docs/k3s/latest/en/advanced/#additional-preparation-for-red-hat-centos-enterprise-linux).
+Disable firewalld and nm-cloud-setup if enabled. This is [recommended by K3s](https://rancher.com/docs/k3s/latest/en/advanced/#additional-preparation-for-red-hat-centos-enterprise-linux).
 
 ```bash
-# Disable Firewalld
+# Disable firewalld
 sudo systemctl disable firewalld --now
 
 # Disable nm-cloud-setup if exists and enabled
@@ -246,7 +246,7 @@ secret/awx-broadcast-websocket                       Opaque                     
 
 Now your AWX is available at `https://awx.example.com/` or the hostname you specified.
 
-Note that you have to access via hostname that you specified in `base/awx.yaml`, instead of IP address, since this guide uses Ingress. So you should configure your DNS or `hosts` file on your client where the brower is running.
+Note that you have to access via hostname that you specified in `base/awx.yaml`, instead of IP address, since this guide uses Ingress. So you should configure your DNS or `hosts` file on your client where the browser is running.
 
 At this point, AWX can be accessed via HTTP as well as HTTPS. If you want to redirect HTTP to HTTPS, see [📝Tips: Redirect HTTP to HTTPS](tips/https-redirection.md).
 
@@ -272,7 +272,7 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
   - If we want to use our own Execution Environment built with Ansible Builder and don't want to push it to the public container registry e.g. Docker Hub, we can deploy a private container registry on K3s.
 - [📁 **Deploy Private Galaxy NG on Docker or Kubernetes** (Experimental)](galaxy)
   - The guide to deploy our own Galaxy NG instance.
-  - **Note that the containerized implementation of Galaxy NG is not officialy supported at this time.**
+  - **Note that the containerized implementation of Galaxy NG is not officially supported at this time.**
   - **All information on the guide is for development, testing and study purposes only.**
 - [📁 **Use SSL Certificate from Public ACME CA**](acme)
   - The guide to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate.
@@ -286,7 +286,7 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
   - [📝Expose `/etc/hosts` to Pods on K3s](tips/expose-hosts.md)
   - [📝Redirect HTTP to HTTPS](tips/https-redirection.md)
   - [📝Use HTTP proxy](tips/use-http-proxy.md)
-  - [📝Uninstall deployed resouces](tips/uninstall.md)
+  - [📝Uninstall deployed resources](tips/uninstall.md)
   - [📝Deploy older version of AWX Operator](tips/deploy-older-operator.md)
   - [📝Upgrade AWX Operator and AWX](tips/upgrade-operator.md)
   - [📝Workaround for the rate limit on Docker Hub](tips/dockerhub-rate-limit.md)
