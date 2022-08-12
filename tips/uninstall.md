@@ -1,5 +1,5 @@
 <!-- omit in toc -->
-# Uninstall deployed resouces
+# Uninstall deployed resources
 
 <!-- omit in toc -->
 ## Table of Contents
@@ -62,7 +62,7 @@ sudo rm -rf /data/<volume name>
 
 ### Uninstall K3s
 
-K3s comes with a handy uninstall script. Once executed, it will perform an uninstall that includes removing all resources deployed on Kubeneretes.
+K3s comes with a handy uninstall script. Once executed, it will perform an uninstall that includes removing all resources deployed on Kubernetes.
 
 ```bash
 /usr/local/bin/k3s-uninstall.sh

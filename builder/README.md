@@ -90,7 +90,7 @@ Other customization is possible besides this. Refer to [the official Ansible Bui
 
 ### Build EE
 
-Once your files are ready, run `ansible-builder build` command to build EE as a container image according to the definition in `execution-environment.yml`. Specify a tag (`--tag`) to suit your requiremnts.
+Once your files are ready, run `ansible-builder build` command to build EE as a container image according to the definition in `execution-environment.yml`. Specify a tag (`--tag`) to suit your requirements.
 
 ```bash
 ansible-builder build --tag registry.example.com/ansible/ee:2.12-custom --container-runtime docker --verbosity 3

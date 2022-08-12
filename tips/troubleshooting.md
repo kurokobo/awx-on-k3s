@@ -147,7 +147,7 @@ Events:
 
 If you follow the steps in this repository to deploy you AWX, your pull request to Docker Hub will be identified as a free, anonymous account. Therefore, you will be limited to 200 requests in 6 hours. The message "429 Too Many Requests" indicates that it has been exceeded.
 
-To solve this, you can simply wait until the limit is freeed up, or [consider giving your Docker Hub credentials to K3s by follwing the guide on this page](dockerhub-rate-limit.md).
+To solve this, you can simply wait until the limit is freed up, or [consider giving your Docker Hub credentials to K3s by following the guide on this page](dockerhub-rate-limit.md).
 
 ### The Pod is `Pending` with "1 Insufficient cpu, 1 Insufficient memory." event
 
@@ -168,7 +168,7 @@ Typical solutions are one of the following:
 - **Add more CPUs or memory to your K3s node.**
   - If you have at least 3 CPUs and 5 GB RAM, AWX may work.
 - **Reduce resource requests for the containers.**
-  - The minimum resouce requirements can be ignored by adding three lines in `base/awx.yml`.
+  - The minimum resource requirements can be ignored by adding three lines in `base/awx.yml`.
 
     ```yaml
     ...
@@ -184,7 +184,7 @@ Typical solutions are one of the following:
 
 ### The Pod is `Pending` with "1 pod has unbound immediate PersistentVolumeClaims." event
 
-If your Pod is in `Pending` state and its `Events` shows following events, the reason is that no usable Persisten Volumes are available.
+If your Pod is in `Pending` state and its `Events` shows following events, the reason is that no usable Persistent Volumes are available.
 
 ```bash
 $ kubectl -n awx describe pod awx-84d5c45999-h7xm4
@@ -260,7 +260,7 @@ This problem occurs when the AWX pod and the PostgreSQL pod cannot communicate p
 To solve this, check or try the following:
 
 - Ensure your PostgreSQL (typically the Pod named `awx-postgres-0` or `awx-postgres-13-0`) is in `Running` state.
-- Ensure `host` under `awx-postgres-configuration` in `base/kustomizaton.yaml` has correct value.
+- Ensure `host` under `awx-postgres-configuration` in `base/kustomization.yaml` has correct value.
   - Specify `awx-postgres` for AWX Operator 0.25.0 or earlier, `awx-postgres-13` for `0.26.0`.
 - Ensure your `firewalld`, `ufw` or any kind of firewall has been disabled on your K3s host.
 - Ensure your `nm-cloud-setup` service on your K3s host is disabled if exists.

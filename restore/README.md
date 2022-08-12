@@ -16,9 +16,9 @@ You can also refer [the official instructions](https://github.com/ansible/awx-op
 
 ## Instruction
 
-To perfom restoration, you need to have AWX Operator running on Kubernetes. If you are planning to restore to a new environment, first prepare Kubernetes and AWX Operator by referring to [the instructions on the main guide](../README.md).
+To perform restoration, you need to have AWX Operator running on Kubernetes. If you are planning to restore to a new environment, first prepare Kubernetes and AWX Operator by referring to [the instructions on the main guide](../README.md).
 
-It is strongly recommended that the version of AWX Operator is the same as the version when the backup was taken. This is because the structure of the backup files differs between versions and may not be compatible. If you have upgraded AWX Operator after taking the backup, it is recommended to downgrade AWX Operator first before perfoming the restore. To deploy `0.13.0` or earlier version of AWX Operator, refer [📝Tips: Deploy older version of AWX Operator](../tips/deploy-older-operator.md)
+It is strongly recommended that the version of AWX Operator is the same as the version when the backup was taken. This is because the structure of the backup files differs between versions and may not be compatible. If you have upgraded AWX Operator after taking the backup, it is recommended to downgrade AWX Operator first before performing the restore. To deploy `0.13.0` or earlier version of AWX Operator, refer [📝Tips: Deploy older version of AWX Operator](../tips/deploy-older-operator.md)
 
 ### Prepare for Restore
 

@@ -99,7 +99,7 @@ spec:
               key: client-secret
 ```
 
-To store Client Secret for the Service Principal to Secret resouce in Kubernetes, modify `acme/kustomization.yaml`.
+To store Client Secret for the Service Principal to Secret resource in Kubernetes, modify `acme/kustomization.yaml`.
 
 ```yaml
 ...
