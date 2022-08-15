@@ -55,22 +55,6 @@ role.rbac.authorization.k8s.io/awx-backup created
 rolebinding.rbac.authorization.k8s.io/awx-backup created
 ```
 
-Obtain the API Token which required to authenticate the Kubernetes API. This token will be used later.
-
-```bash
-# For Kubernetes 1.24 or later:
-# This will generate new token that valid for 87600 hours (10 years).
-# Of course you can modify the value since "87600h" is just an example.
-$ kubectl -n awx create token awx-backup --duration=87600h
-eyJhbGciOiJSUzI...hcGsPI5MzmaMHQvw
-
-# For Kubernetes 1.23 or earlier:
-# Obtain and decode token from Secret that automatically generated for the Service Account.
-$ SECRET=$(kubectl -n ${NAMESPACE} get sa awx-backup -o jsonpath='{.secrets[0].name}')
-$ kubectl -n ${NAMESPACE} get secret ${SECRET} -o jsonpath='{.data.token}' | base64 -d
-eyJhbGciOiJSUzI...hcGsPI5MzmaMHQvw
-```
-
 ### Prepare Backup Storage
 
 Since you have complete control over `spec` of `AWXBackup` via `awxbackup_spec` variables, whether or not this step is required depends on your environment. Check [the official documentation](https://github.com/ansible/awx-operator/tree/devel/roles/backup) and prepare as needed.
@@ -82,9 +66,22 @@ If your AWX was deployed by referring [the main guide on this repository](../../
 Export required environment variables.
 
 ```bash
-export K8S_AUTH_VERIFY_SSL=no
 export K8S_AUTH_HOST="https://<Your K3s Host>:6443/"
-export K8S_AUTH_API_KEY="<Your API Token>"
+export K8S_AUTH_VERIFY_SSL=no
+```
+
+Obtain and export the API Token which required to authenticate the Kubernetes API.
+
+```bash
+# For Kubernetes 1.24 or later:
+# This will generate new token that valid for 1 hours.
+# Of course you can modify the value since "1h" is just an example.
+$ export K8S_AUTH_API_KEY=$(kubectl -n awx create token awx-backup --duration=1h)
+
+# For Kubernetes 1.23 or earlier:
+# Obtain and decode token from Secret that automatically generated for the Service Account.
+$ SECRET=$(kubectl -n ${NAMESPACE} get sa awx-backup -o jsonpath='{.secrets[0].name}')
+$ export K8S_AUTH_API_KEY=$(kubectl -n ${NAMESPACE} get secret ${SECRET} -o jsonpath='{.data.token}' | base64 -d)
 ```
 
 ```bash
@@ -112,20 +109,43 @@ ansible-runner run . -p backup.yml
 
 ## Use with AWX
 
-This playbook can also be run through Job Templates on AWX. Schedules can be also set up in the Job Template to obtain periodic backups.
+This playbook can also be run through Job Templates on AWX. Of course Schedules can be set up in the Job Template to obtain periodic backup.
 
-It is also possible to making the backup of the AWX itself where the Job Template for the backup is running on. In this case, the PostgreSQL will be dumped while the job is running, so complete logs of the job itself is not part of the backup. Therefore, after restoration, **the last backup job will be shown as failed** since the AWX can't determine the result of the job, but this can be safely ignored.
+This is the way to make the backup of the AWX itself where the Job Template for the backup is configured.
 
-1. Add new Credential for your K3s host.
-   - Select `OpenShift or Kubernetes API Bearer Token` as Credential Type.
-   - Specify `https://<Your K3s Host>:6443/` as `OpenShift or Kubernetes API Endpoint`.
-   - Specify your API Token as `API authentication bearer token`.
-   - Toggle `Verify SSL` if needed.
+In this case, the PostgreSQL will be dumped while the job is running, so complete logs of the job itself is not part of the backup. Therefore, after restoration, **the last backup job will be shown as failed** since the AWX can't determine the result of the job, but this can be safely ignored.
+
+1. Add new Container Group to make the API token usable inside the EE.
+   - Enable `Customize pod specification` and put following YAML string. `serviceAccountName` and `automountServiceAccountToken` are important to make the API token usable inside the EE.
+
+     ```yaml
+     apiVersion: v1
+     kind: Pod
+     metadata:
+       namespace: awx
+     spec:
+       serviceAccountName: awx-backup
+       automountServiceAccountToken: true
+       containers:
+         - image: quay.io/ansible/awx-ee:latest
+           name: worker
+           args:
+             - ansible-runner
+             - worker
+             - '--private-data-dir=/runner'
+           resources:
+             requests:
+               cpu: 250m
+               memory: 100Mi
+     ```
+
 2. Add new Project including the playbook.
    - You can specify this repository (`https://github.com/kurokobo/awx-on-k3s.git`) directly, but use with caution. The playbook in this repository is subject to change without notice. You can use [Tag](https://github.com/kurokobo/awx-on-k3s/tags) or [Commit](https://github.com/kurokobo/awx-on-k3s/commits/main) to fix the version to be used.
 3. Add new Job Template which use the playbook.
    - Select appropriate `Execution Environment`. The default `AWX EE (latest)` (`quay.io/ansible/awx-ee:latest`) contains required collections and modules by default, so it's good for the first choice.
    - Select your `backup.yml` as `Playbook`.
-   - Select your Credentials created in the above step.
    - Specify `Variables` as needed.
-4. (Optional) Add new Schedules for periodic backups.
+   - Select your Container Group created in the above step as `Instance Group`.
+4. (Optional) Add new Schedules for periodic backup.
+
+If you want to make the backup of another AWX on different namespace of different cluster, create new Credential with `OpenShift or Kubernetes API Bearer Token` type instead of Container Group and then specify the Credential in the Job Template. To obtain the API token, refer [_"Use with Ansible"_](#use-with-ansible) section.
