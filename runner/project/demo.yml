@@ -33,6 +33,6 @@
       loop_control:
         label: "{{ item.cmd }}"
 
-    # - name: Simply pause for a while
-    #   ansible.builtin.pause:
-    #     minutes: 10
+    - name: Simply pause for a while
+      ansible.builtin.pause:
+        minutes: "{{ wait_minutes | default(0) }}"
