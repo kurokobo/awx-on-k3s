@@ -370,8 +370,8 @@ replicaset.apps/galaxy-web-5f7bc488fb                         1         1       
 NAME                                  READY   AGE
 statefulset.apps/galaxy-postgres-13   1/1     4m31s
 
-NAME                                       CLASS    HOSTS                ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/galaxy-ingress   <none>   galaxy.example.com   192.168.0.100   80, 443   4m19s
+NAME                                       CLASS    HOSTS                ADDRESS                                               PORTS     AGE
+ingress.networking.k8s.io/galaxy-ingress   <none>   galaxy.example.com   192.168.0.219,2400:4050:a8e2:a00:250:56ff:fe86:454d   80, 443   4m19s
 
 NAME                                   TYPE                                  DATA   AGE
 secret/default-token-lhlds             kubernetes.io/service-account-token   3      5m4s

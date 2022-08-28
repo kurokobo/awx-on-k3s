@@ -104,13 +104,13 @@
             api_version: "{{ _awxbackup_config.api_version }}"
             kind: "{{ _awxbackup_config.kind }}"
             namespace: "{{ _awxbackup_config.namespace }}"
-            name: "{{ item.name }}"
+            name: "{{ item.metadata.name }}"
             state: absent
             wait_timeout: "{{ _awxbackup_config.timeout | int }}"
             wait: true
           loop: "{{ _awxbackup_all_backups.resources }}"
           loop_control:
-            label: "{{ item.name }}"
+            label: "{{ item.metadata.name }}"
           when: >-
             (_awxbackup_now | int)
             - ((item.metadata.creationTimestamp | to_datetime('%Y-%m-%dT%H:%M:%S%z')).strftime('%s') | int)

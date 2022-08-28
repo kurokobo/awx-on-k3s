@@ -55,19 +55,19 @@ Required resources has been deployed in `git` namespace.
 ```bash
 $ kubectl -n git get all,ingress
 NAME                      READY   STATUS    RESTARTS   AGE
-pod/git-dc5d76bdb-xpl62   1/1     Running   0          11s
+pod/git-56cc958f9-2q44j   1/1     Running   0          9s
 
 NAME                  TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)           AGE
-service/git-service   ClusterIP   10.43.64.160   <none>        3000/TCP,22/TCP   11s
+service/git-service   ClusterIP   10.43.134.80   <none>        3000/TCP,22/TCP   9s
 
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/git   1/1     1            1           11s
+deployment.apps/git   1/1     1            1           9s
 
 NAME                            DESIRED   CURRENT   READY   AGE
-replicaset.apps/git-dc5d76bdb   1         1         1       11s
+replicaset.apps/git-56cc958f9   1         1         1       9s
 
-NAME                                    CLASS    HOSTS             ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/git-ingress   <none>   git.example.com   192.168.0.100   80, 443   11s
+NAME                                    CLASS    HOSTS             ADDRESS                                               PORTS     AGE
+ingress.networking.k8s.io/git-ingress   <none>   git.example.com   192.168.0.219,2400:4050:a8e2:a00:250:56ff:fe86:454d   80, 443   9s
 ```
 
 Now your Git repository is accessible through `https://git.example.com/` or the hostname you specified. Visit the URL and follow the installation wizard.

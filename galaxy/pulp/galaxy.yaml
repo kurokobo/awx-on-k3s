@@ -6,13 +6,13 @@ spec:
   # These parameters are designed for use with:
   # - Pulp Operator: 0.13.0
   #   https://github.com/pulp/pulp-operator/blob/0.13.0/README.md
-  # - Galaxy NG: 4.5.0
-  #   https://github.com/ansible/galaxy_ng/tree/4.5.0
+  # - Galaxy NG: 4.5.2
+  #   https://github.com/ansible/galaxy_ng/tree/4.5.2
 
   image: quay.io/pulp/galaxy
-  image_version: 4.5.0
+  image_version: 4.5.2
   image_web: quay.io/pulp/galaxy-web
-  image_web_version: 4.5.0
+  image_web_version: 4.5.2
 
   admin_password_secret: galaxy-admin-password
 
