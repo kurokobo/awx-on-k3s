@@ -74,20 +74,20 @@ Required resources has been deployed in `registry` namespace.
 
 ```bash
 $ kubectl -n registry get all,ingress
-NAME                           READY   STATUS    RESTARTS   AGE
-pod/registry-756d57bfd-khln6   1/1     Running   0          9s
+NAME                            READY   STATUS    RESTARTS   AGE
+pod/registry-7457f6c64b-sxqfp   1/1     Running   0          9s
 
-NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-service/registry-service   ClusterIP   10.43.183.177   <none>        5000/TCP   9s
+NAME                       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+service/registry-service   ClusterIP   10.43.15.228   <none>        5000/TCP   9s
 
 NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
 deployment.apps/registry   1/1     1            1           9s
 
-NAME                                 DESIRED   CURRENT   READY   AGE
-replicaset.apps/registry-756d57bfd   1         1         1       9s
+NAME                                  DESIRED   CURRENT   READY   AGE
+replicaset.apps/registry-7457f6c64b   1         1         1       9s
 
-NAME                                         CLASS    HOSTS                  ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/registry-ingress   <none>   registry.example.com   192.168.0.100   80, 443   9s
+NAME                                         CLASS    HOSTS                  ADDRESS                                               PORTS     AGE
+ingress.networking.k8s.io/registry-ingress   <none>   registry.example.com   192.168.0.219,2400:4050:a8e2:a00:250:56ff:fe86:454d   80, 443 
 ```
 
 Now your container registry can be used through `registry.example.com` or the hostname you specified.

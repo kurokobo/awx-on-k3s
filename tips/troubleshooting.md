@@ -179,7 +179,7 @@ Typical solutions are one of the following:
       ee_resource_requirements: {}     👈👈👈
     ```
 
-  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/0.26.0/README.md#containers-resource-requirements) for details.
+  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/0.28.0/README.md#containers-resource-requirements) for details.
   - In this way you can run AWX with fewer resources, but you may encounter performance issues.
 
 ### The Pod is `Pending` with "1 pod has unbound immediate PersistentVolumeClaims." event
@@ -261,7 +261,7 @@ To solve this, check or try the following:
 
 - Ensure your PostgreSQL (typically the Pod named `awx-postgres-0` or `awx-postgres-13-0`) is in `Running` state.
 - Ensure `host` under `awx-postgres-configuration` in `base/kustomization.yaml` has correct value.
-  - Specify `awx-postgres` for AWX Operator 0.25.0 or earlier, `awx-postgres-13` for `0.26.0`.
+  - Specify `awx-postgres` for AWX Operator 0.25.0 or earlier, `awx-postgres-13` for `0.26.0` or later.
 - Ensure your `firewalld`, `ufw` or any kind of firewall has been disabled on your K3s host.
 - Ensure your `nm-cloud-setup` service on your K3s host is disabled if exists.
 - Ensure your `awx-postgres-configuration` has correct values, especially if you're using external PostgreSQL.

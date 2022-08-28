@@ -11,7 +11,7 @@ In this example, we make the Execution Environment to work with the Pod with fol
 - Mount PVC as `/etc/demo`
 - Run on the node with the label `awx-node-type: demo` using `nodeSelector`
 - Have custom environment variable `MY_CUSTOM_ENV`
-- Use custom DNS server `192.168.0.100` in addition to the default DNS servers
+- Use custom DNS server `192.168.0.219` in addition to the default DNS servers
 
 <!-- omit in toc -->
 ## Table of Contents
@@ -113,7 +113,7 @@ spec:
     awx-node-type: demo
   dnsConfig:
     nameservers:
-      - 192.168.0.100
+      - 192.168.0.219
   volumes:
     - name: demo-volume
       persistentVolumeClaim:
@@ -128,7 +128,7 @@ This is the customized manifest to achieve;
 - Mounting PVC as `/etc/demo`
 - Running on the node with the label `awx-node-type: demo` using `nodeSelector`
 - Having custom environment variable `MY_CUSTOM_ENV`
-- Using custom DNS server `192.168.0.100` in addition to the default DNS servers
+- Using custom DNS server `192.168.0.219` in addition to the default DNS servers
 
 You can also change `image`, but it will be overridden by specifying Execution Environment for the Job Template, Project Default, or Global Default.
 
@@ -177,7 +177,7 @@ spec:
     ...
   dnsConfig:
     nameservers:
-    - 192.168.0.100
+    - 192.168.0.219
   nodeSelector:
     awx-node-type: demo
   ...

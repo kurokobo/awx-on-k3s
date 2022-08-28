@@ -10,10 +10,10 @@ One easy way to do this is to use `dnsmasq`.
 
    ```bash
    sudo tee -a /etc/hosts <<EOF
-   192.168.0.100 awx.example.com
-   192.168.0.100 registry.example.com
-   192.168.0.100 git.example.com
-   192.168.0.100 galaxy.example.com
+   192.168.0.219 awx.example.com
+   192.168.0.219 registry.example.com
+   192.168.0.219 git.example.com
+   192.168.0.219 galaxy.example.com
    EOF
    ```
 
@@ -28,7 +28,7 @@ One easy way to do this is to use `dnsmasq`.
 
    ```bash
    sudo tee /etc/rancher/k3s/resolv.conf <<EOF
-   nameserver 192.168.0.100
+   nameserver 192.168.0.219
    EOF
    ```
 
@@ -65,7 +65,7 @@ One easy way to do this is to use `dnsmasq`.
    Address 1: 10.43.0.10 kube-dns.kube-system.svc.cluster.local
 
    Name:      git.example.com
-   Address 1: 192.168.0.100
+   Address 1: 192.168.0.219
    pod "busybox" deleted
    ```
 
