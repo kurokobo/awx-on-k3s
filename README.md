@@ -31,7 +31,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 8 (Minimal)
   - K3s v1.24.4+k3s1
 - Products that will be deployed:
-  - AWX Operator 0.27.0
+  - AWX Operator 0.28.0
   - AWX 21.5.0
   - PostgreSQL 13
 
@@ -39,7 +39,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
 - [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/21.5.0/INSTALL.md) @21.5.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.27.0/README.md) @0.27.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.28.0/README.md) @0.28.0
 
 ## Requirements
 
@@ -86,15 +86,11 @@ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
 
 Install specified version of AWX Operator. Note that this procedure is applicable only for AWX Operator `0.14.0` or later. If you want to deploy `0.13.0` or earlier version of AWX Operator, refer [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md).
 
-| ⚠️ Note ⚠️ |
-| :- |
-| This guide does not recommend 0.27.0 since there is an issue that the deployment for AWX with some `spec` e.g. `*_extra_volume` or `*_extra_env` will be failed ([ansible/awx-operator#1032](https://github.com/ansible/awx-operator/issues/1032)). Use 0.28.0 or later instead. |
-
 ```bash
 cd ~
 git clone https://github.com/ansible/awx-operator.git
 cd awx-operator
-git checkout 0.27.0
+git checkout 0.28.0
 ```
 
 Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
@@ -131,7 +127,7 @@ If you want to use files suitable for the specific version of AWX Operator, [ref
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 0.27.0
+git checkout 0.28.0
 ```
 
 Generate a Self-Signed certificate. Note that IP address can't be specified. If you want to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate, follow the guide on [📁 **Use SSL Certificate from Public ACME CA**](acme) first and come back to this step when done.
