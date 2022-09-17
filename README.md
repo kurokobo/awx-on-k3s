@@ -31,15 +31,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 8 (Minimal)
   - K3s v1.24.4+k3s1
 - Products that will be deployed:
-  - AWX Operator 0.28.0
-  - AWX 21.5.0
+  - AWX Operator 0.29.0
+  - AWX 21.6.0
   - PostgreSQL 13
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/21.5.0/INSTALL.md) @21.5.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.28.0/README.md) @0.28.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/21.6.0/INSTALL.md) @21.6.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/0.29.0/README.md) @0.29.0
 
 ## Requirements
 
@@ -90,7 +90,7 @@ Install specified version of AWX Operator. Note that this procedure is applicabl
 cd ~
 git clone https://github.com/ansible/awx-operator.git
 cd awx-operator
-git checkout 0.28.0
+git checkout 0.29.0
 ```
 
 Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
@@ -127,7 +127,7 @@ If you want to use files suitable for the specific version of AWX Operator, [ref
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 0.28.0
+git checkout 0.29.0
 ```
 
 Generate a Self-Signed certificate. Note that IP address can't be specified. If you want to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate, follow the guide on [📁 **Use SSL Certificate from Public ACME CA**](acme) first and come back to this step when done.
@@ -200,7 +200,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-mana
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=71   changed=0    unreachable=0    failed=0    skipped=48   rescued=0    ignored=1
+localhost                  : ok=74   changed=0    unreachable=0    failed=0    skipped=61   rescued=0    ignored=1
 ```
 
 Required objects has been deployed next to AWX Operator in `awx` namespace.
@@ -234,14 +234,16 @@ statefulset.apps/awx-postgres-13   1/1     4m46s
 NAME                                    CLASS    HOSTS             ADDRESS                                               PORTS     AGE
 ingress.networking.k8s.io/awx-ingress   <none>   awx.example.com   192.168.0.219,2400:4050:a8e2:a00:250:56ff:fe86:454d   80, 443   4m27s
 
-NAME                                  TYPE                             DATA   AGE
-secret/awx-admin-password             Opaque                           1      5m
-secret/awx-postgres-configuration     Opaque                           6      5m
-secret/awx-secret-tls                 kubernetes.io/tls                2      5m
-secret/redhat-operators-pull-secret   kubernetes.io/dockerconfigjson   1      5m
-secret/awx-app-credentials            Opaque                           3      4m30s
-secret/awx-secret-key                 Opaque                           1      4m55s
-secret/awx-broadcast-websocket        Opaque                           1      4m52s
+NAME                                  TYPE                DATA   AGE
+secret/awx-admin-password             Opaque              1      5m
+secret/awx-postgres-configuration     Opaque              6      5m
+secret/awx-secret-tls                 kubernetes.io/tls   2      3m54s
+secret/redhat-operators-pull-secret   Opaque              1      4m30s
+secret/awx-receptor-ca                Opaque              2      4m26s
+secret/awx-receptor-work-signing      Opaque              2      4m29s
+secret/awx-app-credentials            Opaque              3      4m30s
+secret/awx-secret-key                 Opaque              1      4m55s
+secret/awx-broadcast-websocket        Opaque              1      4m52s
 ```
 
 Now your AWX is available at `https://awx.example.com/` or the hostname you specified.
