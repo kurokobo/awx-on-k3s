@@ -20,7 +20,6 @@ All information on this page is for **development, testing and study purposes on
   - [Deploy Galaxy NG](#deploy-galaxy-ng)
   - [Initial Configuration](#initial-configuration)
 - [Deploy on Kubernetes (Pulp Operator)](#deploy-on-kubernetes-pulp-operator)
-  - [Patch K3s](#patch-k3s)
   - [Install Pulp Operator](#install-pulp-operator)
   - [Prepare required files](#prepare-required-files)
   - [Deploy Galaxy NG](#deploy-galaxy-ng-1)
@@ -180,35 +179,7 @@ There is a Kubernetes Operator for Pulp 3 named Pulp Operator.
 
 - [pulp/pulp-operator: Kubernetes Operator for Pulp 3](https://github.com/pulp/pulp-operator)
 
-This project is still under active development and there is no support, however, at least the code to create a new instance seems to be implemented. In this procedure, we use [Pulp Operator 0.13.0](https://github.com/pulp/pulp-operator/tree/0.13.0)
-
-### Patch K3s
-
-If you use Traefik which is K3s' Ingress controller as completely default, the Pod may not be able to get the client's IP address (see [k3s-io/k3s#2997](https://github.com/k3s-io/k3s/discussions/2997) for details). In the current implementation of Pulp, this causes problems with the web UI being unreachable.
-
-For this reason, you should fix the Traefik configuration. For a single node like doing in this repository, reconfiguring your Traefik by creating YAML file is the easy way.
-
-```bash
-sudo tee /var/lib/rancher/k3s/server/manifests/traefik-config.yaml <<EOF
----
-apiVersion: helm.cattle.io/v1
-kind: HelmChartConfig
-metadata:
-  name: traefik
-  namespace: kube-system
-spec:
-  valuesContent: |-
-    hostNetwork: true
-EOF
-```
-
-Then wait until your `traefik` by the following command is `1/1` `READY`.
-
-```bash
-kubectl -n kube-system get deployment traefik
-```
-
-Now your client's IP address can be passed correctly through `X-Forwarded-For` and `X-Real-Ip` headers.
+This project is still under active development and there is no support, however, at least the code to create a new instance seems to be implemented. In this procedure, we use [Pulp Operator 0.14.0](https://github.com/pulp/pulp-operator/tree/0.14.0)
 
 ### Install Pulp Operator
 
@@ -218,7 +189,7 @@ Install specified version of Pulp Operator.
 cd ~
 git clone https://github.com/pulp/pulp-operator.git
 cd pulp-operator
-git checkout 0.13.0
+git checkout 0.14.0
 ```
 
 Export the name of the namespace where you want to deploy Pulp Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `pulp-operator-system`.
@@ -324,7 +295,7 @@ $ kubectl -n galaxy logs -f deployments/pulp-operator-controller-manager -c pulp
 ...
 ----- Ansible Task Status Event StdOut (pulp.pulpproject.org/v1beta1, Kind=Pulp, galaxy/galaxy) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=86   changed=0    unreachable=0    failed=0    skipped=69   rescued=0    ignored=0
+localhost                  : ok=117  changed=26   unreachable=0    failed=0    skipped=82   rescued=0    ignored=0
 ```
 
 Required objects has been deployed next to Pulp Operator in `galaxy` namespace.
@@ -374,8 +345,6 @@ NAME                                       CLASS    HOSTS                ADDRESS
 ingress.networking.k8s.io/galaxy-ingress   <none>   galaxy.example.com   192.168.0.219,2400:4050:a8e2:a00:250:56ff:fe86:454d   80, 443   4m19s
 
 NAME                                   TYPE                                  DATA   AGE
-secret/default-token-lhlds             kubernetes.io/service-account-token   3      5m4s
-secret/pulp-operator-sa-token-45zqf    kubernetes.io/service-account-token   3      5m4s
 secret/galaxy-admin-password           Opaque                                1      4m48s
 secret/galaxy-postgres-configuration   Opaque                                6      4m48s
 secret/galaxy-secret-tls               kubernetes.io/tls                     2      4m48s
