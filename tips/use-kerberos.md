@@ -197,7 +197,7 @@ Create new Container Group, Credential, and Inventory in your AWX.
 
 Create Container Group with custom pod spec that mounts `krb5.conf` to make Kerberos authentication to be used in your EE.
 
-1. Open AWX UI and open `Instance Groups` under `Administration`, then press `Add`.
+1. Open AWX UI and open `Instance Groups` under `Administration`, then press `Add` > `Add container group`.
 2. Enter `Name` as you like (e.g. `kerberos`) and toggle `Customize pod specification`.
 3. Put following YAML string to `Custom pod spec` and press `Save`
 

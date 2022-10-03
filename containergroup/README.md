@@ -75,7 +75,7 @@ Note that this is a little tricky but super useful way to duplicate resource bet
 
 ### Create Container Group
 
-You can create new Container Group by `Administration` > `Instance Group` > `Add`.
+You can create new Container Group by `Administration` > `Instance Group` > `Add` > `Add container group`.
 
 Enable `Customize pod specification` and define specification as following.
 
