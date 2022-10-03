@@ -179,7 +179,7 @@ There is a Kubernetes Operator for Pulp 3 named Pulp Operator.
 
 - [pulp/pulp-operator: Kubernetes Operator for Pulp 3](https://github.com/pulp/pulp-operator)
 
-This project is still under active development and there is no support, however, at least the code to create a new instance seems to be implemented. In this procedure, we use [Pulp Operator 0.14.0](https://github.com/pulp/pulp-operator/tree/0.14.0)
+This project is still under active development and there is no support, however, at least the code to create a new instance seems to be implemented. In this procedure, we use [Pulp Operator 0.14.1](https://github.com/pulp/pulp-operator/tree/0.14.1)
 
 ### Install Pulp Operator
 
@@ -189,7 +189,7 @@ Install specified version of Pulp Operator.
 cd ~
 git clone https://github.com/pulp/pulp-operator.git
 cd pulp-operator
-git checkout 0.14.0
+git checkout 0.14.1
 ```
 
 Export the name of the namespace where you want to deploy Pulp Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `pulp-operator-system`.
@@ -272,6 +272,8 @@ Prepare directories for Persistent Volumes defined in `pulp/pv.yaml`.
 sudo mkdir -p /data/galaxy/postgres-13
 sudo mkdir -p /data/galaxy/redis
 sudo mkdir -p /data/galaxy/pulp
+sudo chmod 755 /data/galaxy/postgres-13
+sudo chown 700:0 /data/galaxy/pulp
 ```
 
 ### Deploy Galaxy NG
