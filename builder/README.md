@@ -58,7 +58,7 @@ cd awx-on-k3s/builder
 - CentOS Stream 8 (Minimal)
 - Python 3.9
 - Docker 20.10.17
-- Ansible Builder 1.1.0
+- Ansible Builder 1.2.0
 
 ### Install Ansible Builder
 
@@ -100,7 +100,7 @@ Below is an example output of this command.
 
 ```bash
 $ ansible-builder build --tag registry.example.com/ansible/ee:2.12-custom --container-runtime docker --verbosity 3
-Ansible Builder is building your execution environment image, "registry.example.com/ansible/ee:2.12-custom".
+Ansible Builder is building your execution environment image. Tags: registry.example.com/ansible/ee:2.12-custom
 File context/_build/requirements.yml will be created.
 File context/_build/requirements.txt will be created.
 File context/_build/bindep.txt will be created.
@@ -109,9 +109,9 @@ Rewriting Containerfile to capture collection requirements
 Running command:
   docker build -f context/Dockerfile -t registry.example.com/ansible/ee:2.12-custom context
 Sending build context to Docker daemon   7.68kB
-Step 1/25 : ARG EE_BASE_IMAGE=quay.io/ansible/ansible-runner:stable-2.12-latest
-Step 2/25 : ARG EE_BUILDER_IMAGE=quay.io/ansible/ansible-builder:latest
-Step 3/25 : FROM $EE_BASE_IMAGE as galaxy
+Step 1/27 : ARG EE_BASE_IMAGE=quay.io/ansible/ansible-runner:stable-2.12-latest
+Step 2/27 : ARG EE_BUILDER_IMAGE=quay.io/ansible/ansible-builder:latest
+Step 3/27 : FROM $EE_BASE_IMAGE as galaxy
 ...
 Removing intermediate container cb1d45eac7ba
  ---> f6c3375db22e

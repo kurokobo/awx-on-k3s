@@ -117,14 +117,14 @@ fatal: [localhost]: FAILED! => {"censored": "the output has been hidden due to t
 
 AWX Operator 0.23.0 or later supports making this revealed.
 
-To achieve this, you can uncomment `no_log: "false"` manually under `spec` for your `awx.yaml`, `awxbackup.yaml`, or `awxrestore.yaml`, and then re-run your deployment, backup, or restoration.
+To achieve this, you can uncomment `no_log: false` manually under `spec` for your `awx.yaml`, `awxbackup.yaml`, or `awxrestore.yaml`, and then re-run your deployment, backup, or restoration.
 
 ```yaml
 ...
 spec:
   ...
   # Uncomment to reveal "censored" logs
-  no_log: "false"     👈👈👈
+  no_log: false     👈👈👈
   ...
 ```
 
@@ -179,7 +179,7 @@ Typical solutions are one of the following:
       ee_resource_requirements: {}     👈👈👈
     ```
 
-  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/0.30.0/README.md#containers-resource-requirements) for details.
+  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/1.0.0/README.md#containers-resource-requirements) for details.
   - In this way you can run AWX with fewer resources, but you may encounter performance issues.
 
 ### The Pod is `Pending` with "1 pod has unbound immediate PersistentVolumeClaims." event
