@@ -82,15 +82,16 @@ docker run --detach \
            pulp/pulp-galaxy-ng:latest
 ```
 
-Once it has started, load the initial configuration file.
+Once it has started, reset the `admin` password.
 
 ```bash
-DATA_FIXTURE_URL="https://raw.githubusercontent.com/ansible/galaxy_ng/master/dev/automation-hub/initial_data.json"
-curl $DATA_FIXTURE_URL | docker exec -i pulp bash -c "cat > /tmp/initial_data.json"
-docker exec pulp bash -c "/usr/local/bin/pulpcore-manager loaddata /tmp/initial_data.json"
+$ docker exec -it pulp bash -c 'pulpcore-manager reset-admin-password'
+Please enter new password for user "admin":
+Please enter new password for user "admin" again:
+Successfully set password for "admin" user.
 ```
 
-Now your own Galaxy NG is available at `http://$(hostname):8080/`. You can log in to the GUI by user `admin` with password `admin`.
+Now your own Galaxy NG is available at `http://$(hostname):8080/`. You can log in to the GUI by user `admin` with password you reset.
 
 ## Deploy on Kubernetes (All-in-One Container)
 
@@ -98,11 +99,19 @@ In this step, we will run the above All-in-One container on Kubernetes.
 
 ### Preparation
 
+Clone this repository and change directory.
+
+```bash
+cd ~
+git clone https://github.com/kurokobo/awx-on-k3s.git
+cd awx-on-k3s/galaxy
+```
+
 Generate a Self-Signed Certificate. Note that IP address can't be specified.
 
 ```bash
 GALAXY_HOST="galaxy.example.com"
-openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./galaxy/all-in-one/tls.crt -keyout ./galaxy/all-in-one/tls.key -subj "/CN=${GALAXY_HOST}/O=${GALAXY_HOST}" -addext "subjectAltName = DNS:${GALAXY_HOST}"
+openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./all-in-one/tls.crt -keyout ./all-in-one/tls.key -subj "/CN=${GALAXY_HOST}/O=${GALAXY_HOST}" -addext "subjectAltName = DNS:${GALAXY_HOST}"
 ```
 
 Modify `hosts` and `host` in `all-in-one/ingress.yaml`.
@@ -140,7 +149,7 @@ sudo mkdir -p /data/galaxy
 Deploy Galaxy NG.
 
 ```bash
-kubectl apply -k galaxy/all-in-one
+kubectl apply -k all-in-one
 ```
 
 Required resources has been deployed in `galaxy` namespace.
@@ -162,16 +171,17 @@ replicaset.apps/galaxy-78df96fc64   1         1         1       53s
 
 ### Initial Configuration
 
-Once it has started, load the initial configuration file.
+Once it has started, reset the `admin` password.
 
 ```bash
-POD_NAME=$(kubectl -n galaxy get pod -l app=galaxy -o name)
-DATA_FIXTURE_URL="https://raw.githubusercontent.com/ansible/galaxy_ng/master/dev/automation-hub/initial_data.json"
-curl $DATA_FIXTURE_URL | kubectl -n galaxy exec -i $POD_NAME -- bash -c "cat > /tmp/initial_data.json"
-kubectl -n galaxy exec -i $POD_NAME -- bash -c "/usr/local/bin/pulpcore-manager loaddata /tmp/initial_data.json"
+$ POD_NAME=$(kubectl -n galaxy get pod -l app=galaxy -o name)
+$ kubectl -n galaxy exec -it $POD_NAME -- bash -c 'pulpcore-manager reset-admin-password'
+Please enter new password for user "admin":
+Please enter new password for user "admin" again:
+Successfully set password for "admin" user.
 ```
 
-Now Galaxy NG is available at `https://galaxy.example.com/` or the hostname you specified. You can log in to the GUI by user `admin` with password `admin`.
+Now Galaxy NG is available at `https://galaxy.example.com/` or the hostname you specified. You can log in to the GUI by user `admin` with password you reset.
 
 ## Deploy on Kubernetes (Pulp Operator)
 
@@ -448,8 +458,13 @@ cat <<EOF > sample_role/tasks/main.yml
     msg: "World"
 EOF
 
-# Build tarball
+# Create CHANGELOG.rst
+# You can install antsibull-changelog by "pip install antsibull-changelog"
 cd ../
+antsibull-changelog init .
+antsibull-changelog release
+
+# Build tarball
 ansible-galaxy collection build
 ```
 
