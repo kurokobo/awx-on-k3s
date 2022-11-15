@@ -32,8 +32,6 @@ spec:
   file_storage_size: 8Gi
 
   pulp_settings:
-    GALAXY_FEATURE_FLAGS:
-      execution_environments: "True"
     TOKEN_AUTH_DISABLED: "True"
 
   api:
