@@ -59,7 +59,7 @@ rolebinding.rbac.authorization.k8s.io/awx-backup created
 
 Since you have complete control over `spec` of `AWXBackup` via `awxbackup_spec` variables, whether or not this step is required depends on your environment. Check [the official documentation](https://github.com/ansible/awx-operator/tree/devel/roles/backup) and prepare as needed.
 
-If your AWX was deployed by referring [the main guide on this repository](../../README.md), preparing backup storage by following [he basic backup guide](../README.md#prepare-for-backup) is good starting point.
+If your AWX was deployed by referring [the main guide on this repository](../../README.md), preparing backup storage by following [the basic backup guide](../README.md#prepare-for-backup) is good starting point.
 
 ## Use with Ansible
 
