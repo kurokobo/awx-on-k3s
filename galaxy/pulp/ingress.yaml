@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: galaxy-ingress
+  name: galaxy
 spec:
   tls:
     - hosts:
@@ -16,6 +16,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: galaxy-service
+                name: galaxy-web-svc
                 port:
-                  number: 80
+                  number: 24880
