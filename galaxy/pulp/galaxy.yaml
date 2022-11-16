@@ -1,13 +1,15 @@
-apiVersion: pulp.pulpproject.org/v1beta1
+apiVersion: repo-manager.pulpproject.org/v1alpha1
 kind: Pulp
 metadata:
   name: galaxy
 spec:
   # These parameters are designed for use with:
-  # - Pulp Operator: 0.14.1
-  #   https://github.com/pulp/pulp-operator/blob/0.14.1/README.md
+  # - Pulp Operator: 1.0.0-alpha.2
+  #   https://github.com/pulp/pulp-operator/blob/1.0.0-alpha.2/README.md
   # - Galaxy NG: 4.5.2
   #   https://github.com/ansible/galaxy_ng/tree/4.5.2
+
+  deployment_type: galaxy
 
   image: quay.io/pulp/galaxy
   image_version: 4.5.2
@@ -16,29 +18,36 @@ spec:
 
   admin_password_secret: galaxy-admin-password
 
-  ingress_type: ingress
-  ingress_tls_secret: galaxy-secret-tls
-  hostname: galaxy.example.com
-
-  postgres_storage_class: galaxy-postgres-volume
-  postgres_storage_requirements:
-    requests:
-      storage: 8Gi
-  redis_storage_class: galaxy-redis-volume
+  # As a workaround for 1.0.0-alpha.2,
+  # to force use TLS termination on Ingress and to force to deploy Pulp Web container,
+  # keep ingress_type empty and deploy ingress without using Operator.
+  # I believe this can be back in the next release.
+  # https://github.com/pulp/pulp-operator/issues/676
+  # https://github.com/pulp/pulp-operator/issues/770
+  #ingress_type: ingress
+  #ingress_tls_secret: galaxy-secret-tls
+  #ingress_host: galaxy.example.com
 
   storage_type: file
-  file_storage_storage_class: galaxy-pulp-volume
+  file_storage_storage_class: galaxy-file-volume
   file_storage_access_mode: ReadWriteOnce
   file_storage_size: 8Gi
 
   pulp_settings:
+    ANSIBLE_API_HOSTNAME: https://galaxy.example.com
+    CONTENT_ORIGIN: https://galaxy.example.com
     TOKEN_AUTH_DISABLED: "True"
 
   api:
     replicas: 1
+  cache:
+    redis_storage_class: galaxy-redis-volume
   content:
     replicas: 1
-  worker:
-    replicas: 1
+  database:
+    postgres_storage_class: galaxy-database-volume
+    postgres_storage_requirements: 8Gi
   web:
+    replicas: 1
+  worker:
     replicas: 1
