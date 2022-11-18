@@ -189,7 +189,7 @@ There is a Kubernetes Operator for Pulp 3 named Pulp Operator.
 
 - [pulp/pulp-operator: Kubernetes Operator for Pulp 3](https://github.com/pulp/pulp-operator)
 
-This project is in alpha stage and under active development. In this guide, we use [Pulp Operator 1.0.0-alpha.2](https://github.com/pulp/pulp-operator/tree/1.0.0-alpha.2).
+This project is in alpha stage and under active development. In this guide, we use [Pulp Operator 1.0.0-alpha.3](https://github.com/pulp/pulp-operator/tree/1.0.0-alpha.3).
 
 ### Install Pulp Operator
 
@@ -199,7 +199,7 @@ Install specified version of Pulp Operator.
 cd ~
 git clone https://github.com/pulp/pulp-operator.git
 cd pulp-operator
-git checkout 1.0.0-alpha.2
+git checkout 1.0.0-alpha.3
 ```
 
 Export the name of the namespace where you want to deploy Pulp Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `pulp-operator-system`. Note that `make deploy` requires `go` binary by default but you can remove this dependency by small `sed` patch.
@@ -244,17 +244,16 @@ GALAXY_HOST="galaxy.example.com"
 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./pulp/tls.crt -keyout ./pulp/tls.key -subj "/CN=${GALAXY_HOST}/O=${GALAXY_HOST}" -addext "subjectAltName = DNS:${GALAXY_HOST}"
 ```
 
-Modify `ANSIBLE_API_HOSTNAME` and `CONTENT_ORIGIN` in `pulp/galaxy.yaml`.
+Modify `ingress_host` in `pulp/galaxy.yaml`.
 
 ```yaml
 ...
 spec:
   ...
-  pulp_settings:
-    ANSIBLE_API_HOSTNAME: https://galaxy.example.com     👈👈👈
-    CONTENT_ORIGIN: https://galaxy.example.com     👈👈👈
-    TOKEN_AUTH_DISABLED: "True"
-  ...
+  ingress_type: ingress
+  ingress_tls_secret: galaxy-secret-tls
+  ingress_host: galaxy.example.com     👈👈👈
+...
 ```
 
 Modify two `password`s in `pulp/kustomization.yaml`.
@@ -276,18 +275,6 @@ Modify two `password`s in `pulp/kustomization.yaml`.
     type: Opaque
     literals:
       - password=Galaxy123!     👈👈👈
-...
-```
-
-Modify `hosts` and `host` in `pulp/ingress.yaml`.
-
-```yaml
-...
-    - hosts:
-        - galaxy.example.com     👈👈👈
-      secretName: galaxy-secret-tls
-  rules:
-    - host: galaxy.example.com     👈👈👈
 ...
 ```
 
@@ -321,7 +308,7 @@ When the deployment completes successfully, the logs end with:
 $ kubectl -n galaxy logs -f deployments/pulp-operator-controller-manager
 ...
 2006-01-02T15:04:05Z    INFO    repo_manager/status.go:133      galaxy operator finished execution ...
-2006-01-02T15:04:05Z    INFO    repo_manager/controller.go:335  Operator tasks synced
+2006-01-02T15:04:05Z    INFO    repo_manager/controller.go:336  Operator tasks synced
 ```
 
 Required objects has been deployed next to Pulp Operator in `galaxy` namespace.
@@ -329,55 +316,55 @@ Required objects has been deployed next to Pulp Operator in `galaxy` namespace.
 ```bash
 $ kubectl -n galaxy get pulp,all,ingress,secrets
 NAME                                       AGE
-pulp.repo-manager.pulpproject.org/galaxy   3m21s
+pulp.repo-manager.pulpproject.org/galaxy   3m22s
 
-NAME                                                   READY   STATUS    RESTARTS   AGE
-pod/pulp-operator-controller-manager-c4d6bcbb7-trdr4   2/2     Running   0          3m54s
-pod/galaxy-redis-7f985cb4f9-47xvl                      1/1     Running   0          3m20s
-pod/galaxy-database-0                                  1/1     Running   0          3m20s
-pod/galaxy-worker-6cb8c9dc97-mfcvm                     1/1     Running   0          3m20s
-pod/galaxy-content-7cf7cf49f6-94qmm                    1/1     Running   0          3m20s
-pod/galaxy-api-6b86d65586-q9hnk                        1/1     Running   0          3m20s
-pod/galaxy-web-546fbf459-mcdtz                         1/1     Running   0          3m20s
+NAME                                                    READY   STATUS    RESTARTS   AGE
+pod/pulp-operator-controller-manager-66445f9d88-w6qjv   2/2     Running   0          5m34s
+pod/galaxy-redis-84c95d97f8-86hkk                       1/1     Running   0          3m22s
+pod/galaxy-database-0                                   1/1     Running   0          3m22s
+pod/galaxy-worker-588c5f4df4-k255c                      1/1     Running   0          3m16s
+pod/galaxy-api-6b86d65586-7rx79                         1/1     Running   0          3m17s
+pod/galaxy-content-7cf7cf49f6-tqqbl                     1/1     Running   0          3m17s
+pod/galaxy-web-546fbf459-cmn9v                          1/1     Running   0          2m44s
 
 NAME                                                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)     AGE
-service/pulp-operator-controller-manager-metrics-service   ClusterIP   10.43.132.135   <none>        8443/TCP    3m54s
-service/galaxy-database-svc                                ClusterIP   None            <none>        5432/TCP    3m20s
-service/galaxy-redis-svc                                   ClusterIP   10.43.13.40     <none>        6379/TCP    3m20s
-service/galaxy-api-svc                                     ClusterIP   10.43.134.165   <none>        24817/TCP   3m20s
-service/galaxy-content-svc                                 ClusterIP   10.43.204.25    <none>        24816/TCP   3m20s
-service/galaxy-web-svc                                     ClusterIP   10.43.219.152   <none>        24880/TCP   3m20s
+service/pulp-operator-controller-manager-metrics-service   ClusterIP   10.43.22.172    <none>        8443/TCP    5m34s
+service/galaxy-database-svc                                ClusterIP   None            <none>        5432/TCP    3m22s
+service/galaxy-redis-svc                                   ClusterIP   10.43.196.8     <none>        6379/TCP    3m22s
+service/galaxy-api-svc                                     ClusterIP   10.43.65.203    <none>        24817/TCP   3m17s
+service/galaxy-content-svc                                 ClusterIP   10.43.226.206   <none>        24816/TCP   3m16s
+service/galaxy-web-svc                                     ClusterIP   10.43.7.188     <none>        24880/TCP   2m43s
 
 NAME                                               READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/pulp-operator-controller-manager   1/1     1            1           3m54s
-deployment.apps/galaxy-redis                       1/1     1            1           3m20s
-deployment.apps/galaxy-worker                      1/1     1            1           3m20s
-deployment.apps/galaxy-content                     1/1     1            1           3m20s
-deployment.apps/galaxy-api                         1/1     1            1           3m20s
-deployment.apps/galaxy-web                         1/1     1            1           3m20s
+deployment.apps/pulp-operator-controller-manager   1/1     1            1           5m34s
+deployment.apps/galaxy-redis                       1/1     1            1           3m22s
+deployment.apps/galaxy-worker                      1/1     1            1           3m16s
+deployment.apps/galaxy-api                         1/1     1            1           3m17s
+deployment.apps/galaxy-content                     1/1     1            1           3m17s
+deployment.apps/galaxy-web                         1/1     1            1           2m44s
 
-NAME                                                         DESIRED   CURRENT   READY   AGE
-replicaset.apps/pulp-operator-controller-manager-c4d6bcbb7   1         1         1       3m54s
-replicaset.apps/galaxy-redis-7f985cb4f9                      1         1         1       3m20s
-replicaset.apps/galaxy-worker-6cb8c9dc97                     1         1         1       3m20s
-replicaset.apps/galaxy-content-7cf7cf49f6                    1         1         1       3m20s
-replicaset.apps/galaxy-api-6b86d65586                        1         1         1       3m20s
-replicaset.apps/galaxy-web-546fbf459                         1         1         1       3m20s
+NAME                                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/pulp-operator-controller-manager-66445f9d88   1         1         1       5m34s
+replicaset.apps/galaxy-redis-84c95d97f8                       1         1         1       3m22s
+replicaset.apps/galaxy-worker-588c5f4df4                      1         1         1       3m16s
+replicaset.apps/galaxy-api-6b86d65586                         1         1         1       3m17s
+replicaset.apps/galaxy-content-7cf7cf49f6                     1         1         1       3m17s
+replicaset.apps/galaxy-web-546fbf459                          1         1         1       2m44s
 
 NAME                               READY   AGE
-statefulset.apps/galaxy-database   1/1     3m20s
+statefulset.apps/galaxy-database   1/1     3m22s
 
 NAME                               CLASS    HOSTS                ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/galaxy   <none>   galaxy.example.com   192.168.0.219   80, 443   3m21s
+ingress.networking.k8s.io/galaxy   <none>   galaxy.example.com   192.168.0.219   80, 443   2m45s
 
 NAME                                   TYPE                DATA   AGE
-secret/galaxy-admin-password           Opaque              1      3m21s
-secret/galaxy-postgres-configuration   Opaque              7      3m21s
-secret/galaxy-secret-tls               kubernetes.io/tls   2      3m21s
-secret/redhat-operators-pull-secret    Opaque              1      3m21s
-secret/galaxy-server                   Opaque              1      3m20s
-secret/galaxy-db-fields-encryption     Opaque              1      3m20s
-secret/galaxy-container-auth           Opaque              2      3m20s
+secret/galaxy-admin-password           Opaque              1      3m22s
+secret/galaxy-postgres-configuration   Opaque              7      3m22s
+secret/galaxy-secret-tls               kubernetes.io/tls   2      3m22s
+secret/redhat-operators-pull-secret    Opaque              1      3m22s
+secret/galaxy-server                   Opaque              1      3m22s
+secret/galaxy-db-fields-encryption     Opaque              1      3m22s
+secret/galaxy-container-auth           Opaque              2      3m22s
 ```
 
 Now your AWX is available at `https://galaxy.example.com/` or the hostname you specified. You can log in to the GUI by user `admin` with password you specified in `pulp/kustomization.yaml`.
