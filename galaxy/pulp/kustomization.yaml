@@ -31,5 +31,4 @@ secretGenerator:
 
 resources:
   - pv.yaml
-  - ingress.yaml
   - galaxy.yaml
