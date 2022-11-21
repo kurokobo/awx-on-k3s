@@ -8,7 +8,7 @@ Deploying your private container registry on your K3s to use with AWX.
 
 - [Procedure](#procedure)
   - [Prepare required files](#prepare-required-files)
-  - [Deploy Private Container Registry](#deploy-private-container-registry)
+  - [Deploy Private Container Registry](#deploy-private-container-registry-1)
 - [Quick Testing](#quick-testing)
   - [Testing with Docker](#testing-with-docker)
   - [Digging into the Registry](#digging-into-the-registry)
@@ -86,8 +86,8 @@ deployment.apps/registry   1/1     1            1           9s
 NAME                                  DESIRED   CURRENT   READY   AGE
 replicaset.apps/registry-7457f6c64b   1         1         1       9s
 
-NAME                                         CLASS    HOSTS                  ADDRESS                                               PORTS     AGE
-ingress.networking.k8s.io/registry-ingress   <none>   registry.example.com   192.168.0.219,2400:4050:a8e2:a00:250:56ff:fe86:454d   80, 443 
+NAME                                         CLASS    HOSTS                  ADDRESS         PORTS     AGE
+ingress.networking.k8s.io/registry-ingress   <none>   registry.example.com   192.168.0.219   80, 443
 ```
 
 Now your container registry can be used through `registry.example.com` or the hostname you specified.

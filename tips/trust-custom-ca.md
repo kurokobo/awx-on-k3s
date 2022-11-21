@@ -121,5 +121,5 @@ kubectl apply -k base
 You can monitor the progress of the re-deployment by following command:
 
 ```bash
-kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
+kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ```

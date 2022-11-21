@@ -53,13 +53,13 @@ kubectl apply -f backup/awxbackup.yaml
 To monitor the progress of the deployment, check the logs of `deployments/awx-operator-controller-manager`:
 
 ```bash
-kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
+kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ```
 
 When the backup completes successfully, the logs end with:
 
 ```txt
-$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWXBackup, awxbackup-2021-06-06/awx) -----
 PLAY RECAP *********************************************************************
