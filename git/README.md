@@ -66,8 +66,8 @@ deployment.apps/git   1/1     1            1           9s
 NAME                            DESIRED   CURRENT   READY   AGE
 replicaset.apps/git-56cc958f9   1         1         1       9s
 
-NAME                                    CLASS    HOSTS             ADDRESS                                               PORTS     AGE
-ingress.networking.k8s.io/git-ingress   <none>   git.example.com   192.168.0.219,2400:4050:a8e2:a00:250:56ff:fe86:454d   80, 443   9s
+NAME                                    CLASS    HOSTS             ADDRESS         PORTS     AGE
+ingress.networking.k8s.io/git-ingress   <none>   git.example.com   192.168.0.219   80, 443   9s
 ```
 
 Now your Git repository is accessible through `https://git.example.com/` or the hostname you specified. Visit the URL and follow the installation wizard.

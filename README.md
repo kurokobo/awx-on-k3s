@@ -31,15 +31,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 8 (Minimal)
   - K3s v1.25.3+k3s1
 - Products that will be deployed:
-  - AWX Operator 1.0.0
-  - AWX 21.8.0
+  - AWX Operator 1.1.0
+  - AWX 21.9.0
   - PostgreSQL 13
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://rancher.com/docs/k3s/latest/en/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/21.8.0/INSTALL.md) @21.8.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/1.0.0/README.md) @1.0.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/21.9.0/INSTALL.md) @21.9.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/1.1.0/README.md) @1.1.0
 
 ## Requirements
 
@@ -90,7 +90,7 @@ Install specified version of AWX Operator. Note that this procedure is applicabl
 cd ~
 git clone https://github.com/ansible/awx-operator.git
 cd awx-operator
-git checkout 1.0.0
+git checkout 1.1.0
 ```
 
 Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
@@ -127,7 +127,7 @@ If you want to use files suitable for the specific version of AWX Operator, [ref
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 1.0.0
+git checkout 1.1.0
 ```
 
 Generate a Self-Signed certificate. Note that IP address can't be specified. If you want to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate, follow the guide on [📁 **Use SSL Certificate from Public ACME CA**](acme) first and come back to this step when done.
@@ -190,13 +190,13 @@ kubectl apply -k base
 To monitor the progress of the deployment, check the logs of `deployments/awx-operator-controller-manager`:
 
 ```bash
-kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
+kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ```
 
 When the deployment completes successfully, the logs end with:
 
 ```txt
-$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
@@ -231,19 +231,19 @@ replicaset.apps/awx-5b859c644                                1         1        
 NAME                               READY   AGE
 statefulset.apps/awx-postgres-13   1/1     4m46s
 
-NAME                                    CLASS    HOSTS             ADDRESS                                               PORTS     AGE
-ingress.networking.k8s.io/awx-ingress   <none>   awx.example.com   192.168.0.219,2400:4050:a8e2:a00:250:56ff:fe86:454d   80, 443   4m27s
+NAME                                    CLASS    HOSTS             ADDRESS         PORTS     AGE
+ingress.networking.k8s.io/awx-ingress   <none>   awx.example.com   192.168.0.219   80, 443   4m27s
 
 NAME                                  TYPE                DATA   AGE
 secret/awx-admin-password             Opaque              1      5m
 secret/awx-postgres-configuration     Opaque              6      5m
 secret/awx-secret-tls                 kubernetes.io/tls   2      3m54s
 secret/redhat-operators-pull-secret   Opaque              1      4m30s
-secret/awx-receptor-ca                Opaque              2      4m26s
-secret/awx-receptor-work-signing      Opaque              2      4m29s
 secret/awx-app-credentials            Opaque              3      4m30s
 secret/awx-secret-key                 Opaque              1      4m55s
 secret/awx-broadcast-websocket        Opaque              1      4m52s
+secret/awx-receptor-ca                Opaque              2      4m26s
+secret/awx-receptor-work-signing      Opaque              2      4m29s
 ```
 
 Now your AWX is available at `https://awx.example.com/` or the hostname you specified.

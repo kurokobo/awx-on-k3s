@@ -14,7 +14,7 @@ Some hints and guides for when you got stuck during deployment and daily use of 
   - [The Pod is `ErrImagePull` with "429 Too Many Requests"](#the-pod-is-errimagepull-with-429-too-many-requests)
   - [The Pod is `Pending` with "1 Insufficient cpu, 1 Insufficient memory." event](#the-pod-is-pending-with-1-insufficient-cpu-1-insufficient-memory-event)
   - [The Pod is `Pending` with "1 pod has unbound immediate PersistentVolumeClaims." event](#the-pod-is-pending-with-1-pod-has-unbound-immediate-persistentvolumeclaims-event)
-  - [The Pod is `Running` but stucked with "[wait-for-migrations] Waiting for database migrations..." message](#the-pod-is-running-but-stucked-with-wait-for-migrations-waiting-for-database-migrations-message)
+  - [The Pod is `Running` but stucked with "wait-for-migrations" message](#the-pod-is-running-but-stucked-with-wait-for-migrations-message)
   - [The Pod for PostgreSQL is in `CrashLoopBackOff` state and shows "Permission denied" log](#the-pod-for-postgresql-is-in-crashloopbackoff-state-and-shows-permission-denied-log)
 - [Troubles during Daily Use](#troubles-during-daily-use)
   - [Job failed with no output](#job-failed-with-no-output)
@@ -94,7 +94,7 @@ kubectl -n awx logs -f statefulset/<Deployment Name> -c <Container Name>
 For AWX Operator and AWX, specifically, the following commands are helpful.
 
 - Logs of AWX Operator
-  - `kubectl -n awx logs -f deployment/awx-operator-controller-manager -c awx-manager`
+  - `kubectl -n awx logs -f deployment/awx-operator-controller-manager`
 - Logs of AWX related containers
   - `kubectl -n awx logs -f deployment/awx -c awx-web`
   - `kubectl -n awx logs -f deployment/awx -c awx-task`
@@ -108,7 +108,7 @@ For AWX Operator and AWX, specifically, the following commands are helpful.
 If you've found the `FAILED` tasks while investigating AWX Operator's log, sadly sometimes it's marked as `censored` and you can't get actual log.
 
 ```bash
-$ kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
+$ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 TASK [Restore database dump to the new postgresql container] ********************************
 fatal: [localhost]: FAILED! => {"censored": "the output has been hidden due to the fact that 'no_log: true' was specified for this result", "changed": true}
@@ -179,7 +179,7 @@ Typical solutions are one of the following:
       ee_resource_requirements: {}     👈👈👈
     ```
 
-  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/1.0.0/README.md#containers-resource-requirements) for details.
+  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/1.1.0/README.md#containers-resource-requirements) for details.
   - In this way you can run AWX with fewer resources, but you may encounter performance issues.
 
 ### The Pod is `Pending` with "1 pod has unbound immediate PersistentVolumeClaims." event
@@ -232,7 +232,7 @@ To solve this, typical solutions are one of the following:
     kubectl apply -k base
     ```
 
-### The Pod is `Running` but stucked with "[wait-for-migrations] Waiting for database migrations..." message
+### The Pod is `Running` but stucked with "wait-for-migrations" message
 
 Sometimes your AWX pod is `Running` state correctly but not functional at all, and its log shows following message repeatedly.
 
@@ -392,7 +392,7 @@ kubectl apply -k base
 You can watch its progress by following command as did when you deploy AWX at the first time.
 
 ```bash
-kubectl -n awx logs -f deployments/awx-operator-controller-manager -c awx-manager
+kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ```
 
 Alternatively you can modify this settings via AWX UI. Move on to `Settings` > `Miscellaneous System settings` > `Edit` page, then and put following JSON strings as `Remote Host Headers`.
