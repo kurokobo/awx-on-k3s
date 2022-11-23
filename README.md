@@ -294,4 +294,5 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
   - [📝Workaround for the rate limit on Docker Hub](tips/dockerhub-rate-limit.md)
   - [📝Version Mapping between AWX Operator and AWX](tips/version-mapping.md)
   - [📝Use Kerberos authentication to connect to Windows hosts](tips/use-kerberos.md)
+  - [📝Use Helm or Operator Lifecycle Manager to manage AWX Operator and AWX](tips/alternative-methods.md)
   - [📝Troubleshooting Guide](tips/troubleshooting.md)
