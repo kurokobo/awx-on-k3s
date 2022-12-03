@@ -4,8 +4,8 @@ metadata:
   name: galaxy
 spec:
   # These parameters are designed for use with:
-  # - Pulp Operator: 1.0.0-alpha.3
-  #   https://github.com/pulp/pulp-operator/blob/1.0.0-alpha.3/README.md
+  # - Pulp Operator: 1.0.0-alpha.4
+  #   https://github.com/pulp/pulp-operator/blob/1.0.0-alpha.4/README.md
   # - Galaxy NG: 4.5.2
   #   https://github.com/ansible/galaxy_ng/tree/4.5.2
 
@@ -19,6 +19,7 @@ spec:
   admin_password_secret: galaxy-admin-password
 
   ingress_type: ingress
+  ingress_class_name: traefik
   ingress_tls_secret: galaxy-secret-tls
   ingress_host: galaxy.example.com
 
