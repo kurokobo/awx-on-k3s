@@ -142,6 +142,9 @@ In this case, the PostgreSQL will be dumped while the job is running, so complet
 2. Add new Project including the playbook.
    - You can specify this repository (`https://github.com/kurokobo/awx-on-k3s.git`) directly, but use with caution. The playbook in this repository is subject to change without notice. You can use [Tag](https://github.com/kurokobo/awx-on-k3s/tags) or [Commit](https://github.com/kurokobo/awx-on-k3s/commits/main) to fix the version to be used.
 3. Add new Job Template which use the playbook.
+   - Select appropriate `Inventory`. The bundled `Demo Inventory` is enough to use. If you specify your own inventory, ensure `localhost` is defined in the inventory and following variables are enabled for `localhost`.
+     - `ansible_connection: local`
+     - `ansible_python_interpreter: '{{ ansible_playbook_python }}'`
    - Select appropriate `Execution Environment`. The default `AWX EE (latest)` (`quay.io/ansible/awx-ee:latest`) contains required collections and modules by default, so it's good for the first choice.
    - Select your `backup.yml` as `Playbook`.
    - Specify `Variables` as needed.
