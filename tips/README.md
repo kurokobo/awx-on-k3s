@@ -1,5 +1,6 @@
 # Tips
 
+- [📝Create "Manual" type project](manual-project.md)
 - [📝Deploy AWX using external PostgreSQL database](external-db.md)
 - [📝Trust custom Certificate Authority](trust-custom-ca.md)
 - [📝Expose `/etc/hosts` to Pods on K3s](expose-hosts.md)
