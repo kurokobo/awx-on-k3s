@@ -283,6 +283,7 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
 - [📁 **Use Customized Pod Specification for your Execution Environment**](containergroup)
   - The guide to use customized Pod of the Execution Environment using **Container Group**.
 - [📁 **Tips**](tips)
+  - [📝Create "Manual" type project](tips/manual-project.md)
   - [📝Deploy AWX using external PostgreSQL database](tips/external-db.md)
   - [📝Trust custom Certificate Authority](tips/trust-custom-ca.md)
   - [📝Expose `/etc/hosts` to Pods on K3s](tips/expose-hosts.md)
