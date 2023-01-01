@@ -12,7 +12,7 @@ So, to add project directories, simply, just placing it under `/data/projects` o
 
 ## Procedure
 
-Create new directory under `/data/projects` on your K3s host, and place your playbooks under the directory you created.
+Create new directory under `/data/projects` on your K3s host, and place your playbooks under the directory you created. Note that this directory and files under the directory must be readable by the user with UID `1000`.
 
 ```bash
 $ tree /data/projects/
