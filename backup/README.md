@@ -81,9 +81,9 @@ drwxr-xr-x. 2 root root 59 Jun  5 06:51 tower-openshift-backup-2021-06-06-10:51:
 
 $ ls -l /data/backup/tower-openshift-backup-2021-06-06-10\:51\:49/
 total 736
--rw-r--r--. 1 root             root    749 Jun  6 06:51 awx_object
--rw-r--r--. 1 root             root    482 Jun  6 06:51 secrets.yml
--rw-------. 1 systemd-coredump root 745302 Jun  6 06:51 tower.db
+-rw-r--r--. 1 root         749 Jun  6 06:51 awx_object
+-rw-r--r--. 1 root         482 Jun  6 06:51 secrets.yml
+-rw-rw----. 1 root root 745302 Jun  6 06:51 tower.db
 ```
 
 ## Appendix: Back up AWX using Ansible

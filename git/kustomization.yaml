@@ -13,6 +13,10 @@ secretGenerator:
       - tls.crt
       - tls.key
 
+images:
+  - name: gitea/gitea
+    newTag: "1.18"
+
 resources:
   - namespace.yaml
   - pv.yaml
