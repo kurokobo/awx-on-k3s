@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: git
-          image: gitea/gitea:1.17
+          image: gitea/gitea:latest
           ports:
             - name: gitea-http
               containerPort: 3000

@@ -4,17 +4,17 @@ metadata:
   name: galaxy
 spec:
   # These parameters are designed for use with:
-  # - Pulp Operator: 1.0.0-alpha.4
-  #   https://github.com/pulp/pulp-operator/blob/1.0.0-alpha.4/README.md
-  # - Galaxy NG: 4.5.2
-  #   https://github.com/ansible/galaxy_ng/tree/4.5.2
+  # - Pulp Operator: 1.0.0-alpha.5
+  #   https://github.com/pulp/pulp-operator/blob/1.0.0-alpha.5/README.md
+  # - Galaxy NG: 4.6.3
+  #   https://github.com/ansible/galaxy_ng/tree/4.6.3
 
   deployment_type: galaxy
 
   image: quay.io/pulp/galaxy
-  image_version: 4.5.2
+  image_version: 4.6.3
   image_web: quay.io/pulp/galaxy-web
-  image_web_version: 4.5.2
+  image_web_version: 4.6.3
 
   admin_password_secret: galaxy-admin-password
 

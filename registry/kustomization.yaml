@@ -13,6 +13,10 @@ secretGenerator:
       - tls.crt
       - tls.key
 
+images:
+  - name: registry
+    newTag: "2.8"
+
 resources:
   - namespace.yaml
   - pv.yaml
