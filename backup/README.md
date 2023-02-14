@@ -63,7 +63,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWXBackup, awxbackup-2021-06-06/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=4    changed=0    unreachable=0    failed=0    skipped=8    rescued=0    ignored=0
+localhost                  : ok=7    changed=0    unreachable=0    failed=0    skipped=9    rescued=0    ignored=0
 ```
 
 This will create AWXBackup object in the namespace and also create backup files in the Persistent Volume. In this example those files are available at `/data/backup`.
@@ -81,9 +81,9 @@ drwxr-xr-x. 2 root root 59 Jun  5 06:51 tower-openshift-backup-2021-06-06-10:51:
 
 $ ls -l /data/backup/tower-openshift-backup-2021-06-06-10\:51\:49/
 total 736
--rw-r--r--. 1 root         749 Jun  6 06:51 awx_object
--rw-r--r--. 1 root         482 Jun  6 06:51 secrets.yml
--rw-rw----. 1 root root 745302 Jun  6 06:51 tower.db
+-rw-------. 1 1001 root   1093 Jun  6 06:51 awx_object
+-rw-------. 1 1001 root  17085 Jun  6 06:51 secrets.yml
+-rw-rw----. 1 root root 833184 Jun  6 06:51 tower.db
 ```
 
 ## Appendix: Back up AWX using Ansible
