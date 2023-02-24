@@ -64,8 +64,8 @@ Disable firewalld and nm-cloud-setup if enabled. This is [recommended by K3s](ht
 sudo systemctl disable firewalld --now
 
 # Disable nm-cloud-setup if exists and enabled
-systemctl disable nm-cloud-setup.service nm-cloud-setup.timer
-reboot
+sudo systemctl disable nm-cloud-setup.service nm-cloud-setup.timer
+sudo reboot
 ```
 
 Install required packages to deploy AWX Operator and AWX.
