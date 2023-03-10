@@ -222,7 +222,6 @@ If you simply need additional Ansible collections only, and no additional Pip or
 
 The procedure is quite simple, create and place `collections/requirements.yml` on your project root including the list of the collections which you want to use.
 
-The format of `collections/requirements.yml` is the same as [the `requirements.yml` for ansible-galaxy](
-https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#install-multiple-collections-with-a-requirements-file).
+The format of `collections/requirements.yml` is the same as [the `requirements.yml` for ansible-galaxy](https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#install-multiple-collections-with-a-requirements-file).
 
 If `collections/requirements.yml` is present in your project, AWX will install the collections accordingly while updating project.
