@@ -27,8 +27,9 @@ This page shows you how to use Kerberos authentication for running job templates
 - [Troubleshooting](#troubleshooting)
   - [Playbook for investigation](#playbook-for-investigation)
   - [Ensure your `krb5.conf` is mounted](#ensure-your-krb5conf-is-mounted)
-  - [Ensure your KDC is accessible from the EE](#ensure-your-kdc-is-accessible-from-the-ee)
+  - [Ensure your KDC and target host are accessible from the EE](#ensure-your-kdc-and-target-host-are-accessible-from-the-ee)
   - [Ensure `kinit` can be succeeded manually](#ensure-kinit-can-be-succeeded-manually)
+  - [Gather trace logs for your playbook](#gather-trace-logs-for-your-playbook)
   - [Common issues and workarounds](#common-issues-and-workarounds)
     - [Error creating pod](#error-creating-pod)
     - [kinit: Cannot find KDC for realm "\<DOMAINNAME\>" while getting initial credentials](#kinit-cannot-find-kdc-for-realm-domainname-while-getting-initial-credentials)
@@ -139,9 +140,14 @@ There are some official documentation about `krb5.conf`:
 - Ansible Automation Controller documentation
   - [23. User Authentication with Kerberos](https://docs.ansible.com/automation-controller/latest/html/administration/kerberos_auth.html)
 
-This is my minimal example. Note that some domain names under `[realms]` and `[domain_realm]` are capitalized.
+This is my example. Note that some domain names under `[realms]` and `[domain_realm]` are capitalized.
 
 ```ini
+[libdefaults]
+  dns_lookup_realm = false
+  dns_lookup_kdc = false
+  rdns = false
+
 [realms]
   KUROKOBO.INTERNAL = {
     kdc = kuro-ad01.kurokobo.internal
@@ -172,6 +178,11 @@ $ kubectl -n awx get configmap awx-kerberos-config -o yaml
 apiVersion: v1
 data:
   krb5.conf: |-
+    [libdefaults]
+      dns_lookup_realm = false
+      dns_lookup_kdc = false
+      rdns = false
+
     [realms]
       KUROKOBO.INTERNAL = {
         kdc = kuro-ad01.kurokobo.internal
@@ -344,7 +355,7 @@ Now you can access `bash` inside the EE by `kubectl -n <namespace> exec -it <pod
 
 ```bash
 $ kubectl -n awx exec -it automation-job-42-tdvs5 -- bash
-bash-4.4$     👈👈👈
+bash-5.1$     👈👈👈
 ```
 
 Then proceed investigation.
@@ -354,7 +365,12 @@ Then proceed investigation.
 If your Container Group and ConfigMap are configured correctly, you can get your `krb5.conf` as `/etc/krb5.conf` inside the EE.
 
 ```bash
-bash-4.4$ cat /etc/krb5.conf
+bash-5.1$ cat /etc/krb5.conf
+[libdefaults]
+  dns_lookup_realm = false
+  dns_lookup_kdc = false
+  rdns = false
+
 [realms]
   KUROKOBO.INTERNAL = {
     kdc = kuro-ad01.kurokobo.internal
@@ -368,42 +384,78 @@ bash-4.4$ cat /etc/krb5.conf
 
 If your `krb5.conf` is missing, ensure your custom pod spec for Container Group and ConfigMap for your `krb5.conf` are correct.
 
-### Ensure your KDC is accessible from the EE
+### Ensure your KDC and target host are accessible from the EE
 
 Ensure your KDC server can be reachable. There is no command such as `ping` or `nslookup`, downloading and using  Busybox is helpful.
 
 ```bash
 # Download busybox and make it executable
-bash-4.4$ curl -o busybox https://busybox.net/downloads/binaries/1.35.0-x86_64-linux-musl/busybox
-bash-4.4$ chmod +x busybox
+bash-5.1$ curl -o busybox https://busybox.net/downloads/binaries/1.35.0-x86_64-linux-musl/busybox
+bash-5.1$ chmod +x busybox
 ```
 
 Then test name resolution and network reachability.
 
 ```bash
 # Ensure your domain name can be resolved
-bash-4.4$ ./busybox nslookup kurokobo.internal
+bash-5.1$ ./busybox nslookup kurokobo.internal
 Server:         10.43.0.10
 Address:        10.43.0.10:53
 
 Name:   kurokobo.internal
-Address: ...
+Address: ***.***.***.***
 ```
 
 ```bash
 # Ensure hostname of your KDC can be resolved
-bash-4.4$ ./busybox nslookup kuro-ad01.kurokobo.internal
+bash-5.1$ ./busybox nslookup kuro-ad01.kurokobo.internal
 Server:         10.43.0.10
 Address:        10.43.0.10:53
 
 Name:   kuro-ad01.kurokobo.internal
-Address: ...
+Address: ***.***.***.***
 ```
 
 ```bash
 # Ensure the port 88 on your KDC can be opened
-bash-4.4$ ./busybox nc -v -w 1 kuro-ad01.kurokobo.internal 88
-kuro-ad01.kurokobo.internal (...:88) open
+bash-5.1$ ./busybox nc -v -w 1 kuro-ad01.kurokobo.internal 88
+kuro-ad01.kurokobo.internal (***.***.***.***:88) open
+```
+
+```bash
+# Ensure hostname of your target host can be resolved
+bash-5.1$ ./busybox nslookup kuro-win01.kurokobo.internal
+Server:         10.43.0.10
+Address:        10.43.0.10:53
+
+Name:   kuro-win01.kurokobo.internal
+Address: ***.***.***.***
+
+# If you don't have "rdns = false" in your "krb5.conf",
+# and the IP address of your target host can be reverse looked up,
+# the result must match the hostname of your target host.
+bash-5.1$ ./busybox nslookup ***.***.***.***
+Server:         10.43.0.10
+Address:        10.43.0.10:53
+
+***.***.***.***.in-addr.arpa      name = kuro-win01.kurokobo.internal
+```
+
+```bash
+# Ensure the port 88 on your KDC is reachable
+bash-5.1$ ./busybox nc -v -w 1 kuro-ad01.kurokobo.internal 88
+kuro-ad01.kurokobo.internal ***.***.***.***:88) open
+```
+
+```bash
+# Ensure the port 5985 (or 5986 for HTTPS) on your target host respond 404 error to HTTP request
+bash-5.1$ curl -I http://kuro-win01.kurokobo.internal:5985
+HTTP/1.1 404 Not Found
+Content-Length: 315
+Content-Type: text/html; charset=us-ascii
+Server: Microsoft-HTTPAPI/2.0
+Date: Wed, 15 Mar 2023 16:47:03 GMT
+Connection: close
 ```
 
 ### Ensure `kinit` can be succeeded manually
@@ -413,13 +465,13 @@ You can test Kerberos authentication by using `kinit` manually inside the EE.
 ```bash
 # Ensure that there is no error while passing <username>@<DOMAINNAME> and password
 # Note that the domain name for kinit have to be capitalized
-bash-4.4$ kinit awx@KUROKOBO.INTERNAL
+bash-5.1$ kinit awx@KUROKOBO.INTERNAL
 Password for awx@KUROKOBO.INTERNAL:
 ```
 
 ```bash
 # Ensure new ticket has been issued after kinit
-bash-4.4$ klist                      
+bash-5.1$ klist
 Ticket cache: FILE:/tmp/krb5cc_1000
 Default principal: awx@KUROKOBO.INTERNAL
 
@@ -428,11 +480,151 @@ Valid starting     Expires            Service principal
         renew until 07/03/22 12:32:21
 ```
 
+If you have faced any errors, you can investigate by getting trace logs for `kinit` by exporting `KRB5_TRACE` environment variable.
+
+```bash
+# The command to destroy cached tickets if exists
+bash-5.1$ kdestroy
+
+# Make trace logs to be displayed on stdout
+bash-5.1$ export KRB5_TRACE=/dev/stdout
+
+# Example trace logs for the case that the ticket has been issued successfully
+bash-5.1$ kinit awx@KUROKOBO.INTERNAL
+[38] 1678897813.575763: Getting initial credentials for awx@KUROKOBO.INTERNAL
+[38] 1678897813.575765: Sending unauthenticated request
+[38] 1678897813.575766: Sending request (190 bytes) to KUROKOBO.INTERNAL
+[38] 1678897813.575767: Resolving hostname kuro-ad01.kurokobo.internal
+[38] 1678897813.575768: Sending initial UDP request to dgram ***.***.***.***:88
+[38] 1678897813.575769: Received answer (198 bytes) from dgram ***.***.***.***:88
+[38] 1678897813.575770: Response was not from primary KDC
+[38] 1678897813.575771: Received error from KDC: -1765328359/Additional pre-authentication required
+[38] 1678897813.575774: Preauthenticating using KDC method data
+[38] 1678897813.575775: Processing preauth types: PA-PK-AS-REQ (16), PA-PK-AS-REP_OLD (15), PA-ETYPE-INFO2 (19), PA-ENC-TIMESTAMP (2)
+[38] 1678897813.575776: Selected etype info: etype aes256-cts, salt "KUROKOBO.INTERNALawx", params ""
+[38] 1678897813.575777: PKINIT client has no configured identity; giving up
+[38] 1678897813.575778: Preauth module pkinit (16) (real) returned: -1765328174/No pkinit_anchors supplied
+Password for awx@KUROKOBO.INTERNAL:
+[38] 1678897823.104967: AS key obtained for encrypted timestamp: aes256-cts/1836
+[38] 1678897823.104969: Encrypted timestamp (for 1678897818.79834): plain 301AA...137DA, encrypted 303E8...E278E
+[38] 1678897823.104970: Preauth module encrypted_timestamp (2) (real) returned: 0/Success
+[38] 1678897823.104971: Produced preauth for next request: PA-ENC-TIMESTAMP (2)
+[38] 1678897823.104972: Sending request (270 bytes) to KUROKOBO.INTERNAL
+[38] 1678897823.104973: Resolving hostname kuro-ad01.kurokobo.internal
+[38] 1678897823.104974: Sending initial UDP request to dgram ***.***.***.***:88
+[38] 1678897823.104975: Received answer (106 bytes) from dgram ***.***.***.***:88
+[38] 1678897823.104976: Response was not from primary KDC
+[38] 1678897823.104977: Received error from KDC: -1765328332/Response too big for UDP, retry with TCP
+[38] 1678897823.104978: Request or response is too big for UDP; retrying with TCP
+[38] 1678897823.104979: Sending request (270 bytes) to KUROKOBO.INTERNAL (tcp only)
+[38] 1678897823.104980: Resolving hostname kuro-ad01.kurokobo.internal
+[38] 1678897823.104981: Initiating TCP connection to stream ***.***.***.***:88
+[38] 1678897823.104982: Sending TCP request to stream ***.***.***.***:88
+[38] 1678897823.104983: Received answer (1639 bytes) from stream ***.***.***.***:88
+[38] 1678897823.104984: Terminating TCP connection to stream ***.***.***.***:88
+[38] 1678897823.104985: Response was not from primary KDC
+[38] 1678897823.104986: Processing preauth types: PA-ETYPE-INFO2 (19)
+[38] 1678897823.104987: Selected etype info: etype aes256-cts, salt "KUROKOBO.INTERNALawx", params ""
+[38] 1678897823.104988: Produced preauth for next request: (empty)
+[38] 1678897823.104989: AS key determined by preauth: aes256-cts/1836
+[38] 1678897823.104990: Decrypted AS reply; session key is: aes256-cts/8188
+[38] 1678897823.104991: FAST negotiation: unavailable
+[38] 1678897823.104992: Resolving unique ccache of type MEMORY
+[38] 1678897823.104993: Initializing MEMORY:9h1LvJw with default princ awx@KUROKOBO.INTERNAL
+[38] 1678897823.104994: Storing config in MEMORY:9h1LvJw for krbtgt/KUROKOBO.INTERNAL@KUROKOBO.INTERNAL: pa_type: 2
+[38] 1678897823.104995: Storing awx@KUROKOBO.INTERNAL -> krb5_ccache_conf_data/pa_type/krbtgt\/KUROKOBO.INTERNAL\@KUROKOBO.INTERNAL@X-CACHECONF: in MEMORY:9h1LvJw
+[38] 1678897823.104996: Storing awx@KUROKOBO.INTERNAL -> krbtgt/KUROKOBO.INTERNAL@KUROKOBO.INTERNAL in MEMORY:9h1LvJw
+[38] 1678897823.104997: Moving ccache MEMORY:9h1LvJw to FILE:/tmp/krb5cc_1000
+[38] 1678897823.104998: Destroying ccache MEMORY:9h1LvJw
+```
+
+### Gather trace logs for your playbook
+
+If manually invoked `kinit` succeeds but the task in your playbook such as `ansible.windows.win_ping` fails, it may be possible to investigate the cause from the trace logs of the `kinit` that invoked internally during runtime of playbook.
+
+1. Append `env` to your custom pod spec for Container Group
+
+   ```yaml
+   apiVersion: v1
+   kind: Pod
+   metadata:
+     namespace: awx
+   spec:
+     ...
+     containers:
+       - image: 'quay.io/ansible/awx-ee:latest'
+         name: worker
+         env:     👈👈👈
+           - name: KRB5_TRACE     👈👈👈
+             value: /tmp/krb5.log     👈👈👈
+         args:
+           - ansible-runner
+           - worker
+           - '--private-data-dir=/runner'
+         ...
+   ```
+
+2. Run playbook that contains following tasks
+
+   ```yaml
+   ...
+     tasks:
+       - name: Ensure windows host is reachable
+         ansible.windows.win_ping:
+         ignore_unreachable: true
+
+       - name: Get /tmp/krb5.log
+         ansible.builtin.debug:
+           msg: "{{ lookup( 'file', '/tmp/krb5.log' ) }}"
+   ```
+
+You can get the contents of `/tmp/krb5.log` from your job output. Below is example with success. Note that `\\n` should be replaced with line break to make it readable.
+
+```bash
+...
+TASK [Ensure windows host is reachable] ****************************************
+ok: [kuro-win01.kurokobo.internal]
+
+TASK [Get /tmp/krb5.log] *******************************************************
+ok: [kuro-win01.kurokobo.internal] => {
+    "msg": "[25] 1678899932.599110: Matching awx@KUROKOBO.INTERNAL in collection with result: 0/Success
+            [25] 1678899932.599111: Matching awx@KUROKOBO.INTERNAL in collection with result: 0/Success
+            [25] 1678899932.599112: Getting credentials awx@KUROKOBO.INTERNAL -> HTTP/kuro-win01.kurokobo.internal@KUROKOBO.INTERNAL using ccache FILE:/tmp/tmprrrrpt1c
+            [25] 1678899932.599113: Retrieving awx@KUROKOBO.INTERNAL -> krb5_ccache_conf_data/start_realm@X-CACHECONF: from FILE:/tmp/tmprrrrpt1c with result: -1765328243/Matching credential not found (filename: /tmp/tmprrrrpt1c)
+            [25] 1678899932.599114: Retrieving awx@KUROKOBO.INTERNAL -> HTTP/kuro-win01.kurokobo.internal@KUROKOBO.INTERNAL from FILE:/tmp/tmprrrrpt1c with result: -1765328243/Matching credential not found (filename: /tmp/tmprrrrpt1c)
+            [25] 1678899932.599115: Retrieving awx@KUROKOBO.INTERNAL -> krbtgt/KUROKOBO.INTERNAL@KUROKOBO.INTERNAL from FILE:/tmp/tmprrrrpt1c with result: 0/Success
+            [25] 1678899932.599116: Starting with TGT for client realm: awx@KUROKOBO.INTERNAL -> krbtgt/KUROKOBO.INTERNAL@KUROKOBO.INTERNAL
+            [25] 1678899932.599117: Requesting tickets for HTTP/kuro-win01.kurokobo.internal@KUROKOBO.INTERNAL, referrals on
+            [25] 1678899932.599118: Generated subkey for TGS request: aes256-cts/7945
+            [25] 1678899932.599119: etypes requested in TGS request: aes256-cts, aes128-cts, aes256-sha2, aes128-sha2, rc4-hmac, camellia128-cts, camellia256-cts
+            [25] 1678899932.599121: Encoding request body and padata into FAST request
+            [25] 1678899932.599122: Sending request (1827 bytes) to KUROKOBO.INTERNAL
+            [25] 1678899932.599123: Resolving hostname kuro-ad01.kurokobo.internal
+            [25] 1678899932.599124: Initiating TCP connection to stream ***.***.***.***:88
+            [25] 1678899932.599125: Sending TCP request to stream ***.***.***.***:88
+            [25] 1678899932.599126: Received answer (1752 bytes) from stream ***.***.***.***:88
+            [25] 1678899932.599127: Terminating TCP connection to stream ***.***.***.***:88
+            [25] 1678899932.599128: Response was not from primary KDC
+            [25] 1678899932.599129: Decoding FAST response
+            [25] 1678899932.599130: FAST reply key: aes256-cts/DEB0
+            [25] 1678899932.599131: TGS reply is for awx@KUROKOBO.INTERNAL -> HTTP/kuro-win01.kurokobo.internal@KUROKOBO.INTERNAL with session key aes256-cts/93B1
+            [25] 1678899932.599132: TGS request result: 0/Success
+            [25] 1678899932.599133: Received creds for desired service HTTP/kuro-win01.kurokobo.internal@KUROKOBO.INTERNAL
+            [25] 1678899932.599134: Storing awx@KUROKOBO.INTERNAL -> HTTP/kuro-win01.kurokobo.internal@KUROKOBO.INTERNAL in FILE:/tmp/tmprrrrpt1c
+            [25] 1678899932.599135: Creating authenticator for awx@KUROKOBO.INTERNAL -> HTTP/kuro-win01.kurokobo.internal@KUROKOBO.INTERNAL, seqnum 655929156, subkey aes256-cts/1F31, session key aes256-cts/93B1
+            [25] 1678899932.599137: Read AP-REP, time 1678899927.599136, subkey aes256-cts/8266, seqnum 1460012097"
+}
+...
+```
+
 ### Common issues and workarounds
 
 Some common issues during this guide and workaround for those errors.
 
-The ["Troubleshooting Kerberos" section in Ansible documentation](https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html#troubleshooting-kerberos) can also be helpful.
+The following official documentations are also be helpful.
+
+- ["Troubleshooting Kerberos" section in Ansible documentation](https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html#troubleshooting-kerberos)
+- [Red Hat's KB article for the error "Server not found in Kerberos database"](https://access.redhat.com/solutions/4911041)
 
 #### Error creating pod
 
@@ -449,7 +641,7 @@ This is usually caused by misconfigured custom pod spec of your Container Group 
 `kinit` inside the EE or job failed with following error.
 
 ```bash
-bash-4.4$ kinit <username>@<DOMAINNAME>
+bash-5.1$ kinit <username>@<DOMAINNAME>
 kinit: Cannot find KDC for realm "<DOMAINNAME>" while getting initial credentials
 ```
 
