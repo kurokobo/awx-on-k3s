@@ -16,6 +16,7 @@ Refer [the official documentation](https://github.com/ansible/awx-operator#trust
 - [Modify `base/kustomization.yaml`](#modify-basekustomizationyaml)
 - [Modify `base/awx.yaml`](#modify-baseawxyaml)
 - [Apply configuration](#apply-configuration)
+- [Troubleshooting](#troubleshooting)
 
 ## Overview
 
@@ -122,4 +123,77 @@ You can monitor the progress of the re-deployment by following command:
 
 ```bash
 kubectl -n awx logs -f deployments/awx-operator-controller-manager
+```
+
+## Troubleshooting
+
+If you have problem with SSL connection such as LDAPS, you can verify your certificates inside the pod.
+
+```bash
+# Open Bash shell of the "awx-web" container
+$ kubectl -n awx exec -it deployment/awx -c awx-web -- bash
+bash-5.1$
+```
+
+First of all, you should ensure your CA certificate is mounted and has PEM format. The certificate should be be dumped as readable plain text by following command, without any error.
+
+```bash
+# The secret ldap_cacert_secret is mounted as /etc/openldap/certs/ldap-ca.crt
+bash-5.1$ openssl x509 -in /etc/openldap/certs/ldap-ca.crt -text
+
+# The secret bundle_cacert_secret is mounted as /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+bash-5.1$ openssl x509 -in /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+```
+
+Note that your certificate file should contain both intermediate CA and root CA, if your server certificate is signed by intermediate CA.
+
+```bash
+# Example output of concatenated CA cert; one for intermediate CA, one for root CA
+bash-5.1$ cat /etc/openldap/certs/ldap-ca.crt
+-----BEGIN CERTIFICATE-----
+MIIDizCCAnOgAwIBAgIUftINZYmeHvcovY0qBHp+SqZWrlswDQYJKoZIhvcNAQEL
+...
+3Eyhv0l7mJw/86twDMFFax+cKOCRFV6NoPOpzK1mzAXmxth6vk8DeRm0ipVpQVQ=
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+MIIDizCCAnOgAwIBAgIUftINZYmeHvcovY0qBHp+SqZWrlwwDQYJKoZIhvcNAQEL
+...
+lVsDxZfbZVpRGkDr8odNurNmz0Xcttr+ZVRkoTy5KUxqIZhQuS6ySJj7yoLawWY=
+-----END CERTIFICATE-----
+```
+
+Now you can test SSL connection.
+
+```bash
+# This is an example to test connection to LDAP server over SSL using /etc/openldap/certs/ldap-ca.crt
+bash-5.1$ openssl s_client -connect ldap.example.com:636 -no-CAfile -CAfile /etc/openldap/certs/ldap-ca.crt
+CONNECTED(00000003)
+depth=2 C = JP, ST = Example State, O = EXAMPLE.COM, CN = rca.example.com
+verify return:1
+depth=1 C = JP, ST = Example State, O = EXAMPLE.COM, CN = ica.example.com
+verify return:1
+depth=0 C = JP, ST = Example State, O = EXAMPLE.COM, CN = ldap.example.com
+verify return:1
+---
+Certificate chain     👈👈👈 Ensure that the full certificate chain is recognized
+ 0 s:C = JP, ST = Example State, O = EXAMPLE.COM, CN = ldap.example.com
+   i:C = JP, ST = Example State, O = EXAMPLE.COM, CN = ica.example.com
+   ...
+ 1 s:C = JP, ST = Example State, O = EXAMPLE.COM, CN = ica.example.com
+   i:C = JP, ST = Example State, O = EXAMPLE.COM, CN = rca.example.com
+   ...
+ 2 s:C = JP, ST = Example State, O = EXAMPLE.COM, CN = rca.example.com
+   i:C = JP, ST = Example State, O = EXAMPLE.COM, CN = rca.example.com
+   ...
+---
+...
+---
+SSL handshake has read 3210 bytes and written 413 bytes
+Verification: OK     👈👈👈 Ensure there is no verification error
+---
+...
+SSL-Session:
+    ...
+    Verify return code: 0 (ok)     👈👈👈 Ensure there is no verification error
+    ...
 ```
