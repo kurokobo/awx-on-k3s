@@ -15,7 +15,7 @@ secretGenerator:
 
 images:
   - name: gitea/gitea
-    newTag: "1.18"
+    newTag: "1.19"
 
 resources:
   - namespace.yaml

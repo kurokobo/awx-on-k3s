@@ -29,17 +29,17 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - Tested on:
   - CentOS Stream 8 (Minimal)
-  - K3s v1.25.6+k3s1
+  - K3s v1.25.7+k3s1
 - Products that will be deployed:
-  - AWX Operator 1.3.0
-  - AWX 21.13.0
+  - AWX Operator 1.4.0
+  - AWX 21.14.0
   - PostgreSQL 13
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/21.13.0/INSTALL.md) @21.13.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/1.3.0/README.md) @1.3.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/21.14.0/INSTALL.md) @21.14.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/1.4.0/README.md) @1.4.0
 
 ## Requirements
 
@@ -90,7 +90,7 @@ Install specified version of AWX Operator. Note that this procedure is applicabl
 cd ~
 git clone https://github.com/ansible/awx-operator.git
 cd awx-operator
-git checkout 1.3.0
+git checkout 1.4.0
 ```
 
 Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
@@ -127,7 +127,7 @@ If you want to use files suitable for the specific version of AWX Operator, [ref
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 1.3.0
+git checkout 1.4.0
 ```
 
 Generate a Self-Signed certificate. Note that IP address can't be specified. If you want to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate, follow the guide on [📁 **Use SSL Certificate from Public ACME CA**](acme) first and come back to this step when done.
