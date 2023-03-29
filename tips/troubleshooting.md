@@ -435,4 +435,4 @@ fatal: [localhost]: FAILED! => {"changed": false, "msg": "Failed to import the r
 ...
 ```
 
-To solve this, refer [the guide about Execution Environment on this repository](../builder).
+To solve this, you can build your own Execution Image, or place `requirements.yml` on the specific path in your project. Refer to [the guide about Execution Environment on this repository](../builder) for details.
