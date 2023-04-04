@@ -43,9 +43,10 @@ If the Pods are working properly, its `STATUS` are `Running`. If your Pods are n
 ```bash
 $ kubectl -n awx get pod
 NAME                                               READY   STATUS    RESTARTS   AGE
-awx-operator-controller-manager-68d787cfbd-j6k7z   2/2     Running   0          7m43s
-awx-postgres-13-0                                  1/1     Running   0          4m6s
-awx-84d5c45999-h7xm4                               0/4     Pending   0          3m59s
+awx-operator-controller-manager-57867569c4-ggl29   2/2     Running   0          8m20s
+awx-postgres-13-0                                  1/1     Running   0          7m26s
+awx-task-5d8cd9b6b9-8ptjt                          0/4     Pending   0          6m55s
+awx-web-66f89bc9cf-6zck5                           0/3     Pending   0          6m9s
 ```
 
 If you have the Pods which has the unexpected state instead of `Running`, the next step is checking `Events` for the Pod. The command to get `Events` for the pod is:
@@ -57,7 +58,7 @@ kubectl -n awx describe pod <Pod Name>
 By this command, you can get the `Events` for the Pod you specified at the end of the output.
 
 ```bash
-$ kubectl -n awx describe pod awx-84d5c45999-h7xm4
+$ kubectl -n awx describe pod awx-task-5d8cd9b6b9-8ptjt
 ...
 Events:
   Type     Reason            Age   From               Message
@@ -77,18 +78,18 @@ The commands to get the logs are following. `-f` is optional, useful to watch th
 ```bash
 # Get the logs of specific Pod.
 # If the Pod includes multiple containers, container name has to be specified.
-kubectl -n awx logs -f <Pod Name>
-kubectl -n awx logs -f <Pod Name> -c <Container Name>
+kubectl -n awx logs -f <POD>
+kubectl -n awx logs -f <POD> -c <CONTAINER>
 
 # Get the logs of specific Pod which is handled by Deployment resource.
 # If the Pod includes multiple containers, container name has to be specified.
-kubectl -n awx logs -f deployment/<Deployment Name>
-kubectl -n awx logs -f deployment/<Deployment Name> -c <Container Name>
+kubectl -n awx logs -f deployment/<DEPLOYMENT>
+kubectl -n awx logs -f deployment/<DEPLOYMENT> -c <CONTAINER>
 
 # Get the logs of specific Pod which is handled by StatefulSet resource
 # If the Pod includes multiple containers, container name has to be specified.
-kubectl -n awx logs -f statefulset/<Deployment Name>
-kubectl -n awx logs -f statefulset/<Deployment Name> -c <Container Name>
+kubectl -n awx logs -f statefulset/<STATEFULSET>
+kubectl -n awx logs -f statefulset/<STATEFULSET> -c <CONTAINER>
 ```
 
 For AWX Operator and AWX, specifically, the following commands are helpful.
@@ -96,13 +97,16 @@ For AWX Operator and AWX, specifically, the following commands are helpful.
 - Logs of AWX Operator
   - `kubectl -n awx logs -f deployment/awx-operator-controller-manager`
 - Logs of AWX related init containers
-  - `kubectl -n awx logs -f deployment/awx -c init`
-  - `kubectl -n awx logs -f deployment/awx -c init-projects`
+  - `kubectl -n awx logs -f deployment/awx-task -c init`
+  - `kubectl -n awx logs -f deployment/awx-task -c init-projects`
 - Logs of AWX related containers
-  - `kubectl -n awx logs -f deployment/awx -c awx-web`
-  - `kubectl -n awx logs -f deployment/awx -c awx-task`
-  - `kubectl -n awx logs -f deployment/awx -c awx-ee`
-  - `kubectl -n awx logs -f deployment/awx -c redis`
+  - `kubectl -n awx logs -f deployment/awx-web -c awx-web`
+  - `kubectl -n awx logs -f deployment/awx-web -c awx-rsyslog`
+  - `kubectl -n awx logs -f deployment/awx-web -c redis`
+  - `kubectl -n awx logs -f deployment/awx-task -c awx-task`
+  - `kubectl -n awx logs -f deployment/awx-task -c awx-ee`
+  - `kubectl -n awx logs -f deployment/awx-task -c awx-rsyslog`
+  - `kubectl -n awx logs -f deployment/awx-task -c redis`
 - Logs of PostgreSQL
   - `kubectl -n awx logs -f statefulset/awx-postgres-13`
 
@@ -157,7 +161,7 @@ To solve this, you can simply wait until the limit is freed up, or [consider giv
 If your Pod is in `Pending` state and its `Events` shows following events, the reason is that the node does not have enough CPU and memory to start the Pod. By default AWX requires at least 2 CPUs and 4 GB RAM. In addition more resources are required to run K3s and the OS itself.
 
 ```bash
-$ kubectl -n awx describe pod awx-84d5c45999-h7xm4
+$ kubectl -n awx describe pod awx-task-5d8cd9b6b9-8ptjt
 ...
 Events:
   Type     Reason            Age   From               Message
@@ -182,7 +186,7 @@ Typical solutions are one of the following:
       ee_resource_requirements: {}     👈👈👈
     ```
 
-  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/1.4.0/README.md#containers-resource-requirements) for details.
+  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/2.0.0/README.md#containers-resource-requirements) for details.
   - In this way you can run AWX with fewer resources, but you may encounter performance issues.
 
 ### The Pod is `Pending` with "1 pod has unbound immediate PersistentVolumeClaims." event
@@ -190,7 +194,7 @@ Typical solutions are one of the following:
 If your Pod is in `Pending` state and its `Events` shows following events, the reason is that no usable Persistent Volumes are available.
 
 ```bash
-$ kubectl -n awx describe pod awx-84d5c45999-h7xm4
+$ kubectl -n awx describe pod awx-task-5d8cd9b6b9-8ptjt
 ...
 Events:
   Type     Reason            Age   From               Message
@@ -240,7 +244,7 @@ To solve this, typical solutions are one of the following:
 Sometimes your AWX pod is `Running` state correctly but not functional at all, and its log shows following message repeatedly.
 
 ```bash
-kubectl -n awx logs -f deployment/awx -c awx-web
+kubectl -n awx logs -f deployment/awx-web -c awx-web
 [wait-for-migrations] Waiting for database migrations...
 [wait-for-migrations] Attempt 1 of 30
 [wait-for-migrations] Waiting 0.5 seconds before next attempt
@@ -277,9 +281,10 @@ In this situation, your Pod for PostgreSQL is in `CrashLoopBackOff` state and it
 ```bash
 $ kubectl -n awx get pod
 NAME                                               READY   STATUS             RESTARTS   AGE
-awx-operator-controller-manager-68d787cfbd-j6k7z   2/2     Running            0          7m43s
-awx-postgres-13-0                                  1/1     CrashLoopBackOff   3          4m6s
-awx-84d5c45999-h7xm4                               4/4     Running            0          3m59s
+awx-operator-controller-manager-57867569c4-ggl29   2/2     Running            0          8m20s
+awx-postgres-13-0                                  1/1     CrashLoopBackOff   5          7m26s
+awx-task-5d8cd9b6b9-8ptjt                          0/4     Running            0          6m55s
+awx-web-66f89bc9cf-6zck5                           0/3     Running            0          6m9s
 
 $ kubectl -n awx logs statefulset/awx-postgres
 mkdir: cannot create directory '/var/lib/postgresql/data': Permission denied

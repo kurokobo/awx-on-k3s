@@ -29,17 +29,17 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - Tested on:
   - CentOS Stream 8 (Minimal)
-  - K3s v1.25.7+k3s1
+  - K3s v1.26.3+k3s1
 - Products that will be deployed:
-  - AWX Operator 1.4.0
-  - AWX 21.14.0
+  - AWX Operator 2.0.0
+  - AWX 22.0.0
   - PostgreSQL 13
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/21.14.0/INSTALL.md) @21.14.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/1.4.0/README.md) @1.4.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/22.0.0/INSTALL.md) @22.0.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.0.0/README.md) @2.0.0
 
 ## Requirements
 
@@ -90,7 +90,7 @@ Install specified version of AWX Operator. Note that this procedure is applicabl
 cd ~
 git clone https://github.com/ansible/awx-operator.git
 cd awx-operator
-git checkout 1.4.0
+git checkout 2.0.0
 ```
 
 Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
@@ -127,7 +127,7 @@ If you want to use files suitable for the specific version of AWX Operator, [ref
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 1.4.0
+git checkout 2.0.0
 ```
 
 Generate a Self-Signed certificate. Note that IP address can't be specified. If you want to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate, follow the guide on [📁 **Use SSL Certificate from Public ACME CA**](acme) first and come back to this step when done.
@@ -200,7 +200,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=80   changed=0    unreachable=0    failed=0    skipped=78   rescued=0    ignored=1
+localhost                  : ok=83   changed=0    unreachable=0    failed=0    skipped=79   rescued=0    ignored=1
 ```
 
 Required objects has been deployed next to AWX Operator in `awx` namespace.
@@ -208,42 +208,45 @@ Required objects has been deployed next to AWX Operator in `awx` namespace.
 ```bash
 $ kubectl -n awx get awx,all,ingress,secrets
 NAME                      AGE
-awx.awx.ansible.com/awx   5m
+awx.awx.ansible.com/awx   6m15s
 
 NAME                                                   READY   STATUS    RESTARTS   AGE
-pod/awx-operator-controller-manager-5d5d58758c-7xcrl   2/2     Running   0          5m35s
-pod/awx-postgres-13-0                                  1/1     Running   0          4m46s
-pod/awx-5b859c644-zp6x5                                4/4     Running   0          4m26s
+pod/awx-operator-controller-manager-57867569c4-ggl29   2/2     Running   0          6m50s
+pod/awx-postgres-13-0                                  1/1     Running   0          5m56s
+pod/awx-task-5d8cd9b6b9-8ptjt                          4/4     Running   0          5m25s
+pod/awx-web-66f89bc9cf-6zck5                           3/3     Running   0          4m39s
 
 NAME                                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-service/awx-operator-controller-manager-metrics-service   ClusterIP   10.43.229.20    <none>        8443/TCP   5m45s
-service/awx-postgres-13                                   ClusterIP   None            <none>        5432/TCP   4m46s
-service/awx-service                                       ClusterIP   10.43.135.205   <none>        80/TCP     4m28s
+service/awx-operator-controller-manager-metrics-service   ClusterIP   10.43.18.30     <none>        8443/TCP   7m
+service/awx-postgres-13                                   ClusterIP   None            <none>        5432/TCP   5m55s
+service/awx-service                                       ClusterIP   10.43.237.218   <none>        80/TCP     5m28s
 
 NAME                                              READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/awx-operator-controller-manager   1/1     1            1           5m45s
-deployment.apps/awx                               1/1     1            1           4m26s
+deployment.apps/awx-operator-controller-manager   1/1     1            1           7m
+deployment.apps/awx-task                          1/1     1            1           5m25s
+deployment.apps/awx-web                           1/1     1            1           4m39s
 
 NAME                                                         DESIRED   CURRENT   READY   AGE
-replicaset.apps/awx-operator-controller-manager-5d5d58758c   1         1         1       5m35s
-replicaset.apps/awx-5b859c644                                1         1         1       4m26s
+replicaset.apps/awx-operator-controller-manager-57867569c4   1         1         1       6m50s
+replicaset.apps/awx-task-5d8cd9b6b9                          1         1         1       5m25s
+replicaset.apps/awx-web-66f89bc9cf                           1         1         1       4m39s
 
 NAME                               READY   AGE
-statefulset.apps/awx-postgres-13   1/1     4m46s
+statefulset.apps/awx-postgres-13   1/1     5m56s
 
-NAME                                    CLASS    HOSTS             ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/awx-ingress   <none>   awx.example.com   192.168.0.219   80, 443   4m27s
+NAME                                    CLASS     HOSTS             ADDRESS         PORTS     AGE
+ingress.networking.k8s.io/awx-ingress   traefik   awx.example.com   192.168.0.219   80, 443   5m27s
 
 NAME                                  TYPE                DATA   AGE
-secret/awx-admin-password             Opaque              1      5m
-secret/awx-postgres-configuration     Opaque              6      5m
-secret/awx-secret-tls                 kubernetes.io/tls   2      3m54s
-secret/redhat-operators-pull-secret   Opaque              1      4m30s
-secret/awx-app-credentials            Opaque              3      4m30s
-secret/awx-secret-key                 Opaque              1      4m55s
-secret/awx-broadcast-websocket        Opaque              1      4m52s
-secret/awx-receptor-ca                Opaque              2      4m26s
-secret/awx-receptor-work-signing      Opaque              2      4m29s
+secret/awx-admin-password             Opaque              1      6m15s
+secret/awx-postgres-configuration     Opaque              6      6m15s
+secret/awx-secret-tls                 kubernetes.io/tls   2      6m15s
+secret/redhat-operators-pull-secret   Opaque              1      6m11s
+secret/awx-app-credentials            Opaque              3      5m30s
+secret/awx-secret-key                 Opaque              1      6m6s
+secret/awx-broadcast-websocket        Opaque              1      6m2s
+secret/awx-receptor-ca                kubernetes.io/tls   2      5m37s
+secret/awx-receptor-work-signing      Opaque              2      5m33s
 ```
 
 Now your AWX is available at `https://awx.example.com/` or the hostname you specified.
