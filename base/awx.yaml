@@ -5,10 +5,10 @@ metadata:
   name: awx
 spec:
   # These parameters are designed for use with:
-  # - AWX Operator: 1.4.0
-  #   https://github.com/ansible/awx-operator/blob/1.4.0/README.md
-  # - AWX: 21.14.0
-  #   https://github.com/ansible/awx/blob/21.14.0/INSTALL.md
+  # - AWX Operator: 2.0.0
+  #   https://github.com/ansible/awx-operator/blob/2.0.0/README.md
+  # - AWX: 22.0.0
+  #   https://github.com/ansible/awx/blob/22.0.0/INSTALL.md
 
   admin_user: admin
   admin_password_secret: awx-admin-password
@@ -27,6 +27,9 @@ spec:
   projects_persistence: true
   projects_existing_claim: awx-projects-claim
 
+  web_replicas: 1
+  task_replicas: 1
+
   postgres_init_container_resource_requirements: {}
   postgres_resource_requirements: {}
   web_resource_requirements: {}
@@ -35,3 +38,14 @@ spec:
 
   # Uncomment to reveal "censored" logs
   #no_log: false
+
+  # A workaround to allow Manual type projects. This have to be removed in the next release
+  # https://github.com/ansible/awx-operator/issues/1323
+  extra_volumes: |
+    - name: awx-projects
+      persistentVolumeClaim:
+        claimName: awx-projects-claim
+
+  web_extra_volume_mounts: |
+    - name: awx-projects
+      mountPath: /var/lib/awx/projects

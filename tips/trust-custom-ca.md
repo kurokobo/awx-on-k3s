@@ -27,7 +27,7 @@ Trusting custom Certificate Authority can be achieved by following steps:
 
 There are two kinds of certificate, one is used to trust LDAP server, and the other is used as the CA bundle.
 
-| Fields in the specification for AWX | Keys in Secret | Containers in AWX pod that the certificate will be mounted | Paths that the certificate will be mounted as |
+| Fields in the specification for AWX | Keys in Secret | Containers that the certificate will be mounted | Paths that the certificate will be mounted as |
 |-|-|-|-|
 | `ldap_cacert_secret` | `ldap-ca.crt` | `awx-web` | `/etc/openldap/certs/ldap-ca.crt` |
 | `bundle_cacert_secret` | `bundle-ca.crt` | `awx-web`, `awx-task`, and `awx-ee` | `/etc/pki/ca-trust/source/anchors/bundle-ca.crt` |
@@ -131,7 +131,7 @@ If you have problem with SSL connection such as LDAPS, you can verify your certi
 
 ```bash
 # Open Bash shell of the "awx-web" container
-$ kubectl -n awx exec -it deployment/awx -c awx-web -- bash
+$ kubectl -n awx exec -it deployment/awx-web -c awx-web -- bash
 bash-5.1$
 ```
 
