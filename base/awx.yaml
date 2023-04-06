@@ -42,10 +42,10 @@ spec:
   # A workaround to allow Manual type projects. This have to be removed in the next release
   # https://github.com/ansible/awx-operator/issues/1323
   extra_volumes: |
-    - name: awx-projects
+    - name: awx-projects-web
       persistentVolumeClaim:
         claimName: awx-projects-claim
 
   web_extra_volume_mounts: |
-    - name: awx-projects
+    - name: awx-projects-web
       mountPath: /var/lib/awx/projects
