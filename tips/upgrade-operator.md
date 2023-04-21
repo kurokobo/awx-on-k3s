@@ -16,7 +16,11 @@ Note that once you upgrade AWX Operator, your AWX will also be upgraded automati
 
 - [✅ Take a backup of the old AWX instance](#-take-a-backup-of-the-old-awx-instance)
 - [📝 Upgrade from `0.14.0` or later (e.g. from `0.14.0` to `0.15.0`)](#-upgrade-from-0140-or-later-eg-from-0140-to-0150)
+  - [⚠️ Note for upgrading from `2.0.0` to `2.0.1` or later](#️-note-for-upgrading-from-200-to-201-or-later)
+  - [⚠️ Note for upgrading from `0.25.0` or earlier to `0.26.0` or later](#️-note-for-upgrading-from-0250-or-earlier-to-0260-or-later)
+  - [📝 Procedure](#-procedure)
 - [📝 Upgrade from `0.13.0` (e.g. from `0.13.0` to `0.14.0`)](#-upgrade-from-0130-eg-from-0130-to-0140)
+  - [📝 Procedure](#-procedure-1)
 - [📝 Upgrade from `0.12.0` or earlier (e.g. from `0.12.0` to `0.13.0`)](#-upgrade-from-0120-or-earlier-eg-from-0120-to-0130)
 - [❓ Troubleshooting](#-troubleshooting)
   - [New Pod gets stuck in `Pending` state](#new-pod-gets-stuck-in-pending-state)
@@ -30,6 +34,21 @@ Refer [📝README: Backing up using AWX Operator](../README.md#backing-up-using-
 ## 📝 Upgrade from `0.14.0` or later (e.g. from `0.14.0` to `0.15.0`)
 
 If you are using AWX Operator `0.14.0` or later and want to upgrade to newer version, basically upgrade is done by deploying the new version of AWX Operator to the same namespace where the old AWX Operator is running.
+
+### ⚠️ Note for upgrading from `2.0.0` to `2.0.1` or later
+
+Note that only when upgrading **from `2.0.0` to `2.0.1` or later**, [the `extra_volumes` and `extra_volumes` in `base/awx.yaml` for `2.0.0` as a workaround for specific issue](https://github.com/kurokobo/awx-on-k3s/blob/2.0.0/base/awx.yaml#L42-L51) causes failure of upgrading.
+
+To avoid this, follow these steps before upgrading AWX Operator. Steps 1 and 2 can also be achieved by `kubectl -n awx edit awx awx`.
+
+1. Remove the definition of the volume and volume mount that named `awx-projects-web` in `extra_volumes` and `web_extra_volume_mounts` in your `base/awx.yaml`.
+   - If there are no other volumes or volume mounts, you can remove whole `extra_volumes` and `web_extra_volume_mounts`.
+2. Apply modified `base/awx.yaml` by `kubectl apply -k base`
+3. Wait for deployment for AWX to be completed
+
+Once your AWX has been deployed without volume `awx-projects-web`, your AWX can be safely upgraded. Proceed to [the next step](#-procedure).
+
+### ⚠️ Note for upgrading from `0.25.0` or earlier to `0.26.0` or later
 
 Note that only when upgrading **from `0.25.0` or earlier to `0.26.0` or later**, since the bundled PostgreSQL version will be changed to 13, so the following additional tasks are required.
 
@@ -55,6 +74,8 @@ spec:
 EOF
 kubectl apply -f pv-postgres-13.yaml
 ```
+
+### 📝 Procedure
 
 To upgrade your AWX Operator, perform following steps.
 
@@ -108,6 +129,8 @@ In this guide, for example, perform upgrading from `0.13.0` to `0.14.0`. The AWX
 | ---------------- | ------------------------------- | --------------------------- |
 | Before Upgrade   | `0.13.0` in `default` namespace | `19.3.0` in `awx` namespace |
 | After Upgrade    | `0.14.0` in `awx` namespace     | `19.4.0` in `awx` namespace |
+
+### 📝 Procedure
 
 To upgrade AWX Operator, remove the old AWX Operator that is running in the `default` namespace first. In addition, remove Service Account, Cluster Role, and Cluster Role Binding that are required for old AWX Operator to work.
 
