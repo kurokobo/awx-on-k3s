@@ -71,7 +71,7 @@ sudo reboot
 Install required packages to deploy AWX Operator and AWX.
 
 ```bash
-sudo dnf install -y git make curl
+sudo dnf install -y git make curl tar
 ```
 
 ### Install K3s
