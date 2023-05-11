@@ -372,7 +372,7 @@ Now your AWX is available at `https://galaxy.example.com/` or the hostname you s
 
 ## Configuration and Usage
 
-Basic configuration and usage of Galaxy NG.
+Basic configuration and usage of Galaxy NG. Following section is based on Galxy NG 4.7.0.
 
 ### Sync Collections with Public Galaxy
 
@@ -398,9 +398,11 @@ collections:
     version: ">=2.1.0"
 ```
 
-In Galaxy NG, open `Collections` > `Repository Management` > `Remote` and click `Configure` on `community`.
+In Galaxy NG, open `Collections` > `Remote` > `community` and click `Edit`.
 
-Select your YAML file in `YAML requirements` and `Save`, then `Sync` and wait to complete.
+Select your YAML file in `YAML requirements` and `Save`.
+
+Open `Collections` > `Repositories` > `community`, then `Sync` and wait to complete.
 
 ### Publish Your Own Collections to Galaxy NG
 
@@ -472,34 +474,34 @@ ansible-galaxy collection build
 
 Then create `demo` namespace on Galaxy NG, and publish your collection.
 
-Note that you can get appropriate URL for `--server` from `Collections` > `Namespaces` > `View collections` > `CLI Configuration` per collections. Your token is available at `Collections` > `API token management` > `Load token`.
+Note that you can get appropriate URL for `--server` from `Collections` > `Namespaces` > `View collections` for `demo` namespace > `CLI configuration` per collections. Your token is available at `Collections` > `API token` > `Load token`.
 
 ```bash
 ansible-galaxy collection publish \
   demo-collection-1.0.0.tar.gz \
-  --server https://galaxy.example.com/api/galaxy/content/inbound-demo/ \
+  --server https://galaxy.example.com/api/galaxy/ \
   --token d926e******************************3e996 \
   -c
 ```
 
-Once the command succeeded, your collection is stayed at `staging` distribution. Approval by super user on `Collections` > `Approval` page is required to move your collection to `published` distribution.
+Once the command succeeded, your collection is stayed at `staging` repository. Approval by super user on `Collections` > `Approval` page is required to move your collection to `published` repository.
 
 Optionally, this approval process can be disabled by adding `galaxy_require_content_approval: "False"` in your `settings.py`.
 
 ### Install Collections Locally from Galaxy NG
 
-Modify your `ansible.cfg` to specify which Galaxy Instance will be used in which order. Note that you can get appropriate configuration from `Collections` > `Repository Management` > `Local` > `CLI configuration` per distributions. Your token is available at `Collections` > `API Token`.
+Modify your `ansible.cfg` to specify which Galaxy Instance will be used in which order. Note that you can get appropriate configuration from `Collections` > `Repositories` > repository name (`community` or `published` for example) > `Copy CLI configuration` per repositories. Your token is available at `Collections` > `API token`.
 
 ```init
 [galaxy]
 server_list = published_repo, community_repo
 
 [galaxy_server.published_repo]
-url=https://galaxy.example.com/api/galaxy/content/published/
+url=https://galaxy.example.com/api/galaxy/
 token=d926e******************************3e996
 
 [galaxy_server.community_repo]
-url=https://galaxy.example.com/api/galaxy/content/community/
+url=https://galaxy.example.com/api/galaxy/
 token=d926e******************************3e996
 ```
 
@@ -558,12 +560,12 @@ To use your Collections on your Galaxy NG through AWX, some tasks are required b
 
 1. Store your **Token** and **URL** for specific **Organization** in AWX
    - Add credential with type `Ansible Galaxy/Automation Hub API Token` with your Token and Galaxy Server URL.
-   - You can get appropriate URL from `Collections` > `Repository Management` > `Local` > `CLI configuration` per distributions on Galaxy NG.
-   - Your token is available at `Collections` > `API Token` on Galaxy NG.
-1. Enable your credential in **Organization**
+   - You can get appropriate URL from `Collections` > `Repositories` > repository name (`community` or `published` for example) > `Copy CLI configuration` on Galaxy NG.
+   - Your token is available at `Collections` > `API token` on Galaxy NG.
+2. Enable your credential in **Organization**
    - In `Edit` screen for `Organization` that will use your Galaxy NG, enable your credential in `Galaxy Credentials`.
    - You can change the order of credentials to set precedence for the sync and lookup of the content.
-1. Ignore SSL Certificate Verification
+3. Ignore SSL Certificate Verification
    - Enable `Ignore Ansible Galaxy SSL Certificate Verification` in `Settings` > `Jobs` > `Jobs settings`
 
 Then create files to test collection.
