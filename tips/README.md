@@ -10,7 +10,7 @@
 - [📝Deploy older version of AWX Operator](deploy-older-operator.md)
 - [📝Upgrade AWX Operator and AWX](upgrade-operator.md)
 - [📝Workaround for the rate limit on Docker Hub](dockerhub-rate-limit.md)
-- [📝Version Mapping between AWX Operator and AWX](version-mapping.md)
+- [📝Version Mapping for AWX Operator and AWX](version-mapping.md)
 - [📝Use Kerberos authentication to connect to Windows hosts](use-kerberos.md)
 - [📝Use Helm or Operator Lifecycle Manager to manage AWX Operator and AWX](alternative-methods.md)
 - [📝Troubleshooting Guide](troubleshooting.md)
