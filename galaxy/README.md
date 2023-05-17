@@ -544,8 +544,8 @@ Then simply `login`, `tag` and `push`.
 
 ```bash
 docker login galaxy.example.com
-docker tag registry.example.com/ansible/ee:2.12-custom galaxy.example.com/demo/ee:2.12-custom
-docker push galaxy.example.com/demo/ee:2.12-custom
+docker tag registry.example.com/ansible/ee:2.15-custom galaxy.example.com/demo/ee:2.15-custom
+docker push galaxy.example.com/demo/ee:2.15-custom
 ```
 
 ## Use with AWX

@@ -43,7 +43,7 @@ In such cases, you need to add Ansible collections, Python packages, and RPM pac
 To build custom EE, there is a tool called Ansible Builder. You can build your own custom EE with any Ansible collections, Python packages, and RPM packages added.
 
 - [ansible/ansible-builder](https://github.com/ansible/ansible-builder)
-- [Introduction — ansible-builder documentation](https://ansible-builder.readthedocs.io/en/latest/)
+- [Introduction — ansible-builder documentation](https://ansible-builder.readthedocs.io/en/stable/)
 
 This repository includes ready-to-use files as an example to use Ansible Builder. You can clone my repository to start with my ready-to-use example files.
 
@@ -58,7 +58,7 @@ cd awx-on-k3s/builder
 - CentOS Stream 8 (Minimal)
 - Python 3.9
 - Docker 20.10.17
-- Ansible Builder 1.2.0
+- Ansible Builder 3.0.0
 
 ### Install Ansible Builder
 
@@ -72,51 +72,61 @@ python3 -m pip install ansible-builder
 
 At least, the file `execution-environment.yml` is required to build EE.
 
-This repository contains [`execution-environment.yml` as a ready-to-use example](execution-environment.yml). This file is made to achieve following requirements.
+This repository contains [`execution-environment.yml` as a minimal ready-to-use example](execution-environment.yml). This file is made to achieve following requirements.
 
-- Use `quay.io/ansible/ansible-runner:stable-2.12-latest` as the base image
-- Add Ansible collections that listed in [`requirements.yml`](requirements.yml)
-- Add Python packages that listed in [`requirements.txt`](requirements.txt)
-- Add RPM Packages that listed in [`bindep.txt`](bindep.txt)
-- Run some commands before build steps and after build steps
+- Use `quay.io/centos/centos:stream9-minimal` as the base image
+- Use Python `3.11` as Python interpreter
+- Use Ansible `2.15.*` and Ansible Runner `2.3.*` to run playbooks on EE
+- Add Ansible collections that listed in [`dependencies/requirements.yml`](dependencies/requirements.yml)
+- Add Python packages that listed in [`ependencies/requirements.txt`](ependencies/requirements.txt)
+- Add RPM Packages that listed in [`dependencies/bindep.txt`](dependencies/bindep.txt) for basic remote connection and debugging
+- Run additional commands during build steps (`additional_build_steps`)
+  - In this example, to allow the hard-coded interpreter name (`python3`) passed by AWX, `alternatives` command is appended under `append_base` to make the binary `/usr/bin/python3.11` executable as command `python3`
 
-You can review modify [`execution-environment.yml`](execution-environment.yml) and any YAML or TEXT file referenced from this file to suit your requirements.
+Note that since this example uses `*-minimal` image as the base image and added only few packages for SSH connection and debugging, there should be still missing packages and modules for some modules and collections.
 
-Note the base image can be chosen from the tags from [quay.io/ansible/ansible-runner](https://quay.io/repository/ansible/ansible-runner?tab=tags).
+You can review and modify [`execution-environment.yml`](execution-environment.yml) and any files referenced from this file to suit your requirements.
 
 The syntax of `requirements.yml` is [the same as for Ansible Galaxy](https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#install-multiple-collections-with-a-requirements-file). The syntax of `requirements.txt` is [the same as for Pip](https://pip.pypa.io/en/stable/reference/requirements-file-format/), and `bindep.txt` is [for Bindep](https://docs.opendev.org/opendev/bindep/latest/readme.html).
 
-Other customization is possible besides this. Refer to [the official Ansible Builder documentation](https://ansible-builder.readthedocs.io/en/latest/) for details.
+Other customization is possible besides this. Refer to [the official Ansible Builder documentation](https://ansible-builder.readthedocs.io/en/stable/) for details.
 
 ### Build EE
 
 Once your files are ready, run `ansible-builder build` command to build EE as a container image according to the definition in `execution-environment.yml`. Specify a tag (`--tag`) to suit your requirements.
 
 ```bash
-ansible-builder build --tag registry.example.com/ansible/ee:2.12-custom --container-runtime docker --verbosity 3
+ansible-builder build --tag registry.example.com/ansible/ee:2.15-custom --container-runtime docker --verbosity 3
 ```
 
 Below is an example output of this command.
 
 ```bash
-$ ansible-builder build --tag registry.example.com/ansible/ee:2.12-custom --container-runtime docker --verbosity 3
-Ansible Builder is building your execution environment image. Tags: registry.example.com/ansible/ee:2.12-custom
+$ ansible-builder build --tag registry.example.com/ansible/ee:2.15-custom --container-runtime docker --verbosity 3
+Ansible Builder is generating your execution environment build context.
 File context/_build/requirements.yml will be created.
 File context/_build/requirements.txt will be created.
 File context/_build/bindep.txt will be created.
-File context/_build/ansible.cfg will be created.
-Rewriting Containerfile to capture collection requirements
+Creating context/_build/configs
+File context/_build/configs/ansible.cfg will be created.
+File context/_build/scripts/assemble will be created.
+File context/_build/scripts/install-from-bindep will be created.
+File context/_build/scripts/introspect.py will be created.
+File context/_build/scripts/check_galaxy will be created.
+File context/_build/scripts/check_ansible will be created.
+File context/_build/scripts/entrypoint will be created.
+Ansible Builder is building your execution environment image. Tags: registry.example.com/ansible/ee:2.15-custom
 Running command:
-  docker build -f context/Dockerfile -t registry.example.com/ansible/ee:2.12-custom context
-Sending build context to Docker daemon   7.68kB
-Step 1/27 : ARG EE_BASE_IMAGE=quay.io/ansible/ansible-runner:stable-2.12-latest
-Step 2/27 : ARG EE_BUILDER_IMAGE=quay.io/ansible/ansible-builder:latest
-Step 3/27 : FROM $EE_BASE_IMAGE as galaxy
+  docker build -f context/Dockerfile -t registry.example.com/ansible/ee:2.15-custom context
+Sending build context to Docker daemon  50.18kB
+Step 1/76 : ARG EE_BASE_IMAGE="quay.io/centos/centos:stream9-minimal"
 ...
-Removing intermediate container cb1d45eac7ba
- ---> f6c3375db22e
-Successfully built f6c3375db22e
-Successfully tagged registry.example.com/ansible/ee:2.12-custom
+Step 76/76 : CMD ["bash"]
+ ---> Running in a7dd36359206
+Removing intermediate container a7dd36359206
+ ---> db146c87502d
+Successfully built db146c87502d
+Successfully tagged registry.example.com/ansible/ee:2.15-custom
 
 Complete! The build context can be found at: /home/********/awx-on-k3s/builder/context
 ```
@@ -125,8 +135,8 @@ Once the command is complete, your custom EE image is built and stored on Docker
 
 ```bash
 $ docker image ls
-REPOSITORY                        TAG                  IMAGE ID       CREATED         SIZE
-registry.example.com/ansible/ee   2.12-custom          f6c3375db22e   4 minutes ago   748MB
+REPOSITORY                        TAG               IMAGE ID       CREATED              SIZE
+registry.example.com/ansible/ee   2.15-custom       db146c87502d   20 seconds ago       281MB
 ```
 
 ## Use EE
@@ -142,13 +152,13 @@ To use your EE in AWX, in typical use cases, your EE should be stored on some co
 Simply you can push your EE image to some container registry. Any registry can be acceptable. If you want to deploy your own private container registry, refer [additional guide on this repository](../registry).
 
 ```bash
-$ docker push registry.example.com/ansible/ee:2.12-custom
+$ docker push registry.example.com/ansible/ee:2.15-custom
 The push refers to repository [registry.example.com/ansible/ee]
 ...
-2.12-custom: digest: sha256:043a2bd19f4fcc5bd189f0ef0e8fb4e3b436c90e984f23f7dcf0e6b3da4443e0 size: 4515
+2.15-custom: digest: sha256:bf799b01b32bccb2570911ae77e3700ef9cc5d708699a9fa421124c038a57d31 size: 3452
 ```
 
-Then you can specify `registry.example.com/ansible/ee:2.12-custom` as your own custom EE in AWX. Specify registry credentials if your container registry requires authentication.
+Then you can specify `registry.example.com/ansible/ee:2.15-custom` as your own custom EE in AWX. Specify registry credentials if your container registry requires authentication.
 
 #### Use EE in AWX without container registry
 
@@ -160,10 +170,10 @@ This means that if your Kubernetes has all the EE images you need in its cache i
 
 ```bash
 # Save your EE image as Tar file
-docker save registry.example.com/ansible/ee:2.12-custom -o custom-ee.tar
+docker save registry.example.com/ansible/ee:2.15-custom -o custom-ee.tar
 
 # Import the Tar file to containerd
-sudo /usr/local/bin/k3s ctr images import --compress-blobs --base-name registry.example.com/ansible/ee:2.12-custom custom-ee.tar
+sudo /usr/local/bin/k3s ctr images import --compress-blobs --base-name registry.example.com/ansible/ee:2.15-custom custom-ee.tar
 ```
 
 Ensure your imported image is listed.
@@ -172,13 +182,13 @@ Ensure your imported image is listed.
 $ sudo /usr/local/bin/k3s crictl images
 IMAGE                             TAG           IMAGE ID            SIZE
 ...
-registry.example.com/ansible/ee   2.12-custom   cbd5e7519054c       515MB
+registry.example.com/ansible/ee   2.15-custom   db146c87502d4       96.3MB
 ...
 ```
 
-Now you can specify `registry.example.com/ansible/ee:2.12-custom` as your own custom EE in AWX without any container registry and any credentials.
+Now you can specify `registry.example.com/ansible/ee:2.15-custom` as your own custom EE in AWX without any container registry and any credentials.
 
-You can change the policy of pulling the image in `Edit` page of your EE. The default `Only pull the image if not present before running` is ok, but to be safe you should specify `Never pull container before running`.
+In AWX, you can change the policy of pulling the image in `Edit` page of your EE. The default `Only pull the image if not present before running` is ok, but to be safe you should specify `Never pull container before running`.
 
 ### Use EE in Ansible Runner
 
@@ -194,12 +204,23 @@ The `Dockerfile` is generated and stored under the `context` directory once your
 
 ```bash
 $ cat context/Dockerfile
-ARG EE_BASE_IMAGE=quay.io/ansible/ansible-runner:stable-2.12-latest
-ARG EE_BUILDER_IMAGE=quay.io/ansible/ansible-builder:latest
+ARG EE_BASE_IMAGE="quay.io/centos/centos:stream9-minimal"
+...
 
-FROM $EE_BASE_IMAGE as galaxy
-ARG ANSIBLE_GALAXY_CLI_COLLECTION_OPTS=
-USER root
+# Base build stage
+FROM $EE_BASE_IMAGE as base
+...
+
+# Galaxy build stage
+FROM base as galaxy
+...
+
+# Builder build stage
+FROM base as builder
+...
+
+# Final build stage
+FROM base as final
 ...
 ```
 
@@ -211,8 +232,14 @@ Ansible Builder is generating your execution environment build context.
 File context/_build/requirements.yml will be created.
 File context/_build/requirements.txt will be created.
 File context/_build/bindep.txt will be created.
-File context/_build/ansible.cfg will be created.
-Rewriting Containerfile to capture collection requirements
+Creating context/_build/configs
+File context/_build/configs/ansible.cfg will be created.
+File context/_build/scripts/assemble will be created.
+File context/_build/scripts/install-from-bindep will be created.
+File context/_build/scripts/introspect.py will be created.
+File context/_build/scripts/check_galaxy will be created.
+File context/_build/scripts/check_ansible will be created.
+File context/_build/scripts/entrypoint will be created.
 Complete! The build context can be found at: /home/********/awx-on-k3s/builder/context
 ```
 

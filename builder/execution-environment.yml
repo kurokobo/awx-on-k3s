@@ -1,20 +1,59 @@
 ---
-version: 1
+# Refer to Ansible Builder Documentation for details for each options:
+# https://ansible-builder.readthedocs.io/en/stable/definition/
 
-build_arg_defaults:
-  EE_BASE_IMAGE: quay.io/ansible/ansible-runner:stable-2.12-latest
+version: 3
 
-ansible_config: ansible.cfg
+# build_arg_defaults:
+#   ANSIBLE_GALAXY_CLI_COLLECTION_OPTS: "--pre"
+#   ANSIBLE_GALAXY_CLI_ROLE_OPTS: "–no-deps"
+
+images:
+  base_image:
+    name: quay.io/centos/centos:stream9-minimal
+
+options:
+  # container_init:
+  #   package_pip: dumb-init==1.2.5
+  #   entrypoint: '["/opt/builder/bin/entrypoint", "dumb-init"]'
+  #   cmd: '["bash"]'
+  package_manager_path: /usr/bin/microdnf
+  # relax_password_permissions: true
+  # skip_ansible_check: false
+  # workdir: /runner
+  # user: 1000
 
 dependencies:
-  galaxy: requirements.yml
-  python: requirements.txt
-  system: bindep.txt
+  python_interpreter:
+    package_system: python3.11
+    python_path: /usr/bin/python3.11
+  ansible_core:
+    package_pip: ansible-core~=2.15
+  ansible_runner:
+    package_pip: ansible-runner~=2.3
+  galaxy: dependencies/requirements.yml
+  python: dependencies/requirements.txt
+  system: dependencies/bindep.txt
+
+additional_build_files:
+  - src: files/ansible.cfg
+    dest: configs
 
 additional_build_steps:
-  prepend:
-    - RUN whoami
-    - RUN cat /etc/os-release
-  append:
-    - RUN echo This is a post-install command!
-    - RUN ls -la /etc
+  # prepend_base:
+  #   - RUN echo "Additional steps for prepend_base"
+  append_base:
+    # - RUN echo "Additional steps for append_base"
+    - RUN alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 0
+  # prepend_galaxy:
+  #   - RUN echo "Additional steps for prepend_galaxy"
+  # append_galaxy:
+  #   - RUN echo "Additional steps for append_galaxy"
+  # prepend_builder:
+  #   - RUN echo "Additional steps for prepend_builder"
+  # append_builder:
+  #   - RUN echo "Additional steps for append_builder"
+  # prepend_final:
+  #   - RUN echo "Additional steps for prepend_final"
+  # append_final:
+  #   - RUN echo "Additional steps for append_final"
