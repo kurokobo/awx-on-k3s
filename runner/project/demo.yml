@@ -26,6 +26,7 @@
         - pwd
         - python3 -m pip list
         - ansible-galaxy collection list -p .
+        - rpm -qa
       register: command_results
     - ansible.builtin.debug:
         msg: "{{ item.stdout_lines }}"

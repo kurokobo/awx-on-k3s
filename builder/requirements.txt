@@ -1,4 +1,0 @@
-example-pypi-package
-
-# Recommended workaround to avoid dependency issues: https://github.com/ansible/ansible-runner/issues/1138
-ansible-runner>=2.2.1

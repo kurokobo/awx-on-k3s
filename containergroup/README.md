@@ -161,7 +161,7 @@ spec:
     env:
     - name: MY_CUSTOM_ENV
       value: This is my custom environment variable
-    image: registry.example.com/ansible/ee:2.12-custom
+    image: registry.example.com/ansible/ee:2.15-custom
     ...
     resources:
       limits:
