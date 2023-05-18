@@ -186,7 +186,7 @@ Typical solutions are one of the following:
       ee_resource_requirements: {}     👈👈👈
     ```
 
-  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/2.1.0/README.md#containers-resource-requirements) for details.
+  - You can specify more specific value for each containers. Refer [official documentation](https://github.com/ansible/awx-operator/blob/2.2.0/README.md#containers-resource-requirements) for details.
   - In this way you can run AWX with fewer resources, but you may encounter performance issues.
 
 ### The Pod is `Pending` with "1 pod has unbound immediate PersistentVolumeClaims." event
