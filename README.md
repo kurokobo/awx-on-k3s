@@ -6,7 +6,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - Accessible over HTTPS from remote host
 - All data will be stored under `/data`
 - Fixed (configurable) passwords for AWX and PostgreSQL
-- Fixed (configurable) versions of AWX and PostgreSQL
+- Fixed (configurable) versions of AWX
 
 **If you want to view the guide for the specific version of AWX Operator, switch the page to the desired tag instead of the `main` branch.**
 
@@ -296,7 +296,7 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
   - [📝Deploy older version of AWX Operator](tips/deploy-older-operator.md)
   - [📝Upgrade AWX Operator and AWX](tips/upgrade-operator.md)
   - [📝Workaround for the rate limit on Docker Hub](tips/dockerhub-rate-limit.md)
-  - [📝Version Mapping between AWX Operator and AWX](tips/version-mapping.md)
+  - [📝Version Mapping for AWX Operator and AWX](tips/version-mapping.md)
   - [📝Use Kerberos authentication to connect to Windows hosts](tips/use-kerberos.md)
   - [📝Use Helm or Operator Lifecycle Manager to manage AWX Operator and AWX](tips/alternative-methods.md)
   - [📝Troubleshooting Guide](tips/troubleshooting.md)
