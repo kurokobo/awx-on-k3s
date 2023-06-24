@@ -1,6 +1,6 @@
 ---
 # Refer to Ansible Builder Documentation for details for each options:
-# https://ansible-builder.readthedocs.io/en/stable/definition/
+# https://ansible.readthedocs.io/projects/builder/en/latest/definition/
 
 version: 3
 
@@ -31,9 +31,9 @@ dependencies:
     package_pip: ansible-core~=2.15
   ansible_runner:
     package_pip: ansible-runner~=2.3
-  galaxy: dependencies/requirements.yml
-  python: dependencies/requirements.txt
   system: dependencies/bindep.txt
+  python: dependencies/requirements.txt
+  galaxy: dependencies/requirements.yml
 
 additional_build_files:
   - src: files/ansible.cfg
@@ -45,8 +45,9 @@ additional_build_steps:
   append_base:
     # - RUN echo "Additional steps for append_base"
     - RUN alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 0
-  # prepend_galaxy:
-  #   - RUN echo "Additional steps for prepend_galaxy"
+  prepend_galaxy:
+    # - RUN echo "Additional steps for prepend_galaxy"
+    - ADD _build/configs/ansible.cfg ~/.ansible.cfg
   # append_galaxy:
   #   - RUN echo "Additional steps for append_galaxy"
   # prepend_builder:

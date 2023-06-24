@@ -43,7 +43,7 @@ In such cases, you need to add Ansible collections, Python packages, and RPM pac
 To build custom EE, there is a tool called Ansible Builder. You can build your own custom EE with any Ansible collections, Python packages, and RPM packages added.
 
 - [ansible/ansible-builder](https://github.com/ansible/ansible-builder)
-- [Introduction — ansible-builder documentation](https://ansible-builder.readthedocs.io/en/stable/)
+- [Introduction to Ansible Builder — ansible-builder documentation](https://ansible.readthedocs.io/projects/builder/en/latest/)
 
 This repository includes ready-to-use files as an example to use Ansible Builder. You can clone my repository to start with my ready-to-use example files.
 
@@ -77,11 +77,14 @@ This repository contains [`execution-environment.yml` as a minimal ready-to-use 
 - Use `quay.io/centos/centos:stream9-minimal` as the base image
 - Use Python `3.11` as Python interpreter
 - Use Ansible `2.15.*` and Ansible Runner `2.3.*` to run playbooks on EE
-- Add Ansible collections that listed in [`dependencies/requirements.yml`](dependencies/requirements.yml)
-- Add Python packages that listed in [`ependencies/requirements.txt`](ependencies/requirements.txt)
 - Add RPM Packages that listed in [`dependencies/bindep.txt`](dependencies/bindep.txt) for basic remote connection and debugging
+- Add Python packages that listed in [`dependencies/requirements.txt`](ependencies/requirements.txt)
+- Add Ansible collections that listed in [`dependencies/requirements.yml`](dependencies/requirements.yml)
+- Customize configuration for `ansible-galaxy` (`additional_build_files` and `additional_build_steps`)
+  - Add customized `ansible.cfg` to the context (`additional_build_files`)
+  - Place customized file as `~/.ansible.cfg` for the stage that `ansible-galaxy` is invoked (`prepend_galaxy` under `additional_build_steps`)
 - Run additional commands during build steps (`additional_build_steps`)
-  - In this example, to allow the hard-coded interpreter name (`python3`) passed by AWX, `alternatives` command is appended under `append_base` to make the binary `/usr/bin/python3.11` executable as command `python3`
+  - To allow the hard-coded interpreter name (`python3`) passed by AWX, `alternatives` command is appended under `append_base` to make the binary `/usr/bin/python3.11` executable as command `python3`
 
 Note that since this example uses `*-minimal` image as the base image and added only few packages for SSH connection and debugging, there should be still missing packages and modules for some modules and collections.
 
@@ -119,13 +122,13 @@ Ansible Builder is building your execution environment image. Tags: registry.exa
 Running command:
   docker build -f context/Dockerfile -t registry.example.com/ansible/ee:2.15-custom context
 Sending build context to Docker daemon  50.18kB
-Step 1/76 : ARG EE_BASE_IMAGE="quay.io/centos/centos:stream9-minimal"
+Step 1/77 : ARG EE_BASE_IMAGE="quay.io/centos/centos:stream9-minimal"
 ...
-Step 76/76 : CMD ["bash"]
- ---> Running in a7dd36359206
-Removing intermediate container a7dd36359206
- ---> db146c87502d
-Successfully built db146c87502d
+Step 77/77 : CMD ["bash"]
+ ---> Running in 2eff2dca84d2
+Removing intermediate container 2eff2dca84d2
+ ---> d804667597e9
+Successfully built d804667597e9
 Successfully tagged registry.example.com/ansible/ee:2.15-custom
 
 Complete! The build context can be found at: /home/********/awx-on-k3s/builder/context
@@ -136,7 +139,7 @@ Once the command is complete, your custom EE image is built and stored on Docker
 ```bash
 $ docker image ls
 REPOSITORY                        TAG               IMAGE ID       CREATED              SIZE
-registry.example.com/ansible/ee   2.15-custom       db146c87502d   20 seconds ago       281MB
+registry.example.com/ansible/ee   2.15-custom       d804667597e9   20 seconds ago       284MB
 ```
 
 ## Use EE
@@ -155,7 +158,7 @@ Simply you can push your EE image to some container registry. Any registry can b
 $ docker push registry.example.com/ansible/ee:2.15-custom
 The push refers to repository [registry.example.com/ansible/ee]
 ...
-2.15-custom: digest: sha256:bf799b01b32bccb2570911ae77e3700ef9cc5d708699a9fa421124c038a57d31 size: 3452
+2.15-custom: digest: sha256:193b380672c64768231973c58a154fb8eec0f0aae1891e63aea3918308a06716 size: 3456
 ```
 
 Then you can specify `registry.example.com/ansible/ee:2.15-custom` as your own custom EE in AWX. Specify registry credentials if your container registry requires authentication.
@@ -182,7 +185,7 @@ Ensure your imported image is listed.
 $ sudo /usr/local/bin/k3s crictl images
 IMAGE                             TAG           IMAGE ID            SIZE
 ...
-registry.example.com/ansible/ee   2.15-custom   db146c87502d4       96.3MB
+registry.example.com/ansible/ee   2.15-custom   d804667597e9e       96.3MB
 ...
 ```
 
