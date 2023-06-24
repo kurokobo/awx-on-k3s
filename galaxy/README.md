@@ -372,7 +372,7 @@ Now your AWX is available at `https://galaxy.example.com/` or the hostname you s
 
 ## Configuration and Usage
 
-Basic configuration and usage of Galaxy NG. Following section is based on Galxy NG 4.7.0.
+Basic configuration and usage of Galaxy NG. Following section is based on Galxy NG 4.7.
 
 ### Sync Collections with Public Galaxy
 
