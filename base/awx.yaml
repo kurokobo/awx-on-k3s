@@ -35,6 +35,7 @@ spec:
   web_resource_requirements: {}
   task_resource_requirements: {}
   ee_resource_requirements: {}
+  init_container_resource_requirements: {}
 
   # Uncomment to reveal "censored" logs
   #no_log: false

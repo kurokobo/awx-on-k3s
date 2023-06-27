@@ -189,7 +189,7 @@ There is a Kubernetes Operator for Pulp 3 named Pulp Operator.
 
 - [pulp/pulp-operator: Kubernetes Operator for Pulp 3](https://github.com/pulp/pulp-operator)
 
-This project is in alpha stage and under active development. In this guide, we use [Pulp Operator 1.0.0-alpha.7](https://github.com/pulp/pulp-operator/tree/1.0.0-alpha.7).
+This project is in alpha stage and under active development. In this guide, we use [Pulp Operator 1.0.0-alpha.8](https://github.com/pulp/pulp-operator/tree/1.0.0-alpha.8).
 
 ### Install Pulp Operator
 
@@ -199,7 +199,7 @@ Install specified version of Pulp Operator.
 cd ~
 git clone https://github.com/pulp/pulp-operator.git
 cd pulp-operator
-git checkout 1.0.0-alpha.7
+git checkout 1.0.0-alpha.8
 ```
 
 Export the name of the namespace where you want to deploy Pulp Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `pulp-operator-system`. Note that `make deploy` requires `go` binary by default but you can remove this dependency by small `sed` patch.
@@ -355,8 +355,8 @@ replicaset.apps/galaxy-web-546fbf459                          1         1       
 NAME                               READY   AGE
 statefulset.apps/galaxy-database   1/1     3m22s
 
-NAME                               CLASS    HOSTS                ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/galaxy   <none>   galaxy.example.com   192.168.0.219   80, 443   2m45s
+NAME                               CLASS     HOSTS                ADDRESS         PORTS     AGE
+ingress.networking.k8s.io/galaxy   traefik   galaxy.example.com   192.168.0.219   80, 443   2m45s
 
 NAME                                   TYPE                DATA   AGE
 secret/galaxy-admin-password           Opaque              1      3m22s
