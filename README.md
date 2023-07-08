@@ -20,7 +20,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - [Prepare CentOS Stream 8 host](#prepare-centos-stream-8-host)
   - [Install K3s](#install-k3s)
   - [Install AWX Operator](#install-awx-operator)
-  - [Prepare required files](#prepare-required-files)
+  - [Prepare required files to deploy AWX](#prepare-required-files-to-deploy-awx)
   - [Deploy AWX](#deploy-awx)
 - [Back up and Restore AWX using AWX Operator](#back-up-and-restore-awx-using-awx-operator)
 - [Additional Guides](#additional-guides)
@@ -71,7 +71,7 @@ sudo reboot
 Install required packages to deploy AWX Operator and AWX.
 
 ```bash
-sudo dnf install -y git make curl tar
+sudo dnf install -y git curl
 ```
 
 ### Install K3s
@@ -84,23 +84,24 @@ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
 
 ### Install AWX Operator
 
-Install specified version of AWX Operator. Note that this procedure is applicable only for AWX Operator `0.14.0` or later. If you want to deploy `0.13.0` or earlier version of AWX Operator, refer [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md).
+Clone this repository and change directory.
+
+If you want to use files suitable for the specific version of AWX Operator, [refer tags in this repository](https://github.com/kurokobo/awx-on-k3s/tags) and specify desired tag in `git checkout`. Especially for `0.13.0` or earlier version of AWX Operator, refer to [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md).
 
 ```bash
 cd ~
-git clone https://github.com/ansible/awx-operator.git
-cd awx-operator
+git clone https://github.com/kurokobo/awx-on-k3s.git
+cd awx-on-k3s
 git checkout 2.3.0
 ```
 
-Export the name of the namespace where you want to deploy AWX Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `awx`.
+Then invoke `kubectl apply -k operator` to deploy AWX Operator.
 
 ```bash
-export NAMESPACE=awx
-make deploy
+kubectl apply -k operator
 ```
 
-The AWX Operator will be deployed to the namespace you specified.
+The AWX Operator will be deployed to the namespace `awx`.
 
 ```bash
 $ kubectl -n awx get all
@@ -117,18 +118,7 @@ NAME                                                         DESIRED   CURRENT  
 replicaset.apps/awx-operator-controller-manager-68d787cfbd   1         1         1       16s
 ```
 
-### Prepare required files
-
-Clone this repository and change directory.
-
-If you want to use files suitable for the specific version of AWX Operator, [refer tags in this repository](https://github.com/kurokobo/awx-on-k3s/tags) and specify desired tag in `git checkout`.
-
-```bash
-cd ~
-git clone https://github.com/kurokobo/awx-on-k3s.git
-cd awx-on-k3s
-git checkout 2.3.0
-```
+### Prepare required files to deploy AWX
 
 Generate a Self-Signed certificate. Note that IP address can't be specified. If you want to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate, follow the guide on [📁 **Use SSL Certificate from Public ACME CA**](acme) first and come back to this step when done.
 
@@ -238,10 +228,10 @@ NAME                                    CLASS     HOSTS             ADDRESS     
 ingress.networking.k8s.io/awx-ingress   traefik   awx.example.com   192.168.0.219   80, 443   5m27s
 
 NAME                                  TYPE                DATA   AGE
+secret/redhat-operators-pull-secret   Opaque              1      7m11s
 secret/awx-admin-password             Opaque              1      6m15s
 secret/awx-postgres-configuration     Opaque              6      6m15s
 secret/awx-secret-tls                 kubernetes.io/tls   2      6m15s
-secret/redhat-operators-pull-secret   Opaque              1      6m11s
 secret/awx-app-credentials            Opaque              3      5m30s
 secret/awx-secret-key                 Opaque              1      6m6s
 secret/awx-broadcast-websocket        Opaque              1      6m2s
