@@ -37,7 +37,7 @@ If you are using AWX Operator `0.14.0` or later and want to upgrade to newer ver
 
 ### ⚠️ Note for upgrading from `2.0.0` to `2.0.1` or later
 
-Note that only when upgrading **from `2.0.0` to `2.0.1` or later**, [the `extra_volumes` and `extra_volumes` in `base/awx.yaml` for `2.0.0` as a workaround for specific issue](https://github.com/kurokobo/awx-on-k3s/blob/2.0.0/base/awx.yaml#L42-L51) causes failure of upgrading.
+Note that only when upgrading **from `2.0.0` that deployed using this repository to `2.0.1` or later**, [the `extra_volumes` and `extra_volumes` in `base/awx.yaml` for `2.0.0` as a workaround for specific issue](https://github.com/kurokobo/awx-on-k3s/blob/2.0.0/base/awx.yaml#L42-L51) causes failure of upgrading.
 
 To avoid this, follow these steps before upgrading AWX Operator. Steps 1 and 2 can also be achieved by `kubectl -n awx edit awx awx`.
 
@@ -77,18 +77,17 @@ kubectl apply -f pv-postgres-13.yaml
 
 ### 📝 Procedure
 
-To upgrade your AWX Operator, perform following steps.
+To upgrade your AWX Operator, perform following steps. If your target version is earlier than 2.3.0, switch this page to the desired tag instead of the `main` branch.
 
 ```bash
 # Prepare required files
 cd ~
-git clone https://github.com/ansible/awx-operator.git
-cd awx-operator
-git checkout 0.15.0  # Checkout the version to upgrade to
+git clone https://github.com/kurokobo/awx-on-k3s.git
+cd awx-on-k3s
+git checkout 2.3.0  # Checkout the version to upgrade to
 
 # Deploy AWX Operator
-export NAMESPACE=awx  # Specify the namespace where the old AWX Operator exists
-make deploy
+kubectl apply -k operator
 ```
 
 This will upgrade the AWX Operator first, after that, AWX will be also upgraded as well.
