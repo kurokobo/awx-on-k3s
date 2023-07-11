@@ -256,7 +256,7 @@ In this method, the lifecycle of AWX Operator is managed by OLM. In the default 
 Refer to [the first step of the instruction that appears by `Install` button](https://operatorhub.io/operator/awx-operator) for details.
 
 ```bash
-OLM_RELEASE="v0.22.0"
+OLM_RELEASE="v0.25.0"
 curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/${OLM_RELEASE}/install.sh | bash -s ${OLM_RELEASE}
 ```
 
@@ -274,16 +274,17 @@ NAMESPACE   NAME                                                  AGE
 operators   operatorgroup.operators.coreos.com/global-operators   83s
 olm         operatorgroup.operators.coreos.com/olm-operators      83s
 
-NAMESPACE   NAME                                                       DISPLAY          VERSION   REPLACES   PHASE
-olm         clusterserviceversion.operators.coreos.com/packageserver   Package Server   0.22.0               Succeeded
-
 NAMESPACE   NAME                                                       DISPLAY               TYPE   PUBLISHER        AGE
 olm         catalogsource.operators.coreos.com/operatorhubio-catalog   Community Operators   grpc   OperatorHub.io   83s
 
+NAMESPACE   NAME                                                       DISPLAY          VERSION   REPLACES   PHASE
+olm         clusterserviceversion.operators.coreos.com/packageserver   Package Server   0.25.0               Succeeded
+
+
 $ kubectl -n olm get all
 NAME                                    READY   STATUS    RESTARTS   AGE
-pod/catalog-operator-5bb75dd968-mkrc6   1/1     Running   0          100s
 pod/olm-operator-f56666c56-ggqp2        1/1     Running   0          100s
+pod/catalog-operator-5bb75dd968-mkrc6   1/1     Running   0          100s
 pod/packageserver-5d9568694-6lxwg       1/1     Running   0          93s
 pod/packageserver-5d9568694-7qnlk       1/1     Running   0          93s
 pod/operatorhubio-catalog-hxvcx         1/1     Running   0          93s
