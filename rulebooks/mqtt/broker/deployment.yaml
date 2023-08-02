@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker
+  labels:
+    app: mqtt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mqtt
+  template:
+    metadata:
+      labels:
+        app: mqtt
+    spec:
+      containers:
+        - name: broker
+          image: eclipse-mosquitto:latest
+          command:
+            - mosquitto
+            - -c
+            - /mosquitto-no-auth.conf
+          ports:
+            - name: mqtt
+              containerPort: 1883

@@ -1,0 +1,17 @@
+---
+- name: Demo Ruleset for MQTT
+  hosts: all 
+
+  sources:
+    - ansible.eda.mqtt:
+        host: "{{ mqtt_host }}"
+        port: "{{ mqtt_port }}"
+        topic: "{{ mqtt_topic }}"
+
+  rules:
+    - name: Run Demo Job Template
+      condition: event.message == "Hello EDA"
+      action:
+        run_job_template:
+          name: Demo Job Template
+          organization: Default

@@ -1,0 +1,22 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: eda
+  name: eda-ingress-webhook
+spec:
+  tls:
+    - hosts:
+        - eda.example.com
+      secretName: eda-secret-tls
+  rules:
+    - host: eda.example.com
+      http:
+        paths:
+          - path: /webhooks/demo
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: activation-job-1-5000
+                port:
+                  number: 5000
