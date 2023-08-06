@@ -1,0 +1,53 @@
+---
+apiVersion: eda.ansible.com/v1alpha1
+kind: EDA
+metadata:
+  name: eda
+spec:
+  admin_user: admin
+  admin_password_secret: eda-admin-password
+
+  ingress_type: ingress
+  ingress_tls_secret: eda-secret-tls
+  hostname: eda.example.com
+
+  automation_server_url: https://awx.example.com/
+  automation_server_ssl_verify: no
+
+  # https://github.com/ansible/eda-server-operator/issues/111
+  image: quay.io/ansible/eda-server
+  image_version: sha-a6e4d66
+
+  # https://github.com/ansible/eda-server-operator/issues/112
+  #extra_settings:
+  #  - setting: GIT_SSL_NO_VERIFY
+  #    value: "true"
+
+  api:
+    replicas: 1
+    resource_requirements:
+      requests: {}
+  ui:
+    replicas: 1
+    resource_requirements:
+      requests: {}
+  worker:
+    replicas: 1
+    resource_requirements:
+      requests: {}
+  redis:
+    replicas: 1
+    resource_requirements:
+      requests: {}
+  database:
+    database_secret: eda-database-configuration
+    # https://github.com/ansible/eda-server-operator/issues/113
+    #postgres_storage_class: eda-postgres-volume
+    storage_requirements:
+      requests:
+        storage: 8Gi
+    resource_requirements:
+      requests: {}
+
+  # Uncomment to reveal "censored" logs
+  #no_log: false

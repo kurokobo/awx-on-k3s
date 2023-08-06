@@ -265,6 +265,9 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
 - [📁 **Deploy Private Container Registry on Kubernetes**](registry)
   - The guide to use Execution Environments in AWX (AWX-EE).
   - If we want to use our own Execution Environment built with Ansible Builder and don't want to push it to the public container registry e.g. Docker Hub, we can deploy a private container registry on K3s.
+- [📁 **Integrate AWX with EDA Controller** (Experimental)](rulebooks)
+  - The guide to deploy and use Event Driven Ansible Controller (EDA Controller) with AWX on K3s.
+  - **Note that EDA Controller Operator that used in this guide is not a fully supported installation method for EDA Controller.**
 - [📁 **Deploy Private Galaxy NG on Docker or Kubernetes** (Experimental)](galaxy)
   - The guide to deploy our own Galaxy NG instance.
   - **Note that the containerized implementation of Galaxy NG is not officially supported at this time.**
