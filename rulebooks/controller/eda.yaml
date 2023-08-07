@@ -32,7 +32,7 @@ spec:
     resource_requirements:
       requests: {}
   worker:
-    replicas: 1
+    replicas: 2
     resource_requirements:
       requests: {}
   redis:

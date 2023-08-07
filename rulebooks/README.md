@@ -318,7 +318,7 @@ activation-job-1   0/1           8m45s      11m
 By this Job, new Pod that `ansible-rulebook` running on is also created.
 
 ```bash
-$ JOB_NAME=$(kubectl -n eda get job -l activation-id=${ACTIVATION_ID} -o name | cut -d '/' -f 2)
+$ JOB_NAME=$(kubectl -n eda get job -l activation-id=${ACTIVATION_ID} -o jsonpath={.items[0].metadata.labels.job-name})
 $ kubectl -n eda get pod -l job-name=${JOB_NAME}
 NAME                     READY   STATUS    RESTARTS   AGE
 activation-job-1-h9kjt   1/1     Running   0          11m
@@ -358,6 +358,17 @@ spec:
                 name: activation-job-1-5000     👈👈👈
                 port:
                   number: 5000
+```
+
+Modify `replicas` for `worker` in the same file. The number of rulebooks that can be activated simultaneously is equal to the number of this value.
+
+```yaml
+  ...
+  worker:
+    replicas: 2    👈👈👈
+    resource_requirements:
+      requests: {}
+  ...
 ```
 
 By applying this file, your webhook can be accessed on the URL `https://eda.example.com/webhooks/demo`.
