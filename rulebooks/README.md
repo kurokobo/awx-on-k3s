@@ -318,7 +318,7 @@ activation-job-1   0/1           8m45s      11m
 By this Job, new Pod that `ansible-rulebook` running on is also created.
 
 ```bash
-$ JOB_NAME=$(kubectl -n eda get job -l activation-id=${ACTIVATION_ID} -o jsonpath={.items[0].metadata.labels.job-name})
+$ JOB_NAME=activation-job-${ACTIVATION_ID}
 $ kubectl -n eda get pod -l job-name=${JOB_NAME}
 NAME                     READY   STATUS    RESTARTS   AGE
 activation-job-1-h9kjt   1/1     Running   0          11m
@@ -409,7 +409,7 @@ Define the Decision Environment with the following information, just as you conf
 | Key | Value |
 | - | - |
 | Name | `Minimal DE with MQTT` |
-| Image | `docker.io/kurokobo//ansible-rulebook:v1.0.1-mqtt` |
+| Image | `docker.io/kurokobo/ansible-rulebook:v1.0.1-mqtt` |
 
 Note that the image specified above is based on `quay.io/ansible/ansible-rulebook:v1.0.1` and includes [PR #113](https://github.com/ansible/event-driven-ansible/pull/113) with small patch to make `ansible.eda.mqtt` workable. The Dockerfile for this image is available under [mqtt/de directory](./mqtt/de).
 
