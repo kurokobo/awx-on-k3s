@@ -145,7 +145,7 @@ $ kubectl -n eda logs -f deployment/eda-server-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (eda.ansible.com/v1alpha1, Kind=EDA, eda/eda) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=54   changed=0    unreachable=0    failed=0    skipped=16   rescued=0    ignored=0
+localhost                  : ok=53   changed=0    unreachable=0    failed=0    skipped=17   rescued=0    ignored=0
 ```
 
 Required objects has been deployed next to AWX Operator in `awx` namespace.
@@ -153,56 +153,66 @@ Required objects has been deployed next to AWX Operator in `awx` namespace.
 ```bash
 $ kubectl -n eda get eda,all,ingress,configmap,secret
 NAME                      AGE
-eda.eda.ansible.com/eda   3m50s
+eda.eda.ansible.com/eda   4m2s
 
 NAME                                                          READY   STATUS    RESTARTS   AGE
-pod/eda-server-operator-controller-manager-7bf7578d44-2wm69   2/2     Running   0          6m29s
-pod/eda-redis-7d78cdf7d5-z87kk                                1/1     Running   0          3m34s
-pod/eda-postgres-13-0                                         1/1     Running   0          3m25s
-pod/eda-ui-647b989ccb-stqkp                                   1/1     Running   0          2m36s
-pod/eda-worker-fd594c44-96d9p                                 1/1     Running   0          2m32s
-pod/eda-api-5c467d6c48-88m8z                                  2/2     Running   0          2m39s
+pod/eda-server-operator-controller-manager-6ff679b85d-djcrt   2/2     Running   0          5m6s
+pod/eda-redis-7d78cdf7d5-f4nsz                                1/1     Running   0          3m47s
+pod/eda-postgres-13-0                                         1/1     Running   0          3m38s
+pod/eda-ui-69569559b8-k4rdq                                   1/1     Running   0          2m50s
+pod/eda-default-worker-5cd8664bcd-zv2v8                       1/1     Running   0          2m46s
+pod/eda-default-worker-5cd8664bcd-7bvc6                       1/1     Running   0          2m46s
+pod/eda-activation-worker-65bbc877fd-g6nj4                    1/1     Running   0          2m43s
+pod/eda-activation-worker-65bbc877fd-6c7lm                    1/1     Running   0          2m43s
+pod/eda-activation-worker-65bbc877fd-wbp92                    1/1     Running   0          2m43s
+pod/eda-scheduler-bbf6554f4-v6x5s                             1/1     Running   0          2m40s
+pod/eda-api-798787c5bf-pp82t                                  2/2     Running   0          2m53s
 
 NAME                                                             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-service/eda-server-operator-controller-manager-metrics-service   ClusterIP   10.43.133.61    <none>        8443/TCP   6m29s
-service/eda-redis-svc                                            ClusterIP   10.43.144.67    <none>        6379/TCP   3m36s
-service/eda-postgres-13                                          ClusterIP   None            <none>        5432/TCP   3m27s
-service/eda-api                                                  ClusterIP   10.43.89.128    <none>        8000/TCP   2m41s
-service/eda-daphne                                               ClusterIP   10.43.12.68     <none>        8001/TCP   2m41s
-service/eda-ui                                                   ClusterIP   10.43.136.60    <none>        80/TCP     2m38s
-service/eda-worker                                               ClusterIP   10.43.201.230   <none>        8080/TCP   2m33s
+service/eda-server-operator-controller-manager-metrics-service   ClusterIP   10.43.22.48     <none>        8443/TCP   5m6s
+service/eda-redis-svc                                            ClusterIP   10.43.2.121     <none>        6379/TCP   3m49s
+service/eda-postgres-13                                          ClusterIP   None            <none>        5432/TCP   3m40s
+service/eda-api                                                  ClusterIP   10.43.57.93     <none>        8000/TCP   2m55s
+service/eda-daphne                                               ClusterIP   10.43.249.197   <none>        8001/TCP   2m55s
+service/eda-ui                                                   ClusterIP   10.43.250.22    <none>        80/TCP     2m51s
+service/eda-default-worker                                       ClusterIP   10.43.66.37     <none>        8080/TCP   2m47s
+service/eda-activation-worker                                    ClusterIP   10.43.221.86    <none>        8080/TCP   2m45s
 
 NAME                                                     READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/eda-server-operator-controller-manager   1/1     1            1           6m29s
-deployment.apps/eda-redis                                1/1     1            1           3m34s
-deployment.apps/eda-ui                                   1/1     1            1           2m36s
-deployment.apps/eda-worker                               1/1     1            1           2m32s
-deployment.apps/eda-api                                  1/1     1            1           2m39s
+deployment.apps/eda-server-operator-controller-manager   1/1     1            1           5m6s
+deployment.apps/eda-redis                                1/1     1            1           3m47s
+deployment.apps/eda-ui                                   1/1     1            1           2m50s
+deployment.apps/eda-default-worker                       2/2     2            2           2m46s
+deployment.apps/eda-activation-worker                    3/3     3            3           2m43s
+deployment.apps/eda-scheduler                            1/1     1            1           2m40s
+deployment.apps/eda-api                                  1/1     1            1           2m53s
 
 NAME                                                                DESIRED   CURRENT   READY   AGE
-replicaset.apps/eda-server-operator-controller-manager-7bf7578d44   1         1         1       6m29s
-replicaset.apps/eda-redis-7d78cdf7d5                                1         1         1       3m34s
-replicaset.apps/eda-ui-647b989ccb                                   1         1         1       2m36s
-replicaset.apps/eda-worker-fd594c44                                 1         1         1       2m32s
-replicaset.apps/eda-api-5c467d6c48                                  1         1         1       2m39s
+replicaset.apps/eda-server-operator-controller-manager-6ff679b85d   1         1         1       5m6s
+replicaset.apps/eda-redis-7d78cdf7d5                                1         1         1       3m47s
+replicaset.apps/eda-ui-69569559b8                                   1         1         1       2m50s
+replicaset.apps/eda-default-worker-5cd8664bcd                       2         2         2       2m46s
+replicaset.apps/eda-activation-worker-65bbc877fd                    3         3         3       2m43s
+replicaset.apps/eda-scheduler-bbf6554f4                             1         1         1       2m40s
+replicaset.apps/eda-api-798787c5bf                                  1         1         1       2m53s
 
 NAME                               READY   AGE
-statefulset.apps/eda-postgres-13   1/1     3m25s
+statefulset.apps/eda-postgres-13   1/1     3m38s
 
 NAME                                    CLASS     HOSTS             ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/eda-ingress   traefik   eda.example.com   192.168.0.219   80, 443   2m35s
+ingress.networking.k8s.io/eda-ingress   traefik   eda.example.com   192.168.0.219   80, 443   2m49s
 
-NAME                            DATA   AGE
-configmap/kube-root-ca.crt      1      6m29s
-configmap/eda-eda-configmap     2      2m43s
-configmap/eda-server-operator   0      6m28s
+NAME                               DATA   AGE
+configmap/kube-root-ca.crt         1      5m7s
+configmap/eda-eda-env-properties   9      2m56s
+configmap/eda-server-operator      0      5m5s
 
 NAME                                     TYPE                DATA   AGE
-secret/redhat-operators-pull-secret      Opaque              1      6m29s
-secret/eda-admin-password                Opaque              1      3m50s
-secret/eda-database-configuration        Opaque              6      3m50s
-secret/eda-secret-tls                    kubernetes.io/tls   2      3m50s
-secret/eda-db-fields-encryption-secret   Opaque              1      2m51s
+secret/redhat-operators-pull-secret      Opaque              1      5m6s
+secret/eda-admin-password                Opaque              1      4m2s
+secret/eda-database-configuration        Opaque              6      4m2s
+secret/eda-secret-tls                    kubernetes.io/tls   2      4m2s
+secret/eda-db-fields-encryption-secret   Opaque              1      3m4s
 ```
 
 Now your EDA Controller is available at `https://eda.example.com/` or the hostname you specified.
