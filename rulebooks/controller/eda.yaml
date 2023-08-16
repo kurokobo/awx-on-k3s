@@ -18,6 +18,9 @@ spec:
   image: quay.io/ansible/eda-server
   image_version: sha-a6e4d66
 
+  image_web: quay.io/ansible/eda-ui
+  image_web_version: "2.4.306"
+
   # https://github.com/ansible/eda-server-operator/issues/112
   #extra_settings:
   #  - setting: GIT_SSL_NO_VERIFY
