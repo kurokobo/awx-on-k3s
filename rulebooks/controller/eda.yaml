@@ -18,6 +18,7 @@ spec:
   image: quay.io/ansible/eda-server
   image_version: sha-a6e4d66
 
+  # https://github.com/ansible/eda-server-operator/issues/123
   image_web: quay.io/ansible/eda-ui
   image_web_version: "2.4.306"
 
