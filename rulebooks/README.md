@@ -114,7 +114,6 @@ Modify two `password`s in `rulebooks/controller/kustomization.yaml`.
 ...
 ```
 
-<!--
 Prepare directories for Persistent Volumes defined in `base/pv.yaml`. This directory will be used to store your database.
 
 ```bash
@@ -122,7 +121,6 @@ sudo mkdir -p /data/eda/postgres-13/data
 sudo chmod 755 /data/eda/postgres-13/data
 sudo chown 26:0 /data/eda/postgres-13/data
 ```
--->
 
 ### Deploy EDA Controller
 
