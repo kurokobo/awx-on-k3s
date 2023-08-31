@@ -31,15 +31,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 8 (Minimal)
   - K3s v1.27.4+k3s1
 - Products that will be deployed:
-  - AWX Operator 2.5.1
-  - AWX 22.7.0
+  - AWX Operator 2.5.2
+  - AWX 23.0.0
   - PostgreSQL 13
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/22.7.0/INSTALL.md) @22.7.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.5.1/README.md) @2.5.1
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/23.0.0/INSTALL.md) @23.0.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.5.2/README.md) @2.5.2
 
 ## Requirements
 
@@ -92,7 +92,7 @@ If you want to use files suitable for the specific version of AWX Operator, [ref
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 2.5.1
+git checkout 2.5.2
 ```
 
 Then invoke `kubectl apply -k operator` to deploy AWX Operator.
