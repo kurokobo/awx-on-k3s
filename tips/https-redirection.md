@@ -8,6 +8,7 @@ Traefik, the default Ingress controller for K3s, listens for access over both HT
 
 - [Procedure](#procedure)
   - [Prepare Traefik](#prepare-traefik)
+      - [Restoring using Redirect HTTP to HTTPS](#restoring-using-redirect-http-to-https)
   - [Patch your AWX to enable HTTPS redirection](#patch-your-awx-to-enable-https-redirection)
     - [Patch your AWX using Kustomize](#patch-your-awx-using-kustomize)
     - [Patch your AWX manually](#patch-your-awx-manually)
@@ -38,6 +39,9 @@ EOF
 kubectl -n default apply -f middleware.yaml
 kubectl -n default get middleware
 ```
+
+#### Restoring using Redirect HTTP to HTTPS
+When deploying the middleware, it will not be part of the [restore instructions in the restore guide](../restore/README.md). Traefik will assume the middleware is present when the restore is complete, but you will have to reapply the scheme in the `default` namespace if it is not already present, e.g. after restoring to a fresh node.
 
 ### Patch your AWX to enable HTTPS redirection
 
