@@ -20,6 +20,8 @@ To perform restoration, you need to have AWX Operator running on Kubernetes. If 
 
 It is strongly recommended that the version of AWX Operator is the same as the version when the backup was taken. This is because the structure of the backup files differs between versions and may not be compatible. If you have upgraded AWX Operator after taking the backup, it is recommended to downgrade AWX Operator first before performing the restore. To deploy `0.13.0` or earlier version of AWX Operator, refer [📝Tips: Deploy older version of AWX Operator](../tips/deploy-older-operator.md)
 
+Some manual additions, such as [the https redirection](../tips/https-redirection.md) or [similar tips](../tips/README.md) will not be restored automatically, and will have to be reapplied after restoring. AWX may not be fully functional depending on the missing manual additions after restoring.
+
 ### Prepare for Restore
 
 If your AWX instance is running, it is recommended that it be deleted along with PVC and PV for the PostgreSQL first, in order to restore to be succeeded.
