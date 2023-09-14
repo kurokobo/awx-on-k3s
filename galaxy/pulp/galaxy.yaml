@@ -1,11 +1,11 @@
-apiVersion: repo-manager.pulpproject.org/v1alpha1
+apiVersion: repo-manager.pulpproject.org/v1beta2
 kind: Pulp
 metadata:
   name: galaxy
 spec:
   # These parameters are designed for use with:
-  # - Pulp Operator: 1.0.0-alpha.9
-  #   https://github.com/pulp/pulp-operator/blob/1.0.0-alpha.9/README.md
+  # - Pulp Operator: 1.0.0-beta.1
+  #   https://github.com/pulp/pulp-operator/blob/1.0.0-beta.1/README.md
   # - Galaxy NG: 4.7.1
   #   https://github.com/ansible/galaxy_ng/tree/4.7.1
 
@@ -23,7 +23,6 @@ spec:
   ingress_tls_secret: galaxy-secret-tls
   ingress_host: galaxy.example.com
 
-  storage_type: file
   file_storage_storage_class: galaxy-file-volume
   file_storage_access_mode: ReadWriteOnce
   file_storage_size: 8Gi

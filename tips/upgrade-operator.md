@@ -118,7 +118,7 @@ sudo rm -rf /data/postgres
 
 ## 📝 Upgrade from `0.13.0` (e.g. from `0.13.0` to `0.14.0`)
 
-If you are using AWX Operator `0.13.0` and want to upgrade to newer version, you should consider the big changes in AWX Operator in `0.14.0`. [As described in the documentation](https://github.com/ansible/awx-operator/blob/2.5.2/docs/upgrade/upgrading.md#v0140), in `0.14.0`, AWX Operator changed from cluster scope to namespace scope. Also, the Operator SDK `1.x` is used.
+If you are using AWX Operator `0.13.0` and want to upgrade to newer version, you should consider the big changes in AWX Operator in `0.14.0`. [As described in the documentation](https://github.com/ansible/awx-operator/blob/2.5.3/docs/upgrade/upgrading.md#v0140), in `0.14.0`, AWX Operator changed from cluster scope to namespace scope. Also, the Operator SDK `1.x` is used.
 
 This means that upgrading from `0.13.0` to `0.14.0` or later requires a bit of finesse, such as cleaning the old AWX Operator. **If you are using `0.12.0` or earlier and want to upgrade to `0.14.0` or later, I recommend you to [upgrade to `0.13.0` first](#-upgrade-from-0120-or-earlier-eg-from-0120-to-0130) and then come back to here to avoid unintended issue.**
 
