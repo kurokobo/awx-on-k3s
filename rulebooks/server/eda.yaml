@@ -14,18 +14,8 @@ spec:
   automation_server_url: https://awx.example.com/
   automation_server_ssl_verify: no
 
-  # https://github.com/ansible/eda-server-operator/issues/111
-  image: quay.io/ansible/eda-server
-  image_version: sha-a6e4d66
-
-  # https://github.com/ansible/eda-server-operator/issues/123
   image_web: quay.io/ansible/eda-ui
-  image_web_version: "2.4.306"
-
-  # https://github.com/ansible/eda-server-operator/issues/112
-  #extra_settings:
-  #  - setting: GIT_SSL_NO_VERIFY
-  #    value: "true"
+  image_web_version: "2.4.454"
 
   api:
     replicas: 1
@@ -35,8 +25,12 @@ spec:
     replicas: 1
     resource_requirements:
       requests: {}
-  worker:
+  default_worker:
     replicas: 2
+    resource_requirements:
+      requests: {}
+  activation_worker:
+    replicas: 3
     resource_requirements:
       requests: {}
   redis:
@@ -45,8 +39,7 @@ spec:
       requests: {}
   database:
     database_secret: eda-database-configuration
-    # https://github.com/ansible/eda-server-operator/issues/113
-    #postgres_storage_class: eda-postgres-volume
+    postgres_storage_class: eda-postgres-volume
     storage_requirements:
       requests:
         storage: 8Gi

@@ -37,6 +37,5 @@ secretGenerator:
   #    - secret_key=MySuperSecureDBFieldsEncryptionKey123!
 
 resources:
-  # https://github.com/ansible/eda-server-operator/issues/113
-  # - pv.yaml
+  - pv.yaml
   - eda.yaml
