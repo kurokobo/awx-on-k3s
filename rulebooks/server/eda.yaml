@@ -14,6 +14,9 @@ spec:
   automation_server_url: https://awx.example.com/
   automation_server_ssl_verify: no
 
+  image_web: quay.io/ansible/eda-ui
+  image_web_version: "2.4.454"
+
   api:
     replicas: 1
     resource_requirements:
