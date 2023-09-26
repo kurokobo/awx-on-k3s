@@ -154,7 +154,7 @@ First of all, you should ensure your CA certificate is mounted and has PEM forma
 bash-5.1$ openssl x509 -in /etc/openldap/certs/ldap-ca.crt -text
 
 # The secret bundle_cacert_secret is mounted as /etc/pki/ca-trust/source/anchors/bundle-ca.crt
-bash-5.1$ openssl x509 -in /etc/pki/ca-trust/source/anchors/bundle-ca.crt
+bash-5.1$ openssl x509 -in /etc/pki/ca-trust/source/anchors/bundle-ca.crt -text
 ```
 
 Note that your certificate file should contain both intermediate CA and root CA, if your server certificate is signed by intermediate CA.
@@ -178,7 +178,7 @@ Now you can test SSL connection.
 
 ```bash
 # This is an example to test connection to LDAP server over SSL using /etc/openldap/certs/ldap-ca.crt
-bash-5.1$ openssl s_client -connect ldap.example.com:636 -no-CAfile -CAfile /etc/openldap/certs/ldap-ca.crt
+bash-5.1$ echo | openssl s_client -connect ldap.example.com:636 -no-CAfile -CAfile /etc/openldap/certs/ldap-ca.crt
 CONNECTED(00000003)
 depth=2 C = JP, ST = Example State, O = EXAMPLE.COM, CN = rca.example.com
 verify return:1
