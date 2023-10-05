@@ -2,11 +2,10 @@
 apiVersion: awx.ansible.com/v1beta1
 kind: AWXBackup
 metadata:
-  name: awxbackup-2021-06-06
+  name: awxbackup-2023-09-29
   namespace: awx
 spec:
   deployment_name: awx
-  backup_pvc: awx-backup-claim
 
   # Uncomment to reveal "censored" logs
   #no_log: false
