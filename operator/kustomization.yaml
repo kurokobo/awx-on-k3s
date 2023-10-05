@@ -12,8 +12,8 @@ secretGenerator:
       - operator=awx
 
 resources:
-  - github.com/ansible/awx-operator/config/default?ref=2.5.3
+  - github.com/ansible/awx-operator/config/default?ref=2.6.0
 
 images:
   - name: quay.io/ansible/awx-operator
-    newTag: 2.5.3
+    newTag: 2.6.0
