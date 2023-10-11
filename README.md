@@ -31,15 +31,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 8 (Minimal)
   - K3s v1.27.6+k3s1
 - Products that will be deployed:
-  - AWX Operator 2.6.0
-  - AWX 23.2.0
+  - AWX Operator 2.7.0
+  - AWX 23.3.0
   - PostgreSQL 13
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/23.2.0/INSTALL.md) @23.2.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.6.0/README.md) @2.6.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/23.3.0/INSTALL.md) @23.3.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.7.0/README.md) @2.7.0
 
 ## Requirements
 
@@ -88,15 +88,11 @@ Clone this repository and change directory.
 
 If you want to use files suitable for the specific version of AWX Operator, [refer tags in this repository](https://github.com/kurokobo/awx-on-k3s/tags) and specify desired tag in `git checkout`. Especially for `0.13.0` or earlier version of AWX Operator, refer to [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md).
 
-**⚠️Note for 2.6.0⚠️**
-
-**I recommend to avoid using 2.6.0 because of bugs ([#1570](https://github.com/ansible/awx-operator/issues/1570), [#1572](https://github.com/ansible/awx-operator/issues/1572), and [#14486](https://github.com/ansible/awx/issues/14486)) that causes upgrading and backups to fail.**
-
 ```bash
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 2.6.0
+git checkout 2.7.0
 ```
 
 Then invoke `kubectl apply -k operator` to deploy AWX Operator.
