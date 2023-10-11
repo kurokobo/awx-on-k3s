@@ -11,10 +11,6 @@ Note that once you upgrade AWX Operator, your AWX will also be upgraded automati
 
 [There is `image_version` parameter for AWX resource to change which image will be used](https://ansible.readthedocs.io/projects/awx-operator/en/latest/user-guide/advanced-configuration/deploying-a-specific-version-of-awx.html), but it appears that using a version of AWX other than the one bundled with the AWX Operator [is currently not supported](https://ansible.readthedocs.io/projects/awx-operator/en/latest/user-guide/advanced-configuration/deploying-a-specific-version-of-awx.html). Conversely, if you want to upgrade AWX, you need to plan to upgrade AWX Operator first.
 
-**⚠️Note for 2.6.0⚠️**
-
-**I recommend to avoid using 2.6.0 because of bugs ([#14486](https://github.com/ansible/awx/issues/14486)) that causes upgrading to fail.**
-
 <!-- omit in toc -->
 ## Table of Contents
 
