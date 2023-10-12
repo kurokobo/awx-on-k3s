@@ -11,6 +11,10 @@ Note that once you upgrade AWX Operator, your AWX will also be upgraded automati
 
 [There is `image_version` parameter for AWX resource to change which image will be used](https://ansible.readthedocs.io/projects/awx-operator/en/latest/user-guide/advanced-configuration/deploying-a-specific-version-of-awx.html), but it appears that using a version of AWX other than the one bundled with the AWX Operator [is currently not supported](https://ansible.readthedocs.io/projects/awx-operator/en/latest/user-guide/advanced-configuration/deploying-a-specific-version-of-awx.html). Conversely, if you want to upgrade AWX, you need to plan to upgrade AWX Operator first.
 
+**⚠️Note for 2.7.0⚠️**
+
+**AWX Operator 2.7.0 has a bug that restoration using backup files directly instead of using AWXBackup object will fail ([#1586](https://github.com/ansible/awx-operator/issues/1586)). If you want to use this method to restore your AWX, you should avoid to use 2.7.0.**
+
 <!-- omit in toc -->
 ## Table of Contents
 
