@@ -73,7 +73,7 @@ If you want to restore from AWXBackup object, specify its name in `restore/awxre
 ...
 ```
 
-If the AWXBackup object no longer exists, place the backup files under `/data/backup/<backup directory>` (e.g. `/data/backup/tower-openshift-backup-2021-06-06-10:51:49`) and specify the name of the PVC and directory in `restore/awxrestore.yaml`. **⚠️This method does not work on AWX Operator 2.7.0 due to [#1586](https://github.com/ansible/awx-operator/issues/1586).**
+If the AWXBackup object no longer exists, place the backup files under `/data/backup/<backup directory>` (e.g. `/data/backup/tower-openshift-backup-2021-06-06-10:51:49`) and specify the name of the PVC and directory in `restore/awxrestore.yaml`. **⚠️This method does not work on AWX Operator 2.7.0 and 2.7.1 due to [#1586](https://github.com/ansible/awx-operator/issues/1586).**
 
 ```yaml
 ...

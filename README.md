@@ -31,15 +31,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 8 (Minimal)
   - K3s v1.27.6+k3s1
 - Products that will be deployed:
-  - AWX Operator 2.7.0
-  - AWX 23.3.0
+  - AWX Operator 2.7.1
+  - AWX 23.3.1
   - PostgreSQL 13
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/23.3.0/INSTALL.md) @23.3.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.7.0/README.md) @2.7.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/23.3.1/INSTALL.md) @23.3.1
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.7.1/README.md) @2.7.1
 
 ## Requirements
 
@@ -88,15 +88,15 @@ Clone this repository and change directory.
 
 If you want to use files suitable for the specific version of AWX Operator, [refer tags in this repository](https://github.com/kurokobo/awx-on-k3s/tags) and specify desired tag in `git checkout`. Especially for `0.13.0` or earlier version of AWX Operator, refer to [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md).
 
-**⚠️Note for 2.7.0⚠️**
+**⚠️Note for 2.7.0 and 2.7.1⚠️**
 
-**AWX Operator 2.7.0 has a bug that restoration using backup files directly instead of using AWXBackup object will fail ([#1586](https://github.com/ansible/awx-operator/issues/1586)). If you want to use this method to restore your AWX, you should avoid to use 2.7.0.**
+**AWX Operator 2.7.0 and 2.7.1 have a bug that restoration using backup files directly instead of using AWXBackup object will fail ([#1586](https://github.com/ansible/awx-operator/issues/1586)). If you want to use this method to restore your AWX, you should avoid to use these versions.**
 
 ```bash
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 2.7.0
+git checkout 2.7.1
 ```
 
 Then invoke `kubectl apply -k operator` to deploy AWX Operator.
