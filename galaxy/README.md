@@ -189,7 +189,7 @@ There is a Kubernetes Operator for Pulp 3 named Pulp Operator.
 
 - [pulp/pulp-operator: Kubernetes Operator for Pulp 3](https://github.com/pulp/pulp-operator)
 
-This project is in alpha stage and under active development. In this guide, we use [Pulp Operator 1.0.0-beta.1](https://github.com/pulp/pulp-operator/tree/1.0.0-beta.1).
+This project is in alpha stage and under active development. In this guide, we use [Pulp Operator 1.0.0-beta.2](https://github.com/pulp/pulp-operator/tree/1.0.0-beta.2).
 
 ### Install Pulp Operator
 
@@ -199,7 +199,7 @@ Install specified version of Pulp Operator.
 cd ~
 git clone https://github.com/pulp/pulp-operator.git
 cd pulp-operator
-git checkout 1.0.0-beta.1
+git checkout 1.0.0-beta.2
 ```
 
 Export the name of the namespace where you want to deploy Pulp Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `pulp-operator-system`. Note that `make deploy` requires `go` binary by default but you can remove this dependency by small `sed` patch.
