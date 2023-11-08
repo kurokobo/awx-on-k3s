@@ -29,7 +29,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - Tested on:
   - CentOS Stream 8 (Minimal)
-  - K3s v1.27.7+k3s1
+  - K3s v1.27.6+k3s1
 - Products that will be deployed:
   - AWX Operator 2.7.2
   - AWX 23.4.0
@@ -76,10 +76,10 @@ sudo dnf install -y git curl
 
 ### Install K3s
 
-Install specific version of K3s with `--write-kubeconfig-mode 644` to make config file (`/etc/rancher/k3s/k3s.yaml`) readable by non-root user.
+Install specific version of K3s with `--write-kubeconfig-mode 644` to make config file (`/etc/rancher/k3s/k3s.yaml`) readable by non-root user. **Note that the latest `v1.27.7+k3s1` has [an issue](https://github.com/k3s-io/k3s/issues/8755) that HTTP redirection causes 404 error for your AWX, so this guide explicitly specifies `v1.27.6+k3s1`.**
 
 ```bash
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.27.7+k3s1 sh -s - --write-kubeconfig-mode 644
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.27.6+k3s1 sh -s - --write-kubeconfig-mode 644
 ```
 
 ### Install AWX Operator
