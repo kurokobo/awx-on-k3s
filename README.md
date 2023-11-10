@@ -247,7 +247,7 @@ Now your AWX is available at `https://awx.example.com/` or the hostname you spec
 
 Note that you have to access via hostname that you specified in `base/awx.yaml`, instead of IP address, since this guide uses Ingress. So you should configure your DNS or `hosts` file on your client where the browser is running.
 
-At this point, AWX can be accessed via HTTP as well as HTTPS. If you want to redirect HTTP to HTTPS, see [📝Tips: Redirect HTTP to HTTPS](tips/https-redirection.md).
+At this point, AWX can be accessed via HTTP as well as HTTPS. If you want to force users to use HTTPS, see [📝Tips: Enable HTTP Strict Transport Security (HSTS)](tips/enable-hsts.md).
 
 ## Back up and Restore AWX using AWX Operator
 
@@ -287,7 +287,7 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
   - [📝Deploy AWX using external PostgreSQL database](tips/external-db.md)
   - [📝Trust custom Certificate Authority](tips/trust-custom-ca.md)
   - [📝Expose `/etc/hosts` to Pods on K3s](tips/expose-hosts.md)
-  - [📝Redirect HTTP to HTTPS](tips/https-redirection.md)
+  - [📝Enable HTTP Strict Transport Security (HSTS)](tips/enable-hsts.md)
   - [📝Use HTTP proxy](tips/use-http-proxy.md)
   - [📝Uninstall deployed resources](tips/uninstall.md)
   - [📝Deploy older version of AWX Operator](tips/deploy-older-operator.md)
