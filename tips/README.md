@@ -4,7 +4,7 @@
 - [📝Deploy AWX using external PostgreSQL database](external-db.md)
 - [📝Trust custom Certificate Authority](trust-custom-ca.md)
 - [📝Expose `/etc/hosts` to Pods on K3s](expose-hosts.md)
-- [📝Redirect HTTP to HTTPS](https-redirection.md)
+- [📝Enable HTTP Strict Transport Security (HSTS)](enable-hsts.md)
 - [📝Use HTTP proxy](use-http-proxy.md)
 - [📝Uninstall deployed resources](uninstall.md)
 - [📝Deploy older version of AWX Operator](deploy-older-operator.md)
