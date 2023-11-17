@@ -319,25 +319,25 @@ The new Job is created on `eda` namespace.
 ```bash
 $ ACTIVATION_ID=1
 $ kubectl -n eda get job -l activation-id=${ACTIVATION_ID}
-NAME               COMPLETIONS   DURATION   AGE
-activation-job-1   0/1           8m45s      11m
+NAME                 COMPLETIONS   DURATION   AGE
+activation-job-1-1   0/1           7m3s       7m3s
 ```
 
 By this Job, new Pod that `ansible-rulebook` running on is also created.
 
 ```bash
-$ JOB_NAME=activation-job-${ACTIVATION_ID}
+$ JOB_NAME=$(kubectl -n eda get job -l activation-id=${ACTIVATION_ID} -o jsonpath='{.items[*].metadata.name}')
 $ kubectl -n eda get pod -l job-name=${JOB_NAME}
-NAME                     READY   STATUS    RESTARTS   AGE
-activation-job-1-h9kjt   1/1     Running   0          11m
+NAME                       READY   STATUS    RESTARTS   AGE
+activation-job-1-1-ctz24   1/1     Running   0          7m16s
 ```
 
 The new Service is also created by EDA Server. This service provides the endpoint for the webhook.
 
 ```bash
 $ kubectl -n eda get service -l job-name=${JOB_NAME}
-NAME                    TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-activation-job-1-5000   ClusterIP   10.43.221.234   <none>        5000/TCP   11m
+NAME                      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+activation-job-1-1-5000   ClusterIP   10.43.82.223   <none>        5000/TCP   7m40s
 ```
 
 #### Deploy Ingress resource for the webhook
@@ -363,7 +363,7 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: activation-job-1-5000     👈👈👈
+                name: activation-job-1-1-5000     👈👈👈
                 port:
                   number: 5000
 ```

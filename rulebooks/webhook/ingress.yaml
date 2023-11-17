@@ -17,6 +17,6 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: activation-job-1-5000
+                name: activation-job-1-1-5000
                 port:
                   number: 5000
