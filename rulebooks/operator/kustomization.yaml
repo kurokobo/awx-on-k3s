@@ -12,8 +12,8 @@ secretGenerator:
       - operator=eda
 
 resources:
-  - github.com/ansible/eda-server-operator/config/default?ref=0.0.6
+  - github.com/ansible/eda-server-operator/config/default?ref=0.0.9
 
 images:
   - name: quay.io/ansible/eda-server-operator
-    newTag: 0.0.6
+    newTag: 0.0.9
