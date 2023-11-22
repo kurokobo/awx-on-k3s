@@ -12,7 +12,7 @@ spec:
 
   # Parameters to restore from existing files on PVC (without AWXBackup object)
   #backup_pvc: awx-backup-claim
-  #backup_dir: /backups/tower-openshift-backup-2021-06-06-10:51:49
+  #backup_dir: /backups/tower-openshift-backup-2021-06-06-105149
 
   # Uncomment to reveal "censored" logs
   #no_log: false

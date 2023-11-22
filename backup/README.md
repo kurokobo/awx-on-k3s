@@ -77,9 +77,9 @@ awxbackup-2021-06-06   6m47s
 ```bash
 $ ls -l /data/backup/
 total 0
-drwxr-xr-x. 2 root root 59 Jun  5 06:51 tower-openshift-backup-2021-06-06-10:51:49
+drwxr-xr-x. 2 root root 59 Jun  5 06:51 tower-openshift-backup-2021-06-06-105149
 
-$ ls -l /data/backup/tower-openshift-backup-2021-06-06-10\:51\:49/
+$ ls -l /data/backup/tower-openshift-backup-2021-06-06-105149/
 total 736
 -rw-------. 1 1001 root   1093 Jun  6 06:51 awx_object
 -rw-------. 1 1001 root  17085 Jun  6 06:51 secrets.yml
