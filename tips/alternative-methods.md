@@ -256,7 +256,7 @@ In this method, the lifecycle of AWX Operator is managed by OLM. In the default 
 Refer to [the first step of the instruction that appears by `Install` button](https://operatorhub.io/operator/awx-operator) for details.
 
 ```bash
-OLM_RELEASE="v0.25.0"
+OLM_RELEASE="v0.26.0"
 curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/${OLM_RELEASE}/install.sh | bash -s ${OLM_RELEASE}
 ```
 
@@ -278,7 +278,7 @@ NAMESPACE   NAME                                                       DISPLAY  
 olm         catalogsource.operators.coreos.com/operatorhubio-catalog   Community Operators   grpc   OperatorHub.io   83s
 
 NAMESPACE   NAME                                                       DISPLAY          VERSION   REPLACES   PHASE
-olm         clusterserviceversion.operators.coreos.com/packageserver   Package Server   0.25.0               Succeeded
+olm         clusterserviceversion.operators.coreos.com/packageserver   Package Server   0.26.0               Succeeded
 
 
 $ kubectl -n olm get all
@@ -383,8 +383,8 @@ You can gather metadata of deployed operator by `get`ting `ClusterServiceVersion
 
 ```bash
 $ kubectl -n awx get csv
-NAME                  DISPLAY   VERSION   REPLACES               PHASE
-awx-operator.v1.0.0   AWX       1.0.0     awx-operator.v0.30.0   Succeeded
+NAME                  DISPLAY   VERSION   REPLACES              PHASE
+awx-operator.v2.8.0   AWX       2.8.0     awx-operator.v2.7.2   Succeeded
 ```
 
 #### Deploy AWX
@@ -406,7 +406,7 @@ All installations requiring approval can be listed by `get`ting InstallPlan reso
 ```bash
 $ kubectl -n awx get installplan
 NAME            CSV                   APPROVAL   APPROVED
-install-jfh85   awx-operator.v1.0.0   Manual     false
+install-jfh85   awx-operator.v2.8.0   Manual     false
 ```
 
 To approve pending `InstallPlan`, `patch` it.
@@ -434,7 +434,7 @@ kubectl delete -f subscription.yaml
 To uninstall OLM, some resources should be deleted.
 
 ```bash
-OLM_RELEASE="v0.22.0"
+OLM_RELEASE="v0.26.0"
 kubectl delete apiservices.apiregistration.k8s.io v1.packages.operators.coreos.com
 kubectl delete -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/${OLM_RELEASE}/crds.yaml
 kubectl delete -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/${OLM_RELEASE}/olm.yaml
