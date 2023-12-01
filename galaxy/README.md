@@ -244,7 +244,7 @@ GALAXY_HOST="galaxy.example.com"
 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./pulp/tls.crt -keyout ./pulp/tls.key -subj "/CN=${GALAXY_HOST}/O=${GALAXY_HOST}" -addext "subjectAltName = DNS:${GALAXY_HOST}"
 ```
 
-Modify `ingress_host` in `pulp/galaxy.yaml`.
+Modify `ingress_host` and `CSRF_TRUSTED_ORIGINS` in `pulp/galaxy.yaml`.
 
 ```yaml
 ...
@@ -254,6 +254,11 @@ spec:
   ingress_class_name: traefik
   ingress_tls_secret: galaxy-secret-tls
   ingress_host: galaxy.example.com     👈👈👈
+  ...
+  pulp_settings:
+    ...
+    CSRF_TRUSTED_ORIGINS:
+      - https://galaxy.example.com     👈👈👈
 ...
 ```
 

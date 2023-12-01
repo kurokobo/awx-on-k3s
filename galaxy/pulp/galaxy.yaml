@@ -30,6 +30,8 @@ spec:
   pulp_settings:
     TOKEN_AUTH_DISABLED: "True"
     GALAXY_FEATURE_FLAGS__ai_deny_index: "True"
+    CSRF_TRUSTED_ORIGINS:
+      - https://galaxy.example.com
 
   api:
     replicas: 1
