@@ -189,7 +189,7 @@ There is a Kubernetes Operator for Pulp 3 named Pulp Operator.
 
 - [pulp/pulp-operator: Kubernetes Operator for Pulp 3](https://github.com/pulp/pulp-operator)
 
-This project is in alpha stage and under active development. In this guide, we use [Pulp Operator 1.0.0-beta.2](https://github.com/pulp/pulp-operator/tree/1.0.0-beta.2).
+This project is in alpha stage and under active development. In this guide, we use [Pulp Operator 1.0.0-beta.3](https://github.com/pulp/pulp-operator/tree/1.0.0-beta.3).
 
 ### Install Pulp Operator
 
@@ -199,7 +199,7 @@ Install specified version of Pulp Operator.
 cd ~
 git clone https://github.com/pulp/pulp-operator.git
 cd pulp-operator
-git checkout 1.0.0-beta.2
+git checkout 1.0.0-beta.3
 ```
 
 Export the name of the namespace where you want to deploy Pulp Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `pulp-operator-system`. Note that `make deploy` requires `go` binary by default but you can remove this dependency by small `sed` patch.
@@ -313,8 +313,8 @@ When the deployment completes successfully, the logs end with:
 ```txt
 $ kubectl -n galaxy logs -f deployments/pulp-operator-controller-manager
 ...
-2006-01-02T15:04:05Z    INFO    repo_manager/status.go:149      galaxy operator finished execution ...
-2006-01-02T15:04:05Z    INFO    repo_manager/controller.go:236  Operator tasks synced
+2006-01-02T15:04:05Z    INFO    repo_manager/status.go:148      galaxy finished execution ...
+2006-01-02T15:04:05Z    INFO    repo_manager/controller.go:129  Operator tasks synced
 ```
 
 Required objects has been deployed next to Pulp Operator in `galaxy` namespace.
@@ -383,7 +383,7 @@ Now your AWX is available at `https://galaxy.example.com/` or the hostname you s
 
 ## Configuration and Usage
 
-Basic configuration and usage of Galaxy NG. Following section is based on Galxy NG 4.7.
+Basic configuration and usage of Galaxy NG. Following section is based on Galaxy NG 4.9.
 
 ### Sync Collections with Public Galaxy
 
@@ -394,26 +394,26 @@ Create a list of Collections to be synchronized as YAML file.
 collections:
   - name: community.general
     source: https://galaxy.ansible.com
-    version: ">=3.2.0"
-  - name: community.kubernetes
+    version: ">=8.0.0"
+  - name: kubernetes.core
     source: https://galaxy.ansible.com
-    version: "2.0.0"
+    version: "3.0.0"
   - name: community.vmware
     source: https://galaxy.ansible.com
-    version: ">=1.10.0,<1.12.0"
+    version: ">=3.10.0,<4.0.0"
   - name: awx.awx
     source: https://galaxy.ansible.com
-    version: ">=19.0.0"
+    version: ">=23.0.0"
   - name: ansible.utils
     source: https://galaxy.ansible.com
-    version: ">=2.1.0"
+    version: ">=2.12.0"
 ```
 
-In Galaxy NG, open `Collections` > `Remote` > `community` and click `Edit`.
+In Galaxy NG, open `Collections` > `Remotes` > `community` and click `Edit`.
 
-Select your YAML file in `YAML requirements` and `Save`.
+Upload your YAML file in `YAML requirements` and `Save`.
 
-Open `Collections` > `Repositories` > `community`, then `Sync` and wait to complete.
+Open `Collections` > `Repositories` > `community` > `Sync`, then `Sync` and wait to complete.
 
 ### Publish Your Own Collections to Galaxy NG
 
