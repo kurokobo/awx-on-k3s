@@ -15,14 +15,10 @@ spec:
   automation_server_ssl_verify: no
 
   image: quay.io/ansible/eda-server
-  image_version: sha-70529ad
+  image_version: sha-f0228ed
 
   image_web: quay.io/ansible/eda-ui
-  image_web_version: 2.4.716
-
-  extra_settings:
-    - setting: EDA_CSRF_TRUSTED_ORIGINS
-      value: http://eda-api:8000
+  image_web_version: 2.4.739
 
   api:
     replicas: 1

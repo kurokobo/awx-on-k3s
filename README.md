@@ -29,17 +29,17 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - Tested on:
   - CentOS Stream 8 (Minimal)
-  - K3s v1.27.7+k3s2
+  - K3s v1.28.4+k3s2
 - Products that will be deployed:
-  - AWX Operator 2.8.0
-  - AWX 23.5.0
+  - AWX Operator 2.9.0
+  - AWX 23.5.1
   - PostgreSQL 13
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/23.5.0/INSTALL.md) @23.5.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.8.0/README.md) @2.8.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/23.5.1/INSTALL.md) @23.5.1
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.9.0/README.md) @2.9.0
 
 ## Requirements
 
@@ -79,7 +79,7 @@ sudo dnf install -y git curl
 Install specific version of K3s with `--write-kubeconfig-mode 644` to make config file (`/etc/rancher/k3s/k3s.yaml`) readable by non-root user.
 
 ```bash
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.27.7+k3s2 sh -s - --write-kubeconfig-mode 644
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.4+k3s2 sh -s - --write-kubeconfig-mode 644
 ```
 
 ### Install AWX Operator
@@ -92,7 +92,7 @@ If you want to use files suitable for the specific version of AWX Operator, [ref
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 2.8.0
+git checkout 2.9.0
 ```
 
 Then invoke `kubectl apply -k operator` to deploy AWX Operator.
@@ -190,7 +190,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=83   changed=0    unreachable=0    failed=0    skipped=79   rescued=0    ignored=1
+localhost                  : ok=84   changed=0    unreachable=0    failed=0    skipped=79   rescued=0    ignored=1
 ```
 
 Required objects has been deployed next to AWX Operator in `awx` namespace.
