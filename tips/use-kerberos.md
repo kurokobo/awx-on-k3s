@@ -147,6 +147,7 @@ This is my example. Note that some domain names under `[realms]` and `[domain_re
   dns_lookup_realm = false
   dns_lookup_kdc = false
   rdns = false
+  default_realm = KUROKOBO.INTERNAL
 
 [realms]
   KUROKOBO.INTERNAL = {
