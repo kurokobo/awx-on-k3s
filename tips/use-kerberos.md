@@ -144,10 +144,10 @@ This is my example. Note that some domain names under `[realms]` and `[domain_re
 
 ```ini
 [libdefaults]
+  default_realm = KUROKOBO.INTERNAL
   dns_lookup_realm = false
   dns_lookup_kdc = false
   rdns = false
-  default_realm = KUROKOBO.INTERNAL
 
 [realms]
   KUROKOBO.INTERNAL = {
@@ -180,6 +180,7 @@ apiVersion: v1
 data:
   krb5.conf: |-
     [libdefaults]
+      default_realm = KUROKOBO.INTERNAL
       dns_lookup_realm = false
       dns_lookup_kdc = false
       rdns = false
@@ -368,6 +369,7 @@ If your Container Group and ConfigMap are configured correctly, you can get your
 ```bash
 bash-5.1$ cat /etc/krb5.conf
 [libdefaults]
+  default_realm = KUROKOBO.INTERNAL
   dns_lookup_realm = false
   dns_lookup_kdc = false
   rdns = false
