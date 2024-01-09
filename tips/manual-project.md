@@ -33,3 +33,13 @@ If you got following warning while selecting `Playbook Directory`, try super-rel
 
 > ⚠️WARNING:
 > There are no available playbook directories in /var/lib/awx/projects
+
+If super-reloading does not help you, ensure your playbooks are visible under project directory on `/var/lib/awx/projects` in awx-web pod.
+
+- Ensure your project directory is visible
+  - `kubectl -n awx exec -it deployment/awx-web -c awx-web -- ls -l /var/lib/awx/projects`
+- Ensure your project directory contains at least one playbook
+  - `kubectl -n awx exec -it deployment/awx-web -c awx-web -- ls -l /var/lib/awx/projects/<YOUR_PROJECT_DIRECTORY>`
+
+> [!IMPORTANT]
+> Any empty project directories and the directories that don't contain any valid playbooks will not be listed in UI. Also all playbooks have to be placed under project directory (means sub directory) on `/var/lib/awx/projects`, not directly under `/var/lib/awx/projects`.
