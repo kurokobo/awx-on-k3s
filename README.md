@@ -284,6 +284,7 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
   - [📝Trust custom Certificate Authority](tips/trust-custom-ca.md)
   - [📝Expose `/etc/hosts` to Pods on K3s](tips/expose-hosts.md)
   - [📝Enable HTTP Strict Transport Security (HSTS)](tips/enable-hsts.md)
+  - [📝Pass values from Secrets to `extra_settings`](tips/extra-settings.md)
   - [📝Use HTTP proxy](tips/use-http-proxy.md)
   - [📝Uninstall deployed resources](tips/uninstall.md)
   - [📝Deploy older version of AWX Operator](tips/deploy-older-operator.md)
