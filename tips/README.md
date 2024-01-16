@@ -5,6 +5,7 @@
 - [📝Trust custom Certificate Authority](trust-custom-ca.md)
 - [📝Expose `/etc/hosts` to Pods on K3s](expose-hosts.md)
 - [📝Enable HTTP Strict Transport Security (HSTS)](enable-hsts.md)
+- [📝Pass values from Secrets to `extra_settings`](extra-settings.md)
 - [📝Use HTTP proxy](use-http-proxy.md)
 - [📝Uninstall deployed resources](uninstall.md)
 - [📝Deploy older version of AWX Operator](deploy-older-operator.md)
