@@ -5,8 +5,6 @@ The guide to deploy and use EDA Server with AWX on K3s.
 
 In this guide, [EDA Server Operator](https://github.com/ansible/eda-server-operator) is used to deploy EDA Server.
 
-**Note that [EDA Server Operator](https://github.com/ansible/eda-server-operator) is not a fully supported installation method for EDA Server since it's not listed in [the deployment guide](https://github.com/ansible/eda-server/blob/main/docs/deployment.md).**
-
 - [Ansible Blog | Ansible.com | Event-Driven Ansible](https://www.ansible.com/blog)
 - [Welcome to Ansible Rulebook documentation — Ansible Rulebook Documentation](https://ansible.readthedocs.io/projects/rulebook/en/latest/)
 - [ansible/eda-server](https://github.com/ansible/eda-server)
@@ -25,7 +23,8 @@ In this guide, [EDA Server Operator](https://github.com/ansible/eda-server-opera
     - [Issue new token for AWX and add it on EDA Server](#issue-new-token-for-awx-and-add-it-on-eda-server)
     - [Add Decision Environment on EDA Server](#add-decision-environment-on-eda-server)
     - [Add Project on EDA Server](#add-project-on-eda-server)
-    - [Activate Rulebook](#activate-rulebook)
+    - [Enable Rulebook Activation](#enable-rulebook-activation)
+    - [Identify activation job](#identify-activation-job)
     - [Deploy Ingress resource for the webhook](#deploy-ingress-resource-for-the-webhook)
   - [Trigger Rule using Webhook](#trigger-rule-using-webhook)
   - [Appendix: Use MQTT as a source](#appendix-use-mqtt-as-a-source)
@@ -143,7 +142,7 @@ $ kubectl -n eda logs -f deployment/eda-server-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (eda.ansible.com/v1alpha1, Kind=EDA, eda/eda) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=53   changed=0    unreachable=0    failed=0    skipped=17   rescued=0    ignored=0
+localhost                  : ok=57   changed=0    unreachable=0    failed=0    skipped=20   rescued=0    ignored=0
 ```
 
 Required objects has been deployed next to AWX Operator in `awx` namespace.
@@ -238,7 +237,7 @@ In order to the webhook to be ready to receive messages, the following tasks nee
 - Issue new token for AWX and add it on EDA Server
 - Add Decision Environment on EDA Server
 - Add Project on EDA Server
-- Activate Rulebook
+- Enable Rulebook Activation
 - Deploy Ingress resource for the webhook
 
 #### Issue new token for AWX and add it on EDA Server
@@ -269,7 +268,7 @@ Decision Environment (DE) is an environment for running Ansible Rulebook (`ansib
 
 There is no default DE on EDA Server, so we have to register new one.
 
-Open `Decision Environments` under `Resources` on Web UI for EDA Server, then click `Create decision environment` button.
+Open `Decision Environments` on Web UI for EDA Server, then click `Create decision environment` button.
 
 Fill the form as follows, then click `Create decision environment` button on the bottom of the page:
 
@@ -284,7 +283,7 @@ To run Ansible Rulebook by EDA Server, the repository on SCM that contains Ruleb
 
 This repository contains some example Rulebooks under [rulebooks](./) directory, so we can register this repository as Project.
 
-Open `Projects` under `Resources` on Web UI for EDA Server, then click `Create project` button.
+Open `Projects` on Web UI for EDA Server, then click `Create project` button.
 
 Fill the form as follows, then click `Create project` button on the bottom of the page:
 
@@ -295,11 +294,11 @@ Fill the form as follows, then click `Create project` button on the bottom of th
 
 Refresh the page and wait for the `Status` for the project to be `Completed`.
 
-#### Activate Rulebook
+#### Enable Rulebook Activation
 
-To run Ansible Rulebook by EDA Server, activate the Rulebook.
+To run Ansible Rulebook by EDA Server, define Rulebook Activation and enable it.
 
-Open `Rulebook Activations` under `Views` on Web UI for EDA Server, then click `Create rulebook activation` button.
+Open `Rulebook Activations` on Web UI for EDA Server, then click `Create rulebook activation` button.
 
 Fill the form as follows, then click `Create rulebook activation` button on the bottom of the page:
 
@@ -312,27 +311,39 @@ Fill the form as follows, then click `Create rulebook activation` button on the 
 
 Refresh the page and wait for the `Activation status` for the Rulebook to be `Running`.
 
-Ensure you have Activation ID which can be found at the end of the URL, e.g. `http://eda.example.com/eda/rulebook-activations/details/1`.
+#### Identify activation job
 
-The new Job is created on `eda` namespace.
+When you enable Rulebook Activation, a Job called an activation job is launched.
 
 ```bash
-$ ACTIVATION_ID=1
-$ kubectl -n eda get job -l activation-id=${ACTIVATION_ID}
+$ kubectl -n eda get job
 NAME                 COMPLETIONS   DURATION   AGE
 activation-job-1-1   0/1           7m3s       7m3s
 ```
 
-By this Job, new Pod that `ansible-rulebook` running on is also created.
+The name of the activation job will be changed with each enabling Rulebook Activation, so it is important to know this name for subsequent tasks.
+
+As an example above, the name of the activation job contains two IDs, such as `activation-job-<Activation ID>-<Instance ID>`. Each of these IDs can be identified as follows.
+
+- **Activation ID**
+  - This is an ID for your Rulebook Activation.
+  - This is uniquely assigned to each Rulebook Activation and does not change.
+  - On Web UI, you can gather this ID by `ID` column on `Rulebook Activations` page, or `Activation ID` on the `Details` tab for your Rulebook Activation.
+- **Instance ID**
+  - This is an ID of each instance of the Ansible Rulebook.
+  - It is newly assigned each time a Rulebook Activation is enabled. It means that the ID changes when Rulebook Activation is disabled and re-enabled.
+  - On Web UI, you can gather this ID by `Name` on the `History` tab for your Rulebook Activation. The number at the beginning of the `Name` column of the line that in `Running` state is the ID.
+
+Once the activation job name has been identified by collecting those two IDs, the Pod created by this job can also be identified. This is the Pod where `ansible-rulebook` is running on.
 
 ```bash
-$ JOB_NAME=$(kubectl -n eda get job -l activation-id=${ACTIVATION_ID} -o jsonpath='{.items[*].metadata.name}')
+$ JOB_NAME=activation-job-1-1
 $ kubectl -n eda get pod -l job-name=${JOB_NAME}
 NAME                       READY   STATUS    RESTARTS   AGE
 activation-job-1-1-ctz24   1/1     Running   0          7m16s
 ```
 
-The new Service is also created by EDA Server. This service provides the endpoint for the webhook.
+The new Service is also created by EDA Server. This Service provides the endpoint for the webhook by routing traffic to the above Pod.
 
 ```bash
 $ kubectl -n eda get service -l job-name=${JOB_NAME}
@@ -368,17 +379,6 @@ spec:
                   number: 5000
 ```
 
-Modify `replicas` for `worker` in the same file. The number of rulebooks that can be activated simultaneously is equal to the number of this value.
-
-```yaml
-  ...
-  worker:
-    replicas: 2    👈👈👈
-    resource_requirements:
-      requests: {}
-  ...
-```
-
 By applying this file, your webhook can be accessed on the URL `https://eda.example.com/webhooks/demo`.
 
 ```bash
@@ -404,7 +404,7 @@ $ curl -k \
   https://eda.example.com/webhooks/demo
 ```
 
-Review `Rule Audit` page under `Views` on the Web UI for EDA Server, and `Jobs` page under `Views` on the Web UI for AWX.
+Review `Rule Audit` page on the Web UI for EDA Server, and `Jobs` page under `Views` on the Web UI for AWX.
 
 ### Appendix: Use MQTT as a source
 
@@ -417,9 +417,9 @@ Define the Decision Environment with the following information, just as you conf
 | Key | Value |
 | - | - |
 | Name | `Minimal DE with MQTT` |
-| Image | `docker.io/kurokobo/ansible-rulebook:v1.0.1-mqtt` |
+| Image | `docker.io/kurokobo/ansible-rulebook:v1.0.4-mqtt` |
 
-Note that the image specified above is based on `quay.io/ansible/ansible-rulebook:v1.0.1` and includes [PR #113](https://github.com/ansible/event-driven-ansible/pull/113) with small patch to make `ansible.eda.mqtt` workable. The Dockerfile for this image is available under [mqtt/de directory](./mqtt/de).
+Note that the image specified above is based on `quay.io/ansible/ansible-rulebook:v1.0.4` and includes [`kubealex.eda`](https://galaxy.ansible.com/ui/repo/published/kubealex/eda/) collection that includes `kubealex.eda.mqtt` plugin. The Dockerfile for this image is available under [mqtt/de directory](./mqtt/de).
 
 Then define Rulebook Activation as follows. Note that you should modify actual values for `Variables` to suit your environment:
 
