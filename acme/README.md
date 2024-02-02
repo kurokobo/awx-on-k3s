@@ -134,8 +134,9 @@ In `base/awx.yaml`, correct `hostname` to the FQDN which the certificate will be
 spec:
   ...
   ingress_type: ingress
-  ingress_tls_secret: awx-secret-tls
-  hostname: awx.example.com     👈👈👈
+  ingress_hosts:
+    - hostname: awx.example.com     👈👈👈
+      tls_secret: awx-secret-tls
 
   ingress_annotations: |     👈👈👈
     cert-manager.io/issuer: awx-issuer     👈👈👈

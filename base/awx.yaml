@@ -14,8 +14,9 @@ spec:
   admin_password_secret: awx-admin-password
 
   ingress_type: ingress
-  ingress_tls_secret: awx-secret-tls
-  hostname: awx.example.com
+  ingress_hosts:
+    - hostname: awx.example.com
+      tls_secret: awx-secret-tls
 
   postgres_configuration_secret: awx-postgres-configuration
 
@@ -30,12 +31,14 @@ spec:
   web_replicas: 1
   task_replicas: 1
 
-  postgres_init_container_resource_requirements: {}
-  postgres_resource_requirements: {}
   web_resource_requirements: {}
   task_resource_requirements: {}
   ee_resource_requirements: {}
   init_container_resource_requirements: {}
+  postgres_init_container_resource_requirements: {}
+  postgres_resource_requirements: {}
+  redis_resource_requirements: {}
+  rsyslog_resource_requirements: {}
 
   # Uncomment to reveal "censored" logs
   #no_log: false
