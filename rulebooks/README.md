@@ -275,7 +275,7 @@ Fill the form as follows, then click `Create decision environment` button on the
 | Key | Value |
 | - | - |
 | Name | `Minimal DE` |
-| Image | `quay.io/ansible/ansible-rulebook:latest` |
+| Image | `quay.io/ansible/ansible-rulebook:stable-1.0` |
 
 #### Add Project on EDA Server
 
@@ -417,9 +417,9 @@ Define the Decision Environment with the following information, just as you conf
 | Key | Value |
 | - | - |
 | Name | `Minimal DE with MQTT` |
-| Image | `docker.io/kurokobo/ansible-rulebook:v1.0.4-mqtt` |
+| Image | `docker.io/kurokobo/ansible-rulebook:stable-1.0-mqtt` |
 
-Note that the image specified above is based on `quay.io/ansible/ansible-rulebook:v1.0.4` and includes [`kubealex.eda`](https://galaxy.ansible.com/ui/repo/published/kubealex/eda/) collection that includes `kubealex.eda.mqtt` plugin. The Dockerfile for this image is available under [mqtt/de directory](./mqtt/de).
+Note that the image specified above is based on `quay.io/ansible/ansible-rulebook:stable-1.0` and includes [`kubealex.eda`](https://galaxy.ansible.com/ui/repo/published/kubealex/eda/) collection that includes `kubealex.eda.mqtt` plugin. The Dockerfile for this image is available under [mqtt/de directory](./mqtt/de).
 
 Then define Rulebook Activation as follows. Note that you should modify actual values for `Variables` to suit your environment:
 

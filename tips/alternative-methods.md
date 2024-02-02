@@ -115,8 +115,9 @@ AWX:
     admin_password_secret: awx-admin-password
 
     ingress_type: ingress
-    ingress_tls_secret: awx-secret-tls
-    hostname: awx.example.com
+    ingress_hosts:
+      - hostname: awx.example.com
+        tls_secret: awx-secret-tls
 
     postgres_configuration_secret: awx-postgres-configuration
 
@@ -128,11 +129,17 @@ AWX:
     projects_persistence: true
     projects_existing_claim: awx-projects-claim
 
-    postgres_init_container_resource_requirements: {}
-    postgres_resource_requirements: {}
+    web_replicas: 1
+    task_replicas: 1
+
     web_resource_requirements: {}
     task_resource_requirements: {}
     ee_resource_requirements: {}
+    init_container_resource_requirements: {}
+    postgres_init_container_resource_requirements: {}
+    postgres_resource_requirements: {}
+    redis_resource_requirements: {}
+    rsyslog_resource_requirements: {}
 EOF
 ```
 

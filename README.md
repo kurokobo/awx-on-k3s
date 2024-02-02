@@ -31,15 +31,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 8 (Minimal)
   - K3s v1.28.5+k3s1
 - Products that will be deployed:
-  - AWX Operator 2.10.0
-  - AWX 23.6.0
+  - AWX Operator 2.11.0
+  - AWX 23.7.0
   - PostgreSQL 13
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/23.6.0/INSTALL.md) @23.6.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.10.0/README.md) @2.10.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/23.7.0/INSTALL.md) @23.7.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.11.0/README.md) @2.11.0
 
 ## Requirements
 
@@ -92,7 +92,7 @@ If you want to use files suitable for the specific version of AWX Operator, [ref
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 2.10.0
+git checkout 2.11.0
 ```
 
 Then invoke `kubectl apply -k operator` to deploy AWX Operator.
@@ -134,8 +134,9 @@ Modify `hostname` in `base/awx.yaml`.
 spec:
   ...
   ingress_type: ingress
-  ingress_tls_secret: awx-secret-tls
-  hostname: awx.example.com     👈👈👈
+  ingress_hosts:
+    - hostname: awx.example.com     👈👈👈
+      tls_secret: awx-secret-tls
 ...
 ```
 
@@ -190,7 +191,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=84   changed=0    unreachable=0    failed=0    skipped=79   rescued=0    ignored=1
+localhost                  : ok=85   changed=1    unreachable=0    failed=0    skipped=78   rescued=0    ignored=1
 ```
 
 Required objects has been deployed next to AWX Operator in `awx` namespace.
