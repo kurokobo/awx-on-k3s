@@ -16,7 +16,6 @@ For example, some resources deployed with the following command;
 
 ```bash
 $ kubectl apply -k base
-namespace/awx created
 secret/awx-admin-password created
 secret/awx-postgres-configuration created
 secret/awx-secret-tls created
@@ -26,11 +25,11 @@ persistentvolumeclaim/awx-projects-claim created
 awx.awx.ansible.com/awx created
 ```
 
-can be deleted with the following command with same manifest files.
+can be deleted with the following command with same manifest files. Note that PVC for PostgreSQL should be removed manually since this PVC was created by not `kubectl apply -k` but AWX Operator.
 
 ```bash
+$ kubectl -n awx delete pvc postgres-13-awx-postgres-13-0 --wait=false
 $ kubectl delete -k base
-namespace "awx" deleted
 secret "awx-admin-password" deleted
 secret "awx-postgres-configuration" deleted
 secret "awx-secret-tls" deleted

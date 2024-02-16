@@ -42,7 +42,7 @@ This guide does not provide any information how to configure Azure, other DNS se
 Deploy cert-manager first.
 
 ```bash
-kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.13.3/cert-manager.yaml
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.14.2/cert-manager.yaml
 ```
 
 Ensure the pods in `cert-manager` namespace are running.

@@ -10,6 +10,8 @@ The table below maps the AWX Operator versions and bundled AWX versions.
 
 | AWX Operator | AWX |
 | - | - |
+| 2.12.1 | 23.8.1 |
+| 2.12.0 | 23.8.0 |
 | 2.11.0 | 23.7.0 |
 | 2.10.0 | 23.6.0 |
 | 2.9.0 | 23.5.1 |
