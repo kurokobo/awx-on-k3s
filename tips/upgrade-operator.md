@@ -35,6 +35,9 @@ Refer [📝README: Backing up using AWX Operator](../README.md#backing-up-using-
 
 If you are using AWX Operator `0.14.0` or later and want to upgrade to newer version, basically upgrade is done by deploying the new version of AWX Operator to the same namespace where the old AWX Operator is running.
 
+> [!WARNING]
+> AWX Operator 2.12.0 and AWX 23.8.0 are marked as NOT RECOMMENDED due to [a known issue](https://github.com/ansible/awx/issues/14876). Refer to the release notes ([for AWX Operator](https://github.com/ansible/awx-operator/releases/tag/2.12.0), [for AWX](https://github.com/ansible/awx/releases/tag/23.8.0)) for details.
+
 ### ⚠️ Note for upgrading from `2.0.0` to `2.0.1` or later
 
 Note that only when upgrading **from `2.0.0` that deployed using this repository to `2.0.1` or later**, [the `extra_volumes` and `extra_volumes` in `base/awx.yaml` for `2.0.0` as a workaround for specific issue](https://github.com/kurokobo/awx-on-k3s/blob/2.0.0/base/awx.yaml#L42-L51) causes failure of upgrading.
