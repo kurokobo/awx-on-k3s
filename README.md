@@ -31,15 +31,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 8 (Minimal)
   - K3s v1.28.6+k3s2
 - Products that will be deployed:
-  - AWX Operator 2.12.0
-  - AWX 23.8.0
+  - AWX Operator 2.12.1
+  - AWX 23.8.1
   - PostgreSQL 13
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/23.8.0/INSTALL.md) @23.8.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.12.0/README.md) @2.12.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/23.8.1/INSTALL.md) @23.8.1
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.12.1/README.md) @2.12.1
 
 ## Requirements
 
@@ -84,9 +84,6 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.6+k3s2 sh -s - --write-
 
 ### Install AWX Operator
 
-> [!WARNING]
-> AWX Operator 2.12.0 and AWX 23.8.0 are marked as NOT RECOMMENDED due to [a known issue](https://github.com/ansible/awx/issues/14876). Refer to the release notes ([for AWX Operator](https://github.com/ansible/awx-operator/releases/tag/2.12.0), [for AWX](https://github.com/ansible/awx/releases/tag/23.8.0)) for details.
-
 Clone this repository and change directory.
 
 If you want to use files suitable for the specific version of AWX Operator, [refer tags in this repository](https://github.com/kurokobo/awx-on-k3s/tags) and specify desired tag in `git checkout`. Especially for `0.13.0` or earlier version of AWX Operator, refer to [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md).
@@ -95,7 +92,7 @@ If you want to use files suitable for the specific version of AWX Operator, [ref
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 2.12.0
+git checkout 2.12.1
 ```
 
 Then invoke `kubectl apply -k operator` to deploy AWX Operator.

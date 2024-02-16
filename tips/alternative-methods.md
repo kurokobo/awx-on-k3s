@@ -204,6 +204,14 @@ helm repo update
 helm -n awx upgrade -i awx awx-operator/awx-operator -f base/values.yaml
 ```
 
+If the upgraded AWX Operator has been released with CRD changes, you may need to run following command to apply the changes.
+
+```bash
+# Specify the version of the upgraded AWX Operator
+VERSION="1.0.1"
+kubectl apply --server-side --force-conflicts -k github.com/ansible/awx-operator/config/crd?ref=${VERSION}
+```
+
 #### Gather history of upgrades
 
 The history of the upgrades for the release can be listed with `history` command.
