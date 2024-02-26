@@ -44,7 +44,8 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 ## Requirements
 
 - **Computing resources**
-  - **2 CPUs and 4 GiB RAM minimum**.
+  - **2 CPUs with x86-64-v2 support**.
+  - **4 GiB RAM minimum**
   - It's recommended to add more CPUs and RAM (like 4 CPUs and 8 GiB RAM or more) to avoid performance issue and job scheduling issue.
   - The files in this repository are configured to ignore resource requirements which specified by AWX Operator by default.
 - **Storage resources**
