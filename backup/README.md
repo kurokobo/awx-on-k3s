@@ -7,6 +7,9 @@ This guide is specifically designed to use with the AWX which deployed using [th
 
 You can also refer [the official instructions](https://github.com/ansible/awx-operator/tree/devel/roles/backup) for more information.
 
+> [!WARNING]
+> AWX Operator 2.12.2 can not create any backup due to [a known issue](https://github.com/ansible/awx-operator/issues/1734).
+
 <!-- omit in toc -->
 ## Table of Contents
 

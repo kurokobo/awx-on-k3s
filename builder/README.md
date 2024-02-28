@@ -58,7 +58,7 @@ cd awx-on-k3s/builder
 - CentOS Stream 8 (Minimal)
 - Python 3.9
 - Docker 20.10.17
-- Ansible Builder 3.0.0
+- Ansible Builder 3.0.1
 
 ### Install Ansible Builder
 
