@@ -86,7 +86,7 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.6+k3s2 sh -s - --write-
 ### Install AWX Operator
 
 > [!WARNING]
-> If you are planning that creating backup of your AWX instance using AWX Operator by referring [the backup guide](backup), AWX Operator 2.12.2 is not recommended due to [a known issue for backup](https://github.com/ansible/awx-operator/issues/1734).
+> If you are planning that creating backup of your AWX instance using AWX Operator by referring [the backup guide](backup), AWX Operator 2.12.2 is not recommended due to [a known issue for backup](https://github.com/ansible/awx-operator/issues/1734). Use the older version of AWX Operator like [2.12.1](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1) instead.
 
 Clone this repository and change directory.
 
