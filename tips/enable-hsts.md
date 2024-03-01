@@ -87,7 +87,7 @@ namespace/awx unchanged
 secret/awx-admin-password unchanged
 secret/awx-postgres-configuration unchanged
 secret/awx-secret-tls configured
-persistentvolume/awx-postgres-13-volume unchanged
+persistentvolume/awx-postgres-15-volume unchanged
 persistentvolume/awx-projects-volume unchanged
 persistentvolumeclaim/awx-projects-claim unchanged
 awx.awx.ansible.com/awx configured     👈👈👈

@@ -29,19 +29,19 @@ If your AWX instance is running, it is recommended that it be deleted along with
 ```bash
 # Delete AWX resource, PVC, and PV
 kubectl -n awx delete awx awx
-kubectl -n awx delete pvc postgres-13-awx-postgres-13-0
-kubectl delete pv awx-postgres-13-volume
+kubectl -n awx delete pvc postgres-15-awx-postgres-15-0
+kubectl delete pv awx-postgres-15-volume
 
 # Delete any data in the PV
-sudo rm -rf /data/postgres-13
+sudo rm -rf /data/postgres-15
 ```
 
 Then prepare directories for your PVs. `/data/projects` is required if you are restoring the entire AWX to a new environment.
 
 ```bash
-sudo mkdir -p /data/postgres-13
+sudo mkdir -p /data/postgres-15
 sudo mkdir -p /data/projects
-sudo chmod 755 /data/postgres-13
+sudo chmod 755 /data/postgres-15
 sudo chown 1000:0 /data/projects
 ```
 

@@ -34,6 +34,32 @@ Refer [📝README: Backing up using AWX Operator](../README.md#backing-up-using-
 If you are using AWX Operator `0.14.0` or later and want to upgrade to newer version, basically upgrade is done by deploying the new version of AWX Operator to the same namespace where the old AWX Operator is running.
 
 > [!WARNING]
+> If you are planning to upgrade AWX Operator **from `2.12.2` or earlier to `2.13.0` or later**, note that since the bundled PostgreSQL version will be changed to 15, so the following additional tasks are required.
+>
+> ```bash
+> # Required only when upgrading from 2.12.2 or earlier to 2.13.0 or later
+> sudo mkdir -p /data/postgres-15
+> sudo chmod 755 /data/postgres-15
+> cat <<EOF > pv-postgres-15.yaml
+> ---
+> apiVersion: v1
+> kind: PersistentVolume
+> metadata:
+>   name: awx-postgres-15-volume
+> spec:
+>   accessModes:
+>     - ReadWriteOnce
+>   persistentVolumeReclaimPolicy: Retain
+>   capacity:
+>     storage: 8Gi
+>   storageClassName: awx-postgres-volume
+>   hostPath:
+>     path: /data/postgres-15
+> EOF
+> kubectl apply -f pv-postgres-15.yaml
+> ```
+
+> [!WARNING]
 > If you are planning to upgrade AWX Operator **from `2.0.0` to `2.0.1` or later**, note that [the `extra_volumes` and `extra_volumes` in `base/awx.yaml` for `2.0.0` as a workaround for specific issue](https://github.com/kurokobo/awx-on-k3s/blob/2.0.0/base/awx.yaml#L42-L51) causes failure of upgrading.
 >
 > To avoid this, follow these steps before upgrading AWX Operator. Steps 1 and 2 can also be achieved by `kubectl -n awx edit awx awx`.

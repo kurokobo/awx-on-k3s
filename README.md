@@ -33,7 +33,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - Products that will be deployed:
   - AWX Operator 2.12.2
   - AWX 23.9.0
-  - PostgreSQL 13
+  - PostgreSQL 15
 
 ## References
 
@@ -85,8 +85,8 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.6+k3s2 sh -s - --write-
 
 ### Install AWX Operator
 
-> [!WARNING]
-> If you are planning that creating backup of your AWX instance using AWX Operator by referring to [the backup guide](backup), AWX Operator 2.12.2 is not recommended due to [a known issue for backup](https://github.com/ansible/awx-operator/issues/1734). Use an older version of AWX Operator like [2.12.1](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1) instead.
+> [!NOTE]
+> From AWX Operator 2.13.0, Default PostgreSQL version is bumped from 13 to 15. If you have a plan to upgrade existing AWX Operator and AWX, refer to [📝Tips: Upgrade AWX Operator and AWX](tips/upgrade-operator.md) to perform additional tasks to database migration.
 
 Clone this repository and change directory.
 
@@ -151,7 +151,7 @@ Modify the two `password` entries in `base/kustomization.yaml`. Note that the `p
   - name: awx-postgres-configuration
     type: Opaque
     literals:
-      - host=awx-postgres-13
+      - host=awx-postgres-15
       - port=5432
       - database=awx
       - username=awx
@@ -168,9 +168,9 @@ Modify the two `password` entries in `base/kustomization.yaml`. Note that the `p
 Prepare directories for Persistent Volumes defined in `base/pv.yaml`. These directories will be used to store your databases and project files. Note that the size of the PVs and PVCs are specified in some of the files in this repository, but since their backends are `hostPath`, its value is just like a label and there is no actual capacity limitation.
 
 ```bash
-sudo mkdir -p /data/postgres-13
+sudo mkdir -p /data/postgres-15
 sudo mkdir -p /data/projects
-sudo chmod 755 /data/postgres-13
+sudo chmod 755 /data/postgres-15
 sudo chown 1000:0 /data/projects
 ```
 
@@ -207,13 +207,13 @@ awx.awx.ansible.com/awx   6m15s
 
 NAME                                                   READY   STATUS    RESTARTS   AGE
 pod/awx-operator-controller-manager-57867569c4-ggl29   2/2     Running   0          6m50s
-pod/awx-postgres-13-0                                  1/1     Running   0          5m56s
+pod/awx-postgres-15-0                                  1/1     Running   0          5m56s
 pod/awx-task-5d8cd9b6b9-8ptjt                          4/4     Running   0          5m25s
 pod/awx-web-66f89bc9cf-6zck5                           3/3     Running   0          4m39s
 
 NAME                                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
 service/awx-operator-controller-manager-metrics-service   ClusterIP   10.43.18.30     <none>        8443/TCP   7m
-service/awx-postgres-13                                   ClusterIP   None            <none>        5432/TCP   5m55s
+service/awx-postgres-15                                   ClusterIP   None            <none>        5432/TCP   5m55s
 service/awx-service                                       ClusterIP   10.43.237.218   <none>        80/TCP     5m28s
 
 NAME                                              READY   UP-TO-DATE   AVAILABLE   AGE
@@ -227,7 +227,7 @@ replicaset.apps/awx-task-5d8cd9b6b9                          1         1        
 replicaset.apps/awx-web-66f89bc9cf                           1         1         1       4m39s
 
 NAME                               READY   AGE
-statefulset.apps/awx-postgres-13   1/1     5m56s
+statefulset.apps/awx-postgres-15   1/1     5m56s
 
 NAME                                    CLASS     HOSTS             ADDRESS         PORTS     AGE
 ingress.networking.k8s.io/awx-ingress   traefik   awx.example.com   192.168.0.219   80, 443   5m27s
