@@ -130,13 +130,23 @@ PLAY RECAP *********************************************************************
 localhost                  : ok=56   changed=0    unreachable=0    failed=0    skipped=35   rescued=0    ignored=0
 ```
 
-If your AWX Operator has upgraded from `0.25.0` or earlier to `0.26.0` or later, old PV for PostgreSQL 12 can be removed since new AWX is running with new PV for PostgreSQL 13.
+> [!NOTE]
+> If your AWX Operator has upgraded from `2.12.2` or earlier to `2.13.0` or later, old PV for PostgreSQL 13 can be removed since new AWX is running with new PV for PostgreSQL 15.
+>
+> ```bash
+> # Recommended only when upgraded from 2.12.2 or earlier to 2.13.0 or later
+> kubectl delete pv awx-postgres-13-volume
+> sudo rm -rf /data/postgres-13
+> ```
 
-```bash
-# Recommended only when upgraded from 0.25.0 or earlier to 0.26.0 or later
-kubectl delete pv awx-postgres-volume
-sudo rm -rf /data/postgres
-```
+> [!NOTE]
+> If your AWX Operator has upgraded from `0.25.0` or earlier to `0.26.0` or later, old PV for PostgreSQL 12 can be removed since new AWX is running with new PV for PostgreSQL 13.
+>
+> ```bash
+> # Recommended only when upgraded from 0.25.0 or earlier to 0.26.0 or later
+> kubectl delete pv awx-postgres-volume
+> sudo rm -rf /data/postgres
+> ```
 
 ## 📝 Upgrade from `0.13.0` (e.g. from `0.13.0` to `0.14.0`)
 
