@@ -1,0 +1,52 @@
+apiVersion: galaxy.ansible.com/v1beta1
+kind: Galaxy
+metadata:
+  name: galaxy
+spec:
+  # These parameters are designed for use with:
+  # - Galaxy Operator: 2024.02.29
+  #   https://github.com/ansible/galaxy-operator/blob/2024.02.29/README.md
+
+  image: quay.io/ansible/galaxy-ng
+  image_version: 5d56bddb
+  image_web: quay.io/ansible/galaxy-ui
+  image_web_version: 59cf7798
+
+  admin_password_secret: galaxy-admin-password
+
+  ingress_type: ingress
+  ingress_tls_secret: galaxy-secret-tls
+  hostname: galaxy.example.com
+
+  storage_type: file
+  file_storage_storage_class: galaxy-file-volume
+  file_storage_access_mode: ReadWriteOnce
+  file_storage_size: 8Gi
+
+  postgres_storage_class: galaxy-postgres-volume
+  postgres_storage_requirements: 
+    requests:
+      storage: 8Gi
+  postgres_resource_requirements: {}
+  redis_storage_class: galaxy-redis-volume
+
+  pulp_settings:
+    galaxy_collection_signing_service: ""
+    galaxy_container_signing_service: ""
+    token_auth_disabled: "True"
+
+  api:
+    replicas: 1
+    resource_requirements: {}
+  redis:
+    replicas: 1
+    resource_requirements: {}
+  content:
+    replicas: 1
+    resource_requirements: {}
+  web:
+    replicas: 1
+    resource_requirements: {}
+  worker:
+    replicas: 1
+    resource_requirements: {}

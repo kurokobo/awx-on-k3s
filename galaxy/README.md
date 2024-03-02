@@ -1,28 +1,25 @@
 <!-- omit in toc -->
 # [Experimental] Deploy Galaxy NG
 
-Deploying your private Galaxy NG a.k.a. upstream version of Ansible Automation Hub.
+The guide to deploy your private Galaxy NG a.k.a. upstream version of Ansible Automation Hub on K3s.
 
-**Note that the containerized implementation of Galaxy NG is not supported at this time. See the official installation guide for supported procedure.**
+In this guide, [Galaxy Operator](https://github.com/ansible/galaxy-operator) is used to deploy Galaxy NG.
 
-- [End User Installation · ansible/galaxy_ng Wiki](https://github.com/ansible/galaxy_ng/wiki/End-User-Installation)
+- [Galaxy-Operator](https://ansible.readthedocs.io/projects/galaxy-operator/en/latest/)
+- [ansible/galaxy-operator](https://github.com/ansible/galaxy-operator)
+- [ansible/galaxy-ng](https://github.com/ansible/galaxy_ng)
 
-All information on this page is for **development, testing and study purposes only.**
+> [!NOTE]
+> Refer to [the official installation guide](https://ansible.readthedocs.io/projects/galaxy-ng/en/latest/usage_guide/installation/) if you want to deploy Galaxy NG on Docker or Podman.
 
 <!-- omit in toc -->
 ## Table of Contents
 
-- [Deploy on Docker (Official Development Setup)](#deploy-on-docker-official-development-setup)
-- [Deploy on Docker (All-in-One Container)](#deploy-on-docker-all-in-one-container)
-  - [Procedure](#procedure)
-- [Deploy on Kubernetes (All-in-One Container)](#deploy-on-kubernetes-all-in-one-container)
-  - [Preparation](#preparation)
+- [Environment](#environment)
+- [Deployment Instruction](#deployment-instruction)
+  - [Install Galaxy Operator](#install-galaxy-operator)
+  - [Prepare required files to deploy Galaxy NG](#prepare-required-files-to-deploy-galaxy-ng)
   - [Deploy Galaxy NG](#deploy-galaxy-ng)
-  - [Initial Configuration](#initial-configuration)
-- [Deploy on Kubernetes (Pulp Operator)](#deploy-on-kubernetes-pulp-operator)
-  - [Install Pulp Operator](#install-pulp-operator)
-  - [Prepare required files](#prepare-required-files)
-  - [Deploy Galaxy NG](#deploy-galaxy-ng-1)
 - [Configuration and Usage](#configuration-and-usage)
   - [Sync Collections with Public Galaxy](#sync-collections-with-public-galaxy)
   - [Publish Your Own Collections to Galaxy NG](#publish-your-own-collections-to-galaxy-ng)
@@ -32,244 +29,80 @@ All information on this page is for **development, testing and study purposes on
   - [Use Collections on Galaxy NG through AWX](#use-collections-on-galaxy-ng-through-awx)
   - [Use Execution Environment on Galaxy NG through AWX](#use-execution-environment-on-galaxy-ng-through-awx)
 
-## Deploy on Docker (Official Development Setup)
+## Environment
 
-Official guide for Development Setup provides the procedure to run Galaxy NG on Docker.
+> [!WARNING]
+> Galaxy NG deployed with this procedure will not be used as container registry due to [a known issue](https://github.com/ansible/galaxy-operator/issues/74). If you want to use fully working Galaxy NG, follow [the old version of this guide that uses Pulp Operator instead](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1/galaxy#deploy-on-kubernetes-pulp-operator).
 
-[Development Setup · ansible/galaxy_ng Wiki](https://github.com/ansible/galaxy_ng/wiki/Development-Setup)
+- Galaxy Operator 2024.02.29
+- Galaxy NG
+  - Service: 5d56bddb
+  - UI: 59cf7798
 
-You can control the version of Galaxy NG by using Tags in cloned local Git repository. It takes some time to build the image, but it's not that complicated and it's a good way to try out Galaxy NG.
+## Deployment Instruction
 
-## Deploy on Docker (All-in-One Container)
-
-[Pulp Project](https://pulpproject.org/) provides an all-in-one container image that contains all the necessary elements. One of the easiest ways to get a working Galaxy NG is to run it on Docker.
-
-- [Pulp in One Container | software repository management](https://pulpproject.org/pulp-in-one-container/)
-- [pulp/pulp-oci-images: Containerfiles and other assets for building Pulp 3 OCI images](https://github.com/pulp/pulp-oci-images)
-
-Although not documented, a container image with Galaxy NG preinstalled and its source `Containerfile` are also available.
-
-- [pulp/pulp-galaxy-ng - Docker Image | Docker Hub](https://hub.docker.com/r/pulp/pulp-galaxy-ng)
-- [pulp-oci-images/images/pulp_galaxy_ng at latest · pulp/pulp-oci-images · GitHub](https://github.com/pulp/pulp-oci-images/tree/latest/images/pulp_galaxy_ng)
-
-### Procedure
-
-There are only three steps to make this work.
-
-First, prepare a directory and a configuration file. You can replace the hostname as you like.
-
-```bash
-mkdir settings pulp_storage pgsql containers
-cat <<EOF > settings/settings.py
-CONTENT_ORIGIN='http://$(hostname):8080'
-ANSIBLE_API_HOSTNAME='http://$(hostname):8080'
-ANSIBLE_CONTENT_HOSTNAME='http://$(hostname):8080/pulp/content'
-TOKEN_AUTH_DISABLED=True
-EOF
-```
-
-Then invoke `docker run`.
-
-```bash
-docker run --detach \
-           --publish 8080:80 \
-           --name pulp \
-           --volume "$(pwd)/settings":/etc/pulp \
-           --volume "$(pwd)/pulp_storage":/var/lib/pulp \
-           --volume "$(pwd)/pgsql":/var/lib/pgsql \
-           --volume "$(pwd)/containers":/var/lib/containers \
-           --device /dev/fuse \
-           pulp/pulp-galaxy-ng:latest
-```
-
-Once it has started, reset the `admin` password.
-
-```bash
-$ docker exec -it pulp bash -c 'pulpcore-manager reset-admin-password'
-Please enter new password for user "admin":
-Please enter new password for user "admin" again:
-Successfully set password for "admin" user.
-```
-
-Now your own Galaxy NG is available at `http://$(hostname):8080/`. You can log in to the GUI by user `admin` with password you reset.
-
-## Deploy on Kubernetes (All-in-One Container)
-
-In this step, we will run the above All-in-One container on Kubernetes.
-
-### Preparation
+### Install Galaxy Operator
 
 Clone this repository and change directory.
 
 ```bash
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
-cd awx-on-k3s/galaxy
+cd awx-on-k3s
 ```
 
-Generate a Self-Signed Certificate. Note that IP address can't be specified.
+Then invoke `kubectl apply -k galaxy/operator` to deploy Galaxy Operator.
 
 ```bash
-GALAXY_HOST="galaxy.example.com"
-openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./all-in-one/tls.crt -keyout ./all-in-one/tls.key -subj "/CN=${GALAXY_HOST}/O=${GALAXY_HOST}" -addext "subjectAltName = DNS:${GALAXY_HOST}"
+kubectl apply -k galaxy/operator
 ```
 
-Modify `hosts` and `host` in `all-in-one/ingress.yaml`.
-
-```yaml
-...
-    - hosts:
-        - galaxy.example.com     👈👈👈
-      secretName: galaxy-secret-tls
-  rules:
-    - host: galaxy.example.com     👈👈👈
-...
-```
-
-Modify FQDNs in `all-in-one/configmap.yaml`.
-
-```yaml
-...
-data:
-  settings.py: |-
-    CONTENT_ORIGIN='https://galaxy.example.com'     👈👈👈
-    ANSIBLE_API_HOSTNAME='https://galaxy.example.com'     👈👈👈
-    ANSIBLE_CONTENT_HOSTNAME='https://galaxy.example.com/pulp/content'     👈👈👈
-    TOKEN_AUTH_DISABLED=True
-```
-
-Prepare directories for Persistent Volumes defined in `all-in-one/pv.yaml`.
-
-```bash
-sudo mkdir -p /data/galaxy
-```
-
-### Deploy Galaxy NG
-
-Deploy Galaxy NG.
-
-```bash
-kubectl apply -k all-in-one
-```
-
-Required resources has been deployed in `galaxy` namespace.
+The Galaxy Operator will be deployed to the namespace `galaxy`.
 
 ```bash
 $ kubectl -n galaxy get all
-NAME                          READY   STATUS    RESTARTS   AGE
-pod/galaxy-78df96fc64-l7tbq   1/1     Running   0          53s
+NAME                                                      READY   STATUS    RESTARTS   AGE
+pod/galaxy-operator-controller-manager-69bdb6886d-jz62p   2/2     Running   0          31s
 
-NAME                     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
-service/galaxy-service   ClusterIP   10.43.201.53   <none>        80/TCP    6m14s
+NAME                                                         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
+service/galaxy-operator-controller-manager-metrics-service   ClusterIP   10.43.73.43   <none>        8443/TCP   31s
 
-NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/galaxy   1/1     1            1           53s
+NAME                                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/galaxy-operator-controller-manager   1/1     1            1           31s
 
-NAME                                DESIRED   CURRENT   READY   AGE
-replicaset.apps/galaxy-78df96fc64   1         1         1       53s
+NAME                                                            DESIRED   CURRENT   READY   AGE
+replicaset.apps/galaxy-operator-controller-manager-69bdb6886d   1         1         1       31s
 ```
 
-### Initial Configuration
-
-Once it has started, reset the `admin` password.
-
-```bash
-$ POD_NAME=$(kubectl -n galaxy get pod -l app=galaxy -o name)
-$ kubectl -n galaxy exec -it $POD_NAME -- bash -c 'pulpcore-manager reset-admin-password'
-Please enter new password for user "admin":
-Please enter new password for user "admin" again:
-Successfully set password for "admin" user.
-```
-
-Now Galaxy NG is available at `https://galaxy.example.com/` or the hostname you specified. You can log in to the GUI by user `admin` with password you reset.
-
-## Deploy on Kubernetes (Pulp Operator)
-
-There is a Kubernetes Operator for Pulp 3 named Pulp Operator.
-
-- [pulp/pulp-operator: Kubernetes Operator for Pulp 3](https://github.com/pulp/pulp-operator)
-
-This project is in alpha stage and under active development. In this guide, we use [Pulp Operator 1.0.0-beta.4](https://github.com/pulp/pulp-operator/tree/1.0.0-beta.4).
-
-### Install Pulp Operator
-
-Install specified version of Pulp Operator.
-
-```bash
-cd ~
-git clone https://github.com/pulp/pulp-operator.git
-cd pulp-operator
-git checkout 1.0.0-beta.4
-```
-
-Export the name of the namespace where you want to deploy Pulp Operator as the environment variable `NAMESPACE` and run `make deploy`. The default namespace is `pulp-operator-system`. Note that `make deploy` requires `go` binary by default but you can remove this dependency by small `sed` patch.
-
-```bash
-sed -i 's/^deploy: manifests/deploy:/g' ./Makefile
-export NAMESPACE=galaxy
-make deploy
-```
-
-The Pulp Operator will be deployed to the namespace you specified.
-
-```bash
-$ kubectl -n galaxy get all
-NAME                                                   READY   STATUS    RESTARTS   AGE
-pod/pulp-operator-controller-manager-9b8644f46-rg2rl   2/2     Running   0          21s
-
-NAME                                                       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
-service/pulp-operator-controller-manager-metrics-service   ClusterIP   10.43.20.233   <none>        8443/TCP   21s
-
-NAME                                               READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/pulp-operator-controller-manager   1/1     1            1           21s
-
-NAME                                                         DESIRED   CURRENT   READY   AGE
-replicaset.apps/pulp-operator-controller-manager-9b8644f46   1         1         1       21s
-```
-
-### Prepare required files
-
-Clone this repository and change directory.
-
-```bash
-cd ~
-git clone https://github.com/kurokobo/awx-on-k3s.git
-cd awx-on-k3s/galaxy
-```
+### Prepare required files to deploy Galaxy NG
 
 Generate a Self-Signed Certificate and key pair. Note that IP address can't be specified.
 
 ```bash
 GALAXY_HOST="galaxy.example.com"
-openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./pulp/tls.crt -keyout ./pulp/tls.key -subj "/CN=${GALAXY_HOST}/O=${GALAXY_HOST}" -addext "subjectAltName = DNS:${GALAXY_HOST}"
+openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./galaxy/galaxy/tls.crt -keyout ./galaxy/galaxy/tls.key -subj "/CN=${GALAXY_HOST}/O=${GALAXY_HOST}" -addext "subjectAltName = DNS:${GALAXY_HOST}"
 ```
 
-Modify `ingress_host` and `CSRF_TRUSTED_ORIGINS` in `pulp/galaxy.yaml`.
+Modify `hostname` in `galaxy/galaxy/galaxy.yaml`.
 
 ```yaml
 ...
 spec:
   ...
   ingress_type: ingress
-  ingress_class_name: traefik
   ingress_tls_secret: galaxy-secret-tls
-  ingress_host: galaxy.example.com     👈👈👈
+  hostname: galaxy.example.com     👈👈👈
   ...
-  pulp_settings:
-    ...
-    CSRF_TRUSTED_ORIGINS:
-      - https://galaxy.example.com     👈👈👈
-...
 ```
 
-Modify two `password`s in `pulp/kustomization.yaml`.
+Modify two `password`s in `galaxy/galaxy/kustomization.yaml`.
 
 ```yaml
 ...
   - name: galaxy-postgres-configuration
     type: Opaque
     literals:
-      - host=galaxy-database-svc
+      - host=galaxy-postgres-13
       - port=5432
       - database=galaxy
       - username=galaxy
@@ -284,28 +117,28 @@ Modify two `password`s in `pulp/kustomization.yaml`.
 ...
 ```
 
-Prepare directories for Persistent Volumes defined in `pulp/pv.yaml`.
+Prepare directories for Persistent Volumes defined in `galaxy/galaxy/pv.yaml`.
 
 ```bash
-sudo mkdir -p /data/galaxy/database
+sudo mkdir -p /data/galaxy/postgres-13
 sudo mkdir -p /data/galaxy/redis
 sudo mkdir -p /data/galaxy/file
-sudo chmod 755 /data/galaxy/database
-sudo chown 700:0 /data/galaxy/file
+sudo chmod 755 /data/galaxy/postgres-13
+sudo chown 1000:0 /data/galaxy/file
 ```
 
 ### Deploy Galaxy NG
 
-Deploy Galaxy NG.
+Deploy Galaxy NG, this takes few minutes to complete.
 
 ```bash
-kubectl apply -k pulp
+kubectl apply -k galaxy/galaxy
 ```
 
-To monitor the progress of the deployment, check the logs of `deployments/awx-operator-controller-manager`:
+To monitor the progress of the deployment, check the logs of `deployments/galaxy-operator-controller-manager`:
 
 ```bash
-kubectl -n galaxy logs -f deployments/pulp-operator-controller-manager
+kubectl -n galaxy logs -f deployments/galaxy-operator-controller-manager
 ```
 
 When the deployment completes successfully, the logs end with:
@@ -313,77 +146,72 @@ When the deployment completes successfully, the logs end with:
 ```txt
 $ kubectl -n galaxy logs -f deployments/pulp-operator-controller-manager
 ...
-2006-01-02T15:04:05Z    INFO    repo_manager/status.go:148      galaxy finished execution ...
-2006-01-02T15:04:05Z    INFO    repo_manager/controller.go:128  Operator tasks synced
+----- Ansible Task Status Event StdOut (galaxy.ansible.com/v1beta1, Kind=Galaxy, galaxy/galaxy) -----
+PLAY RECAP *********************************************************************
+localhost                  : ok=128  changed=25   unreachable=0    failed=0    skipped=85   rescued=0    ignored=0
 ```
 
 Required objects has been deployed next to Pulp Operator in `galaxy` namespace.
 
 ```bash
-$ kubectl -n galaxy get pulp,all,ingress,secrets
-NAME                                       AGE
-pulp.repo-manager.pulpproject.org/galaxy   3m15s
+$ kubectl -n galaxy get galaxy,all,ingress,secrets
+NAME                               AGE
+galaxy.galaxy.ansible.com/galaxy   4m44s
 
-NAME                                                    READY   STATUS      RESTARTS   AGE
-pod/pulp-operator-controller-manager-74f74c5846-kcnvx   2/2     Running     0          3m29s
-pod/galaxy-redis-56445fcbbb-hxdq9                       1/1     Running     0          3m15s
-pod/galaxy-database-0                                   1/1     Running     0          3m15s
-pod/galaxy-pulpcore-migration-dcmhw-tjnxq               0/1     Completed   0          3m4s
-pod/galaxy-reset-admin-password-pb5mv-s2nm6             0/1     Completed   0          3m4s
-pod/galaxy-api-5bbf4c58cd-kzdgg                         1/1     Running     0          3m4s
-pod/galaxy-content-59bbb99578-d87zz                     1/1     Running     0          3m4s
-pod/galaxy-worker-66dd884cfb-v7r9z                      1/1     Running     0          3m4s
-pod/galaxy-web-5bfcd9c5f9-xfgcv                         1/1     Running     0          2m24s
+NAME                                                      READY   STATUS    RESTARTS   AGE
+pod/galaxy-operator-controller-manager-69bdb6886d-klh28   2/2     Running   0          4m29s
+pod/galaxy-postgres-13-0                                  1/1     Running   0          3m45s
+pod/galaxy-redis-994cbcbff-46m95                          1/1     Running   0          3m26s
+pod/galaxy-worker-5ffd987855-g56rt                        1/1     Running   0          3m30s
+pod/galaxy-api-75d6bf46b8-lbt4z                           1/1     Running   0          3m19s
+pod/galaxy-content-6d7dd695c5-dsjkq                       1/1     Running   0          3m34s
+pod/galaxy-web-7f75d4c888-bg5pt                           1/1     Running   0          3m40s
 
-NAME                                                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)     AGE
-service/pulp-operator-controller-manager-metrics-service   ClusterIP   10.43.168.53    <none>        8443/TCP    3m29s
-service/galaxy-database-svc                                ClusterIP   None            <none>        5432/TCP    3m15s
-service/galaxy-redis-svc                                   ClusterIP   10.43.192.108   <none>        6379/TCP    3m15s
-service/galaxy-api-svc                                     ClusterIP   10.43.90.155    <none>        24817/TCP   3m4s
-service/galaxy-content-svc                                 ClusterIP   10.43.240.255   <none>        24816/TCP   3m4s
-service/galaxy-web-svc                                     ClusterIP   10.43.60.255    <none>        24880/TCP   2m23s
+NAME                                                         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)     AGE
+service/galaxy-operator-controller-manager-metrics-service   ClusterIP   10.43.73.43    <none>        8443/TCP    4m29s
+service/galaxy-postgres-13                                   ClusterIP   None           <none>        5432/TCP    3m45s
+service/galaxy-web-svc                                       ClusterIP   10.43.114.49   <none>        24880/TCP   3m39s
+service/galaxy-content-svc                                   ClusterIP   10.43.9.181    <none>        24816/TCP   3m37s
+service/galaxy-redis-svc                                     ClusterIP   10.43.20.127   <none>        6379/TCP    3m27s
+service/galaxy-api-svc                                       ClusterIP   10.43.76.66    <none>        8000/TCP    3m24s
 
-NAME                                               READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/pulp-operator-controller-manager   1/1     1            1           3m29s
-deployment.apps/galaxy-redis                       1/1     1            1           3m15s
-deployment.apps/galaxy-content                     1/1     1            1           3m4s
-deployment.apps/galaxy-api                         1/1     1            1           3m4s
-deployment.apps/galaxy-worker                      1/1     1            1           3m4s
-deployment.apps/galaxy-web                         1/1     1            1           2m24s
+NAME                                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/galaxy-operator-controller-manager   1/1     1            1           4m29s
+deployment.apps/galaxy-redis                         1/1     1            1           3m26s
+deployment.apps/galaxy-worker                        1/1     1            1           3m30s
+deployment.apps/galaxy-api                           1/1     1            1           3m19s
+deployment.apps/galaxy-content                       1/1     1            1           3m34s
+deployment.apps/galaxy-web                           1/1     1            1           3m40s
 
-NAME                                                          DESIRED   CURRENT   READY   AGE
-replicaset.apps/pulp-operator-controller-manager-74f74c5846   1         1         1       3m29s
-replicaset.apps/galaxy-redis-56445fcbbb                       1         1         1       3m15s
-replicaset.apps/galaxy-api-5bbf4c58cd                         1         1         1       3m4s
-replicaset.apps/galaxy-content-59bbb99578                     1         1         1       3m4s
-replicaset.apps/galaxy-worker-66dd884cfb                      1         1         1       3m4s
-replicaset.apps/galaxy-web-5bfcd9c5f9                         1         1         1       2m24s
+NAME                                                            DESIRED   CURRENT   READY   AGE
+replicaset.apps/galaxy-operator-controller-manager-69bdb6886d   1         1         1       4m29s
+replicaset.apps/galaxy-redis-994cbcbff                          1         1         1       3m26s
+replicaset.apps/galaxy-worker-5ffd987855                        1         1         1       3m30s
+replicaset.apps/galaxy-api-75d6bf46b8                           1         1         1       3m19s
+replicaset.apps/galaxy-content-6d7dd695c5                       1         1         1       3m34s
+replicaset.apps/galaxy-web-7f75d4c888                           1         1         1       3m40s
 
-NAME                               READY   AGE
-statefulset.apps/galaxy-database   1/1     3m15s
+NAME                                  READY   AGE
+statefulset.apps/galaxy-postgres-13   1/1     3m45s
 
-NAME                                          COMPLETIONS   DURATION   AGE
-job.batch/galaxy-pulpcore-migration-dcmhw     1/1           31s        3m4s
-job.batch/galaxy-reset-admin-password-pb5mv   1/1           35s        3m4s
-
-NAME                               CLASS     HOSTS                ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/galaxy   traefik   galaxy.example.com   192.168.0.219   80, 443   2m20s
+NAME                                       CLASS     HOSTS                ADDRESS         PORTS     AGE
+ingress.networking.k8s.io/galaxy-ingress   traefik   galaxy.example.com   192.168.0.219   80, 443   2m9s
 
 NAME                                   TYPE                DATA   AGE
-secret/galaxy-postgres-configuration   Opaque              7      3m15s
-secret/galaxy-secret-tls               kubernetes.io/tls   2      3m15s
-secret/galaxy-secret-key               Opaque              1      3m15s
-secret/galaxy-server                   Opaque              1      3m15s
-secret/galaxy-db-fields-encryption     Opaque              1      3m15s
-secret/galaxy-container-auth           Opaque              2      3m15s
-secret/galaxy-admin-password           Opaque              1      3m15s
+secret/galaxy-admin-password           Opaque              1      4m44s
+secret/galaxy-postgres-configuration   Opaque              7      4m44s
+secret/galaxy-secret-tls               kubernetes.io/tls   2      4m44s
+secret/redhat-operators-pull-secret    Opaque              1      3m56s
+secret/galaxy-db-fields-encryption     Opaque              1      3m48s
+secret/galaxy-server                   Opaque              1      3m25s
+secret/galaxy-container-auth           Opaque              2      3m22s
 ```
 
 Now your AWX is available at `https://galaxy.example.com/` or the hostname you specified. You can log in to the GUI by user `admin` with password you specified in `pulp/kustomization.yaml`.
 
 ## Configuration and Usage
 
-Basic configuration and usage of Galaxy NG. Following section is based on Galaxy NG 4.9.
+Basic configuration and usage of Galaxy NG.
 
 ### Sync Collections with Public Galaxy
 
@@ -477,6 +305,10 @@ EOF
 # You can install antsibull-changelog by "pip install antsibull-changelog"
 cd ../
 antsibull-changelog init .
+cat <<EOF > changelogs/fragments/summary.yml
+release_summary: |
+  Demo Collection 1.0.0
+EOF
 antsibull-changelog release
 
 # Build tarball
@@ -512,7 +344,7 @@ url=https://galaxy.example.com/api/galaxy/
 token=d926e******************************3e996
 
 [galaxy_server.community_repo]
-url=https://galaxy.example.com/api/galaxy/
+url=https://galaxy.example.com/api/galaxy/content/community/
 token=d926e******************************3e996
 ```
 
