@@ -273,10 +273,8 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
 - [📁 **Integrate AWX with EDA Controller** (Experimental)](rulebooks)
   - The guide to deploy and use Event Driven Ansible Controller (EDA Controller) with AWX on K3s.
   - **Note that EDA Controller Operator that used in this guide is not a fully supported installation method for EDA Controller.**
-- [📁 **Deploy Private Galaxy NG on Docker or Kubernetes** (Experimental)](galaxy)
+- [📁 **Deploy Private Galaxy NG on Kubernetes** (Experimental)](galaxy)
   - The guide to deploy our own Galaxy NG instance.
-  - **Note that the containerized implementation of Galaxy NG is not officially supported at this time.**
-  - **All information on the guide is for development, testing and study purposes only.**
 - [📁 **Use SSL Certificate from Public ACME CA**](acme)
   - The guide to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate.
 - [📁 **Use Ansible Runner**](runner)
