@@ -92,3 +92,27 @@ kubectl apply -k base
 Now you need to wait some time until K3S has restarted all your pods.
 
 After logging in you can navigate to `Settings` > `Jobs settings` in the AWX UI and find your proxy settings in the `Extra Environment Variables` block. But note that you will not be able to edit the setting via Web UI once the configuration has passed through AWX Operator. If you want to modify your configuration, use AWX Operator again.
+
+> [!TIP]
+> The proxy settings above don't work as expected for the specific use cases such as social authentication. If you are in these cases behind proxy, try adding proxy settings by AWX Operator in different way. This can't be configured and reviewed by AWX UI.
+>
+> ```yaml
+> ...
+> spec:
+>   ...
+>   task_extra_env: |     👈👈👈
+>     - name: HTTP_PROXY     👈👈👈
+>       value: http://proxy.example.com:3128     👈👈👈
+>     - name: HTTPS_PROXY     👈👈👈
+>       value: http://proxy.example.com:3128     👈👈👈
+>     - name: NO_PROXY     👈👈👈
+>       value: 127.0.0.1,localhost,.example.com     👈👈👈
+>
+>   web_extra_env: |     👈👈👈
+>     - name: HTTP_PROXY     👈👈👈
+>       value: http://proxy.example.com:3128     👈👈👈
+>     - name: HTTPS_PROXY     👈👈👈
+>       value: http://proxy.example.com:3128     👈👈👈
+>     - name: NO_PROXY     👈👈👈
+>       value: 127.0.0.1,localhost,.example.com     👈👈👈
+> ```
