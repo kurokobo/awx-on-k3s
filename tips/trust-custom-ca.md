@@ -233,9 +233,7 @@ In this example, the value of the environment variable `REQUESTS_CA_BUNDLE` is s
 
 ### Method 1: Use Container Group
 
-This method can be used for standard jobs, such as the case that some modules in your playbook require custom CA certificates.
-
-Note that this method can't be used for accessing inventory sources since current AWX does not support specifying Container Group for inventory sync.
+This method can be used for standard jobs, such as the case that some modules in your playbook require custom CA certificates. In addition, this method can also be used to access inventory sources.
 
 #### Create Secret
 
@@ -319,7 +317,9 @@ If you just want to place CA certificates somewhere on automation job pods and `
 
 #### Specify Container Group
 
-The Container Group can be specified as `Instance Groups` for the Job Template.
+The Container Group can be specified as `Instance Groups` for the Job Template or Organization.
+
+If you want to use this Container Group to access inventory sources, specify it as `Instance Groups` for the Inventory or Organization.
 
 ### Method 2: Mount host filesystem
 
