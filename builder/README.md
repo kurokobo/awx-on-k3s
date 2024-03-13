@@ -23,24 +23,24 @@ This page mainly shows you how to build and use your own custom Execution Enviro
 
 ## Introduction
 
-When the Job Template launched on AWX, the playbook runs on the Execution Environment (EE), which is a containerized environment completely isolated from your K3s host.
+When the Job Template is launched on AWX, the playbook runs on the Execution Environment (EE), which is a containerized environment completely isolated from your K3s host.
 
 - [What's new in Ansible Automation Platform 2: automation execution environments](https://www.ansible.com/blog/whats-new-in-ansible-automation-platform-2-automation-execution-environments)
 
 The default EE, [quay.io/ansible/awx-ee:latest](https://quay.io/repository/ansible/awx-ee), has some typical collections, Pip modules, and RPM packages by default, but sometimes your playbooks require additional (non-default) collections, modules or packages.
 
-In such cases, you need to add Ansible collections, Python packages, and RPM packages to EE. There are two ways you can choose to achieve this.
+In such cases, you need to add Ansible collections, Python packages, and RPM packages to the EE. There are two ways you can choose to achieve this.
 
 1. **Build and use your own Execution Environment**
    - This method is used when additional Pip or RPM packages are required in addition to the Ansible collection.
-   - Follow whole of this page to build and use custom EE.
+   - Follow the whole of this page to build and use a custom EE.
 2. **Place `collections/requirements.yml` in your project**
    - This is useful if you simply need additional Ansible collections only, and no additional Pip or RPM packages are required. However, this method cannot be used if your project type on AWX is Manual.
    - See [_Use Ansible collections without custom EE_](#use-ansible-collections-without-custom-ee) at the bottom of this page for instructions.
 
 ## Build your own custom EE
 
-To build custom EE, there is a tool called Ansible Builder. You can build your own custom EE with any Ansible collections, Python packages, and RPM packages added.
+To build a custom EE, there is a tool called Ansible Builder. You can build your own custom EE with any Ansible collections, Python packages, and RPM packages added.
 
 - [ansible/ansible-builder](https://github.com/ansible/ansible-builder)
 - [Introduction to Ansible Builder — ansible-builder documentation](https://ansible.readthedocs.io/projects/builder/en/latest/)
@@ -70,33 +70,33 @@ python3 -m pip install ansible-builder
 
 ### Prepare Required Files
 
-At least, the file `execution-environment.yml` is required to build EE.
+At least, the file `execution-environment.yml` is required to build an EE.
 
-This repository contains [`execution-environment.yml` as a minimal ready-to-use example](execution-environment.yml). This file is made to achieve following requirements.
+This repository contains [`execution-environment.yml`](execution-environment.yml) as a minimal ready-to-use example. This file is made to achieve the following requirements.
 
 - Use `quay.io/centos/centos:stream9-minimal` as the base image
-- Use Python `3.11` as Python interpreter
-- Use Ansible `2.15.*` and Ansible Runner `2.3.*` to run playbooks on EE
-- Add RPM Packages that listed in [`dependencies/bindep.txt`](dependencies/bindep.txt) for basic remote connection and debugging
-- Add Python packages that listed in [`dependencies/requirements.txt`](ependencies/requirements.txt)
-- Add Ansible collections that listed in [`dependencies/requirements.yml`](dependencies/requirements.yml)
-- Customize configuration for `ansible-galaxy` (`additional_build_files` and `additional_build_steps`)
-  - Add customized `ansible.cfg` to the context (`additional_build_files`)
-  - Place customized file as `~/.ansible.cfg` for the stage that `ansible-galaxy` is invoked (`prepend_galaxy` under `additional_build_steps`)
+- Use Python `3.11` as the Python interpreter
+- Use Ansible `2.15.*` and Ansible Runner `2.3.*` to run playbooks on the EE
+- Add RPM Packages that are listed in [`dependencies/bindep.txt`](dependencies/bindep.txt) for basic remote connection and debugging
+- Add Python packages that are listed in [`dependencies/requirements.txt`](ependencies/requirements.txt)
+- Add Ansible collections that are listed in [`dependencies/requirements.yml`](dependencies/requirements.yml)
+- Customize the configuration for `ansible-galaxy` (`additional_build_files` and `additional_build_steps`)
+  - Add a customized `ansible.cfg` to the context (`additional_build_files`)
+  - Place the customized file as `~/.ansible.cfg` for the stage that `ansible-galaxy` is invoked (`prepend_galaxy` under `additional_build_steps`)
 - Run additional commands during build steps (`additional_build_steps`)
-  - To allow the hard-coded interpreter name (`python3`) passed by AWX, `alternatives` command is appended under `append_base` to make the binary `/usr/bin/python3.11` executable as command `python3`
+  - To allow the hard-coded interpreter name (`python3`) to be passed by AWX, the `alternatives` command is appended under `append_base` to make the binary `/usr/bin/python3.11` executable as command `python3`
 
-Note that since this example uses `*-minimal` image as the base image and added only few packages for SSH connection and debugging, there should be still missing packages and modules for some modules and collections.
+Note that since this example uses the `*-minimal` image as the base image and added only a few packages for SSH connection and debugging, there should still be missing packages and modules for some modules and collections.
 
 You can review and modify [`execution-environment.yml`](execution-environment.yml) and any files referenced from this file to suit your requirements.
 
 The syntax of `requirements.yml` is [the same as for Ansible Galaxy](https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#install-multiple-collections-with-a-requirements-file). The syntax of `requirements.txt` is [the same as for Pip](https://pip.pypa.io/en/stable/reference/requirements-file-format/), and `bindep.txt` is [for Bindep](https://docs.opendev.org/opendev/bindep/latest/readme.html).
 
-Other customization is possible besides this. Refer to [the official Ansible Builder documentation](https://ansible-builder.readthedocs.io/en/stable/) for details.
+Other customizations are possible besides this. Refer to [the official Ansible Builder documentation](https://ansible-builder.readthedocs.io/en/stable/) for details.
 
 ### Build EE
 
-Once your files are ready, run `ansible-builder build` command to build EE as a container image according to the definition in `execution-environment.yml`. Specify a tag (`--tag`) to suit your requirements.
+Once your files are ready, run `ansible-builder build` command to build an EE as a container image according to the definition in `execution-environment.yml`. Specify a tag (`--tag`) to suit your requirements.
 
 ```bash
 ansible-builder build --tag registry.example.com/ansible/ee:2.15-custom --container-runtime docker --verbosity 3
@@ -165,7 +165,7 @@ Then you can specify `registry.example.com/ansible/ee:2.15-custom` as your own c
 
 #### Use EE in AWX without container registry
 
-The EEs in AWX are just Pods on Kubernetes. When executing a Job Template in AWX, AWX instructs Kubernetes to create a Pod using specified EE image. Of course Kubernetes requires the specified container image when creating the Pod. So while creating the Pod, Kubernetes usually pulls specified image from the container registry.
+The EEs in AWX are just Pods on Kubernetes. When executing a Job Template in AWX, AWX instructs Kubernetes to create a Pod using the specified EE image. Of course Kubernetes requires the specified container image when creating the Pod. So while creating the Pod, Kubernetes usually pulls the specified image from the container registry.
 
 But this happens only if the image is not cached on the container runtime for Kubernetes. If Kubernetes has the cache of the specified image, Kubernetes never pulls the image from the container registry (Technically, this is the default behavior and stated as `imagePullPolicy` is `IfNotPresent`).
 
@@ -195,7 +195,7 @@ In AWX, you can change the policy of pulling the image in `Edit` page of your EE
 
 ### Use EE in Ansible Runner
 
-Refer [the guide for Ansible Runner on this repository](../runner).
+Refer to [the guide for Ansible Runner on this repository](../runner).
 
 ## Tips
 
@@ -203,7 +203,7 @@ Some additional information around Ansible Builder and EE.
 
 ### Get the `Dockerfile` of your custom EE
 
-The `Dockerfile` is generated and stored under the `context` directory once your `ansible-builder build` command is completed.
+The `Dockerfile` is generated and stored under the `context` directory once your `ansible-builder build` command has completed.
 
 ```bash
 $ cat context/Dockerfile
@@ -227,7 +227,7 @@ FROM base as final
 ...
 ```
 
-If you want to create `Dockerfile` without building image, you can use `ansible-builder create` command.
+If you want to create `Dockerfile` without building an image, you can use the `ansible-builder create` command.
 
 ```bash
 $ ansible-builder create --verbosity 3
@@ -250,7 +250,7 @@ Complete! The build context can be found at: /home/********/awx-on-k3s/builder/c
 
 If you simply need additional Ansible collections only, and no additional Pip or RPM packages are required, this method is the simplest way. However, this method can't be applied for Manual type projects. If you want to add your project as Manual type, you should build custom EE.
 
-The procedure is quite simple, create and place `collections/requirements.yml` on your project root including the list of the collections which you want to use.
+The procedure is quite simple, create and place `collections/requirements.yml` in your project root including the list of the collections that you want to use.
 
 The format of `collections/requirements.yml` is the same as [the `requirements.yml` for ansible-galaxy](https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#install-multiple-collections-with-a-requirements-file).
 
