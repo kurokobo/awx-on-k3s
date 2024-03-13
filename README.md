@@ -69,7 +69,7 @@ sudo systemctl disable nm-cloud-setup.service nm-cloud-setup.timer
 sudo reboot
 ```
 
-Install required packages to deploy AWX Operator and AWX.
+Install the required packages to deploy AWX Operator and AWX.
 
 ```bash
 sudo dnf install -y git curl
@@ -77,7 +77,7 @@ sudo dnf install -y git curl
 
 ### Install K3s
 
-Install specific version of K3s with `--write-kubeconfig-mode 644` to make config file (`/etc/rancher/k3s/k3s.yaml`) readable by non-root user.
+Install a specific version of K3s with `--write-kubeconfig-mode 644` to make the config file (`/etc/rancher/k3s/k3s.yaml`) readable by non-root users.
 
 ```bash
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.6+k3s2 sh -s - --write-kubeconfig-mode 644
@@ -86,11 +86,11 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.6+k3s2 sh -s - --write-
 ### Install AWX Operator
 
 > [!WARNING]
-> If you are planning that creating backup of your AWX instance using AWX Operator by referring [the backup guide](backup), AWX Operator 2.12.2 is not recommended due to [a known issue for backup](https://github.com/ansible/awx-operator/issues/1734). Use the older version of AWX Operator like [2.12.1](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1) instead.
+> If you are planning that creating backup of your AWX instance using AWX Operator by referring to [the backup guide](backup), AWX Operator 2.12.2 is not recommended due to [a known issue for backup](https://github.com/ansible/awx-operator/issues/1734). Use an older version of AWX Operator like [2.12.1](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1) instead.
 
 Clone this repository and change directory.
 
-If you want to use files suitable for the specific version of AWX Operator, [refer tags in this repository](https://github.com/kurokobo/awx-on-k3s/tags) and specify desired tag in `git checkout`. Especially for `0.13.0` or earlier version of AWX Operator, refer to [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md).
+If you want to use files suitable for a specific version of AWX Operator, [refer to tags in this repository](https://github.com/kurokobo/awx-on-k3s/tags) and specify the desired tag in `git checkout`. Especially for `0.13.0` or earlier versions of AWX Operator, refer to [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md).
 
 ```bash
 cd ~
@@ -124,7 +124,7 @@ replicaset.apps/awx-operator-controller-manager-68d787cfbd   1         1        
 
 ### Prepare required files to deploy AWX
 
-Generate a Self-Signed certificate. Note that IP address can't be specified. If you want to use a certificate from public ACME CA such as Let's Encrypt or ZeroSSL instead of Self-Signed certificate, follow the guide on [📁 **Use SSL Certificate from Public ACME CA**](acme) first and come back to this step when done.
+Generate a Self-Signed certificate. Note that an IP address can't be specified. If you want to use a certificate from a public ACME CA such as Let's Encrypt or ZeroSSL instead of a Self-Signed certificate, follow the guide on [📁 **Use SSL Certificate from Public ACME CA**](acme) first and come back to this step when done.
 
 ```bash
 AWX_HOST="awx.example.com"
@@ -144,7 +144,7 @@ spec:
 ...
 ```
 
-Modify two `password`s in `base/kustomization.yaml`. Note that the `password` under `awx-postgres-configuration` should not contain single or double quotes (`'`, `"`) or backslashes (`\`) to avoid any issues during deployment, backup or restoration.
+Modify the two `password` entries in `base/kustomization.yaml`. Note that the `password` under `awx-postgres-configuration` should not contain single or double quotes (`'`, `"`) or backslashes (`\`) to avoid any issues during deployment, backup or restoration.
 
 ```yaml
 ...
@@ -188,7 +188,7 @@ To monitor the progress of the deployment, check the logs of `deployments/awx-op
 kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ```
 
-When the deployment completes successfully, the logs end with:
+If the deployment completes successfully, the logs end with:
 
 ```txt
 $ kubectl -n awx logs -f deployments/awx-operator-controller-manager
@@ -198,7 +198,7 @@ PLAY RECAP *********************************************************************
 localhost                  : ok=85   changed=1    unreachable=0    failed=0    skipped=78   rescued=0    ignored=1
 ```
 
-Required objects has been deployed next to AWX Operator in `awx` namespace.
+The required objects should now have been deployed next to AWX Operator in the `awx` namespace.
 
 ```bash
 $ kubectl -n awx get awx,all,ingress,secrets
@@ -246,7 +246,7 @@ secret/awx-receptor-work-signing      Opaque              2      5m33s
 
 Now your AWX is available at `https://awx.example.com/` or the hostname you specified.
 
-Note that you have to access via hostname that you specified in `base/awx.yaml`, instead of IP address, since this guide uses Ingress. So you should configure your DNS or `hosts` file on your client where the browser is running.
+Note that you have to access via the hostname that you specified in `base/awx.yaml`, instead of by IP address, since this guide uses Ingress. So you should configure your DNS or `hosts` file on your client where the browser is running.
 
 At this point, AWX can be accessed via HTTP as well as HTTPS. If you want to force users to use HTTPS, see [📝Tips: Enable HTTP Strict Transport Security (HSTS)](tips/enable-hsts.md).
 
