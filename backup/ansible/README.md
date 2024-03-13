@@ -38,7 +38,7 @@ An example simple playbook for Ansible is also provided in this repository. This
 
 <!-- markdownlint-enable MD033 -->
 
-Note that this playbook enables `clean_backup_on_delete` by default that only works with AWX Operator `0.24.0` and later. This option makes that your actual backup data in your PVC is deleted at the same time the AWXBackup resource is deleted. You can disable this feature by explicitly specifying `clean_backup_on_delete: false`. Refer [the official documentation](https://github.com/ansible/awx-operator/tree/devel/roles/backup) for detail.
+Note that this playbook enables `clean_backup_on_delete` by default that only works with AWX Operator `0.24.0` and later. This option makes it so that your actual backup data in your PVC is deleted at the same time the AWXBackup resource is deleted. You can disable this feature by explicitly specifying `clean_backup_on_delete: false`. Refer to [the official documentation](https://github.com/ansible/awx-operator/tree/devel/roles/backup) for detail.
 
 ## Preparation
 
@@ -59,18 +59,18 @@ rolebinding.rbac.authorization.k8s.io/awx-backup created
 
 Since you have complete control over `spec` of `AWXBackup` via `awxbackup_spec` variables, whether or not this step is required depends on your environment. Check [the official documentation](https://github.com/ansible/awx-operator/tree/devel/roles/backup) and prepare as needed.
 
-If your AWX was deployed by referring [the main guide on this repository](../../README.md), preparing backup storage by following [the basic backup guide](../README.md#prepare-for-backup) is good starting point.
+If your AWX was deployed by referencing [the main guide on this repository](../../README.md), preparing backup storage by following [the basic backup guide](../README.md#prepare-for-backup) is a good starting point.
 
 ## Use with Ansible
 
-Export required environment variables.
+Export the required environment variables.
 
 ```bash
 export K8S_AUTH_HOST="https://<Your K3s Host>:6443/"
 export K8S_AUTH_VERIFY_SSL=no
 ```
 
-Obtain and export the API Token which required to authenticate the Kubernetes API.
+Obtain and export the API Token which is required to authenticate to the Kubernetes API.
 
 ```bash
 # For Kubernetes 1.24 or later:
@@ -93,9 +93,9 @@ ansible-playbook project/backup.yml \
 
 ## Use with Ansible Runner
 
-Refer [the guide for Ansible Runner](../../runner) for the basic usage.
+Refer to [the guide for Ansible Runner](../../runner) for the basic usage.
 
-Modify following files as needed. Note that the EE `quay.io/ansible/awx-ee:latest` contains required modules and collections by default.
+Modify the following files as needed. Note that the EE `quay.io/ansible/awx-ee:latest` contains required modules and collections by default.
 
 - [📝`env/settings`](env/settings): Configure your Execution Environment
 - [📝`env/envvars`](env/envvars): Specify your K3s host and API Token
@@ -113,10 +113,10 @@ This playbook can also be run through Job Templates on AWX. Of course Schedules 
 
 This is the way to make the backup of the AWX itself where the Job Template for the backup is configured.
 
-In this case, the PostgreSQL will be dumped while the job is running, so complete logs of the job itself is not part of the backup. Therefore, after restoration, **the last backup job will be shown as failed** since the AWX can't determine the result of the job, but this can be safely ignored.
+In this case, the PostgreSQL db will be dumped while the job is running, so complete logs of the job itself is not a part of the backup. Therefore, after restoration, **the last backup job will be shown as failed** the AWX can't determine the result of the job, but this can be safely ignored.
 
-1. Add new Container Group to make the API token usable inside the EE.
-   - Enable `Customize pod specification` and put following YAML string. `serviceAccountName` and `automountServiceAccountToken` are important to make the API token usable inside the EE.
+1. Add a new Container Group to make the API token usable inside the EE.
+   - Enable `Customize pod specification` and put the following YAML string. `serviceAccountName` and `automountServiceAccountToken` are important to make the API token usable inside the EE.
 
      ```yaml
      apiVersion: v1
@@ -139,16 +139,16 @@ In this case, the PostgreSQL will be dumped while the job is running, so complet
                memory: 100Mi
      ```
 
-2. Add new Project including the playbook.
+2. Add a new Project including the playbook.
    - You can specify this repository (`https://github.com/kurokobo/awx-on-k3s.git`) directly, but use with caution. The playbook in this repository is subject to change without notice. You can use [Tag](https://github.com/kurokobo/awx-on-k3s/tags) or [Commit](https://github.com/kurokobo/awx-on-k3s/commits/main) to fix the version to be used.
-3. Add new Job Template which use the playbook.
-   - Select appropriate `Inventory`. The bundled `Demo Inventory` is enough to use. If you specify your own inventory, ensure `localhost` is defined in the inventory and following variables are enabled for `localhost`.
+3. Add a new Job Template which uses the playbook.
+   - Select the appropriate `Inventory`. The bundled `Demo Inventory` is enough to use. If you specify your own inventory, ensure `localhost` is defined in the inventory and the following variables are enabled for `localhost`.
      - `ansible_connection: local`
      - `ansible_python_interpreter: '{{ ansible_playbook_python }}'`
-   - Select appropriate `Execution Environment`. The default `AWX EE (latest)` (`quay.io/ansible/awx-ee:latest`) contains required collections and modules by default, so it's good for the first choice.
+   - Select the appropriate `Execution Environment`. The default `AWX EE (latest)` (`quay.io/ansible/awx-ee:latest`) contains required collections and modules by default, so it's good for the first choice.
    - Select your `backup.yml` as `Playbook`.
    - Specify `Variables` as needed.
    - Select your Container Group created in the above step as `Instance Group`.
 4. (Optional) Add new Schedules for periodic backup.
 
-If you want to make the backup of another AWX on different namespace of different cluster, create new Credential with `OpenShift or Kubernetes API Bearer Token` type instead of Container Group and then specify the Credential in the Job Template. To obtain the API token, refer [_"Use with Ansible"_](#use-with-ansible) section.
+If you want to make the backup of another AWX on a different namespace of different cluster, create a new Credential with `OpenShift or Kubernetes API Bearer Token` type instead of Container Group and then specify the Credential in the Job Template. To obtain the API token, refer to the [_"Use with Ansible"_](#use-with-ansible) section.
