@@ -184,6 +184,11 @@ Typical solutions are one of the following:
       web_resource_requirements: {}     👈👈👈
       task_resource_requirements: {}     👈👈👈
       ee_resource_requirements: {}     👈👈👈
+      init_container_resource_requirements: {}     👈👈👈
+      postgres_init_container_resource_requirements: {}     👈👈👈
+      postgres_resource_requirements: {}     👈👈👈
+      redis_resource_requirements: {}     👈👈👈
+      rsyslog_resource_requirements: {}     👈👈👈
     ```
 
   - You can specify more specific value for each containers. Refer [official documentation](https://ansible.readthedocs.io/projects/awx-operator/en/latest/user-guide/advanced-configuration/containers-resource-requirements.html) for details.
@@ -286,13 +291,18 @@ awx-postgres-13-0                                  1/1     CrashLoopBackOff   5 
 awx-task-5d8cd9b6b9-8ptjt                          0/4     Running            0          6m55s
 awx-web-66f89bc9cf-6zck5                           0/3     Running            0          6m9s
 
-$ kubectl -n awx logs statefulset/awx-postgres
+# On PostgreSQL 13
+$ kubectl -n awx logs statefulset/awx-postgres-13
 mkdir: cannot create directory '/var/lib/postgresql/data': Permission denied
+
+# On PostgreSQL 15
+$ kubectl -n awx logs statefulset/awx-postgres-13
+mkdir: cannot create directory '/var/lib/pgsql/data/userdata': Permission denied
 ```
 
 You should check the permissions and the owner of directories where used as PV on your K3s host.
 
-For the PostgreSQL that deployed by **AWX Operator 2.12.2 or earlier**, if you followed my guide, it would be `/data/postgres-13`. There is additional `data` directory created by K3s under `/data/postgres-13`.
+For the PostgreSQL 13 that deployed by **AWX Operator 2.12.2 or earlier**, if you followed my guide, it would be `/data/postgres-13`. There is additional `data` directory created by K3s under `/data/postgres-13`.
 
 ```bash
 $ ls -ld /data/postgres-13 /data/postgres-13/data
@@ -300,38 +310,34 @@ drwxr-xr-x. 2 root root 18 Aug 20 10:09 /data/postgres-13
 drwxr-xr-x. 3 root root 20 Aug 20 10:09 /data/postgres-13/data
 ```
 
-In my environment, `755` and `root:root` (`0:0`) works correctly. So you can try:
+In my environment, `755` and `root:root` (`0:0`) works correctly. So you can try following commands.
 
 ```bash
 sudo chmod 755 /data/postgres-13 /data/postgres-13/data
 sudo chown 0:0 /data/postgres-13 /data/postgres-13/data
 ```
 
-Or, you can also try `` as owner/group for the directory.
+Or, you can also try `999:0` as owner/group for the directory. `999` is [the UID of the `postgres` user which used in the container](https://github.com/docker-library/postgres/blob/master/13/bullseye/Dockerfile#L13).
 
 ```bash
 sudo chmod 755 /data/postgres-13 /data/postgres-13/data
 sudo chown 999:0 /data/postgres-13 /data/postgres-13/data
 ```
 
-`999` is [the UID of the `postgres` user which used in the container](https://github.com/docker-library/postgres/blob/master/13/bullseye/Dockerfile#L13).
-
-For the PostgreSQL that deployed by **AWX Operator 2.13.0 or later**, if you followed my guide, it would be `/data/postgres-15`. There is additional `data` directory created by K3s under `/data/postgres-15`.
+For the PostgreSQL 15 that deployed by **AWX Operator 2.13.0 or later**, if you followed my guide, it would be `/data/postgres-15`. There is additional `data` directory created by K3s under `/data/postgres-15`.
 
 ```bash
 $ ls -ld /data/postgres-15 /data/postgres-15/data
 drwxr-xr-x. 2 root root 18 Aug 20 10:09 /data/postgres-15
-drwxr-xr-x. 3 root root 20 Aug 20 10:09 /data/postgres-15/data
+drwxr-xr-x. 3   26 root 20 Aug 20 10:09 /data/postgres-15/data
 ```
 
-In my environment, `755` and `26:0` works correctly. So you can try:
+In my environment, `700` and `26:0` works correctly. So you can try following commands. `26` is [the UID of the user which used in the container](https://github.com/sclorg/postgresql-container/blob/master/15/Dockerfile.c9s#L86).
 
 ```bash
-sudo chmod 755 /data/postgres-15 /data/postgres-15/data
+sudo chmod 700 /data/postgres-15 /data/postgres-15/data
 sudo chown 26:0 /data/postgres-15 /data/postgres-15/data
 ```
-
-`26` is [the UID of the user which used in the container](https://github.com/sclorg/postgresql-container/blob/master/15/Dockerfile.c9s#L86).
 
 ## Troubles during Daily Use
 

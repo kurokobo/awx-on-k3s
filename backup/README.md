@@ -7,9 +7,6 @@ This guide is specifically designed to use with the AWX which deployed using [th
 
 You can also refer [the official instructions](https://github.com/ansible/awx-operator/tree/devel/roles/backup) for more information.
 
-> [!WARNING]
-> AWX Operator 2.12.2 can not create any backup due to [a known issue](https://github.com/ansible/awx-operator/issues/1734).
-
 <!-- omit in toc -->
 ## Table of Contents
 
@@ -26,6 +23,8 @@ Prepare directories for Persistent Volumes to store backup files that defined in
 
 ```bash
 sudo mkdir -p /data/backup
+sudo chmod 700 /data/backup
+sudo chown 26:0 /data/backup
 ```
 
 Then deploy Persistent Volume and Persistent Volume Claim.
@@ -78,15 +77,15 @@ awxbackup-2021-06-06   6m47s
 ```
 
 ```bash
-$ ls -l /data/backup/
+$ sudo ls -l /data/backup/
 total 0
-drwxr-xr-x. 2 root root 59 Jun  5 06:51 tower-openshift-backup-2021-06-06-105149
+drwxr-xr-x. 2 26 26 59 Jun  5 06:51 tower-openshift-backup-2021-06-06-105149
 
-$ ls -l /data/backup/tower-openshift-backup-2021-06-06-105149/
+$ sudo ls -l /data/backup/tower-openshift-backup-2021-06-06-105149/
 total 736
--rw-------. 1 1001 root   1093 Jun  6 06:51 awx_object
--rw-------. 1 1001 root  17085 Jun  6 06:51 secrets.yml
--rw-rw----. 1 root root 833184 Jun  6 06:51 tower.db
+-rw-------. 1 26 26   1093 Jun  6 06:51 awx_object
+-rw-------. 1 26 26  17085 Jun  6 06:51 secrets.yml
+-rw-r--r--. 1 26 26 833184 Jun  6 06:51 tower.db
 ```
 
 ## Appendix: Back up AWX using Ansible

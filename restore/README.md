@@ -39,9 +39,10 @@ sudo rm -rf /data/postgres-15
 Then prepare directories for your PVs. `/data/projects` is required if you are restoring the entire AWX to a new environment.
 
 ```bash
-sudo mkdir -p /data/postgres-15
+sudo mkdir -p /data/postgres-15/data
 sudo mkdir -p /data/projects
-sudo chmod 755 /data/postgres-15
+sudo chmod 700 /data/postgres-15/data
+sudo chown 26:0 /data/postgres-15/data
 sudo chown 1000:0 /data/projects
 ```
 
@@ -102,7 +103,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=87   changed=1    unreachable=0    failed=0    skipped=76   rescued=0    ignored=1
+localhost                  : ok=92   changed=0    unreachable=0    failed=0    skipped=79   rescued=0    ignored=1
 ```
 
 This will create AWXRestore object in the namespace, and now your AWX is restored.

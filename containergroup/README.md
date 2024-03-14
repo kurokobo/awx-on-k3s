@@ -35,7 +35,7 @@ Prepare directories for Persistent Volumes defined in `containergroup/case1/pv.y
 
 ```bash
 sudo mkdir -p /data/work
-sudo chmod 755 /data/work
+sudo chmod 700 /data/work
 sudo chown 1000:0 /data/work
 ```
 
@@ -188,7 +188,7 @@ Prepare directories for Persistent Volumes defined in `containergroup/case2/pv.y
 
 ```bash
 sudo mkdir -p /data/demo
-sudo chmod 755 /data/demo
+sudo chmod 700 /data/demo
 sudo chown 1000:0 /data/demo
 ```
 

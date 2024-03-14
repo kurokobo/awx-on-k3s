@@ -31,7 +31,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 8 (Minimal)
   - K3s v1.28.7+k3s1
 - Products that will be deployed:
-  - AWX Operator 2.13.0
+  - AWX Operator 2.13.1
   - AWX 24.0.0
   - PostgreSQL 15
 
@@ -39,7 +39,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
 - [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/24.0.0/INSTALL.md) @24.0.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.13.0/README.md) @2.13.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.13.1/README.md) @2.13.1
 
 ## Requirements
 
@@ -85,9 +85,6 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.7+k3s1 sh -s - --write-
 
 ### Install AWX Operator
 
-> [!CAUTION]
-> AWX Operator 2.13.0 has [a bug that potentially causes data loss](https://forum.ansible.com/t/attention-do-not-upgrade-to-awx-operator-to-2-13-0/4363/3), and its image is already removed from `quay.io`. Use AWX Operator 2.13.1 or later instead.
-
 > [!NOTE]
 > From AWX Operator 2.13.0, Default PostgreSQL version is bumped from 13 to 15. If you have a plan to upgrade existing AWX Operator and AWX, refer to [📝Tips: Upgrade AWX Operator and AWX](tips/upgrade-operator.md) to perform additional tasks to database migration.
 
@@ -99,7 +96,7 @@ If you want to use files suitable for a specific version of AWX Operator, [refer
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 2.13.0
+git checkout 2.13.1
 ```
 
 Then invoke `kubectl apply -k operator` to deploy AWX Operator.
@@ -171,9 +168,10 @@ Modify the two `password` entries in `base/kustomization.yaml`. Note that the `p
 Prepare directories for Persistent Volumes defined in `base/pv.yaml`. These directories will be used to store your databases and project files. Note that the size of the PVs and PVCs are specified in some of the files in this repository, but since their backends are `hostPath`, its value is just like a label and there is no actual capacity limitation.
 
 ```bash
-sudo mkdir -p /data/postgres-15
+sudo mkdir -p /data/postgres-15/data
 sudo mkdir -p /data/projects
-sudo chmod 755 /data/postgres-15
+sudo chmod 700 /data/postgres-15/data
+sudo chown 26:0 /data/postgres-15/data
 sudo chown 1000:0 /data/projects
 ```
 
@@ -198,7 +196,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=85   changed=1    unreachable=0    failed=0    skipped=78   rescued=0    ignored=1
+localhost                  : ok=90   changed=0    unreachable=0    failed=0    skipped=81   rescued=0    ignored=1
 ```
 
 The required objects should now have been deployed next to AWX Operator in the `awx` namespace.
@@ -206,45 +204,49 @@ The required objects should now have been deployed next to AWX Operator in the `
 ```bash
 $ kubectl -n awx get awx,all,ingress,secrets
 NAME                      AGE
-awx.awx.ansible.com/awx   6m15s
+awx.awx.ansible.com/awx   6m48s
 
-NAME                                                   READY   STATUS    RESTARTS   AGE
-pod/awx-operator-controller-manager-57867569c4-ggl29   2/2     Running   0          6m50s
-pod/awx-postgres-15-0                                  1/1     Running   0          5m56s
-pod/awx-task-5d8cd9b6b9-8ptjt                          4/4     Running   0          5m25s
-pod/awx-web-66f89bc9cf-6zck5                           3/3     Running   0          4m39s
+NAME                                                  READY   STATUS      RESTARTS   AGE
+pod/awx-operator-controller-manager-59b86c6fb-4zz9r   2/2     Running     0          7m22s
+pod/awx-postgres-15-0                                 1/1     Running     0          6m33s
+pod/awx-web-549f7fdbc5-htpl9                          3/3     Running     0          6m5s
+pod/awx-migration-24.0.0-kglht                        0/1     Completed   0          4m36s
+pod/awx-task-7d4fcdd449-mqkp2                         4/4     Running     0          6m4s
 
 NAME                                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-service/awx-operator-controller-manager-metrics-service   ClusterIP   10.43.18.30     <none>        8443/TCP   7m
-service/awx-postgres-15                                   ClusterIP   None            <none>        5432/TCP   5m55s
-service/awx-service                                       ClusterIP   10.43.237.218   <none>        80/TCP     5m28s
+service/awx-operator-controller-manager-metrics-service   ClusterIP   10.43.58.194    <none>        8443/TCP   7m33s
+service/awx-postgres-15                                   ClusterIP   None            <none>        5432/TCP   6m33s
+service/awx-service                                       ClusterIP   10.43.180.226   <none>        80/TCP     6m7s
 
 NAME                                              READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/awx-operator-controller-manager   1/1     1            1           7m
-deployment.apps/awx-task                          1/1     1            1           5m25s
-deployment.apps/awx-web                           1/1     1            1           4m39s
+deployment.apps/awx-operator-controller-manager   1/1     1            1           7m33s
+deployment.apps/awx-web                           1/1     1            1           6m5s
+deployment.apps/awx-task                          1/1     1            1           6m4s
 
-NAME                                                         DESIRED   CURRENT   READY   AGE
-replicaset.apps/awx-operator-controller-manager-57867569c4   1         1         1       6m50s
-replicaset.apps/awx-task-5d8cd9b6b9                          1         1         1       5m25s
-replicaset.apps/awx-web-66f89bc9cf                           1         1         1       4m39s
+NAME                                                        DESIRED   CURRENT   READY   AGE
+replicaset.apps/awx-operator-controller-manager-59b86c6fb   1         1         1       7m22s
+replicaset.apps/awx-web-549f7fdbc5                          1         1         1       6m5s
+replicaset.apps/awx-task-7d4fcdd449                         1         1         1       6m4s
 
 NAME                               READY   AGE
-statefulset.apps/awx-postgres-15   1/1     5m56s
+statefulset.apps/awx-postgres-15   1/1     6m33s
+
+NAME                             COMPLETIONS   DURATION   AGE
+job.batch/awx-migration-24.0.0   1/1           2m4s       4m36s
 
 NAME                                    CLASS     HOSTS             ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/awx-ingress   traefik   awx.example.com   192.168.0.219   80, 443   5m27s
+ingress.networking.k8s.io/awx-ingress   traefik   awx.example.com   192.168.0.219   80, 443   6m6s
 
 NAME                                  TYPE                DATA   AGE
-secret/redhat-operators-pull-secret   Opaque              1      7m11s
-secret/awx-admin-password             Opaque              1      6m15s
-secret/awx-postgres-configuration     Opaque              6      6m15s
-secret/awx-secret-tls                 kubernetes.io/tls   2      6m15s
-secret/awx-app-credentials            Opaque              3      5m30s
-secret/awx-secret-key                 Opaque              1      6m6s
-secret/awx-broadcast-websocket        Opaque              1      6m2s
-secret/awx-receptor-ca                kubernetes.io/tls   2      5m37s
-secret/awx-receptor-work-signing      Opaque              2      5m33s
+secret/redhat-operators-pull-secret   Opaque              1      7m33s
+secret/awx-admin-password             Opaque              1      6m48s
+secret/awx-postgres-configuration     Opaque              6      6m48s
+secret/awx-secret-tls                 kubernetes.io/tls   2      6m48s
+secret/awx-app-credentials            Opaque              3      6m9s
+secret/awx-secret-key                 Opaque              1      6m41s
+secret/awx-broadcast-websocket        Opaque              1      6m38s
+secret/awx-receptor-ca                kubernetes.io/tls   2      6m14s
+secret/awx-receptor-work-signing      Opaque              2      6m12s
 ```
 
 Now your AWX is available at `https://awx.example.com/` or the hostname you specified.

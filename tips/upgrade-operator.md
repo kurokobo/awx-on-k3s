@@ -33,16 +33,14 @@ Refer [📝README: Backing up using AWX Operator](../README.md#backing-up-using-
 
 If you are using AWX Operator `0.14.0` or later and want to upgrade to newer version, basically upgrade is done by deploying the new version of AWX Operator to the same namespace where the old AWX Operator is running.
 
-> [!CAUTION]
-> AWX Operator 2.13.0 has [a bug that potentially causes data loss](https://forum.ansible.com/t/attention-do-not-upgrade-to-awx-operator-to-2-13-0/4363/3), and its image is already removed from `quay.io`. Use AWX Operator 2.13.1 or later instead.
-
 > [!WARNING]
-> If you are planning to upgrade AWX Operator **from `2.12.2` or earlier to `2.13.0` or later**, note that since the bundled PostgreSQL version will be changed to 15, so the following additional tasks are required.
+> If you are planning to upgrade AWX Operator **from `2.12.2` or earlier to `2.13.1` or later**, note that since the bundled PostgreSQL version will be changed to 15, so the following additional tasks are required.
 >
 > ```bash
-> # Required only when upgrading from 2.12.2 or earlier to 2.13.0 or later
-> sudo mkdir -p /data/postgres-15
-> sudo chmod 755 /data/postgres-15
+> # Required only when upgrading from 2.12.2 or earlier to 2.13.1 or later
+> sudo mkdir -p /data/postgres-15/data
+> sudo chmod 700 /data/postgres-15/data
+> sudo chown 26:0 /data/postgres-15/data
 > cat <<EOF > pv-postgres-15.yaml
 > ---
 > apiVersion: v1
@@ -80,7 +78,7 @@ If you are using AWX Operator `0.14.0` or later and want to upgrade to newer ver
 > ```bash
 > # Required only when upgrading from 0.25.0 or earlier to 0.26.0 or later
 > sudo mkdir -p /data/postgres-13
-> sudo chmod 755 /data/postgres-13
+> sudo chmod 700 /data/postgres-13
 > cat <<EOF > pv-postgres-13.yaml
 > ---
 > apiVersion: v1
@@ -134,10 +132,10 @@ localhost                  : ok=56   changed=0    unreachable=0    failed=0    s
 ```
 
 > [!NOTE]
-> If your AWX Operator has upgraded from `2.12.2` or earlier to `2.13.0` or later, old PV for PostgreSQL 13 can be removed since new AWX is running with new PV for PostgreSQL 15.
+> If your AWX Operator has upgraded from `2.12.2` or earlier to `2.13.1` or later, old PV for PostgreSQL 13 can be removed since new AWX is running with new PV for PostgreSQL 15.
 >
 > ```bash
-> # Recommended only when upgraded from 2.12.2 or earlier to 2.13.0 or later
+> # Recommended only when upgraded from 2.12.2 or earlier to 2.13.1 or later
 > kubectl delete pv awx-postgres-13-volume
 > sudo rm -rf /data/postgres-13
 > ```

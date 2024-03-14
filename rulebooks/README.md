@@ -117,7 +117,7 @@ Prepare directories for Persistent Volumes defined in `base/pv.yaml`. This direc
 
 ```bash
 sudo mkdir -p /data/eda/postgres-13/data
-sudo chmod 755 /data/eda/postgres-13/data
+sudo chmod 700 /data/eda/postgres-13/data
 sudo chown 26:0 /data/eda/postgres-13/data
 ```
 
