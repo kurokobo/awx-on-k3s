@@ -29,17 +29,17 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - Tested on:
   - CentOS Stream 8 (Minimal)
-  - K3s v1.28.6+k3s2
+  - K3s v1.28.7+k3s1
 - Products that will be deployed:
-  - AWX Operator 2.12.2
-  - AWX 23.9.0
+  - AWX Operator 2.13.0
+  - AWX 24.0.0
   - PostgreSQL 15
 
 ## References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/23.9.0/INSTALL.md) @23.9.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.12.2/README.md) @2.12.2
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/24.0.0/INSTALL.md) @24.0.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.13.0/README.md) @2.13.0
 
 ## Requirements
 
@@ -80,10 +80,13 @@ sudo dnf install -y git curl
 Install a specific version of K3s with `--write-kubeconfig-mode 644` to make the config file (`/etc/rancher/k3s/k3s.yaml`) readable by non-root users.
 
 ```bash
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.6+k3s2 sh -s - --write-kubeconfig-mode 644
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.7+k3s1 sh -s - --write-kubeconfig-mode 644
 ```
 
 ### Install AWX Operator
+
+> [!CAUTION]
+> AWX Operator 2.13.0 has [a bug that potentially causes data loss](https://forum.ansible.com/t/attention-do-not-upgrade-to-awx-operator-to-2-13-0/4363/3), and its image is already removed from `quay.io`. Use AWX Operator 2.13.1 or later instead.
 
 > [!NOTE]
 > From AWX Operator 2.13.0, Default PostgreSQL version is bumped from 13 to 15. If you have a plan to upgrade existing AWX Operator and AWX, refer to [📝Tips: Upgrade AWX Operator and AWX](tips/upgrade-operator.md) to perform additional tasks to database migration.
@@ -96,7 +99,7 @@ If you want to use files suitable for a specific version of AWX Operator, [refer
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 2.12.2
+git checkout 2.13.0
 ```
 
 Then invoke `kubectl apply -k operator` to deploy AWX Operator.

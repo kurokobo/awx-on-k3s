@@ -33,6 +33,9 @@ Refer [📝README: Backing up using AWX Operator](../README.md#backing-up-using-
 
 If you are using AWX Operator `0.14.0` or later and want to upgrade to newer version, basically upgrade is done by deploying the new version of AWX Operator to the same namespace where the old AWX Operator is running.
 
+> [!CAUTION]
+> AWX Operator 2.13.0 has [a bug that potentially causes data loss](https://forum.ansible.com/t/attention-do-not-upgrade-to-awx-operator-to-2-13-0/4363/3), and its image is already removed from `quay.io`. Use AWX Operator 2.13.1 or later instead.
+
 > [!WARNING]
 > If you are planning to upgrade AWX Operator **from `2.12.2` or earlier to `2.13.0` or later**, note that since the bundled PostgreSQL version will be changed to 15, so the following additional tasks are required.
 >
