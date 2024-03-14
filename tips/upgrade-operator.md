@@ -132,10 +132,11 @@ localhost                  : ok=56   changed=0    unreachable=0    failed=0    s
 ```
 
 > [!NOTE]
-> If your AWX Operator has upgraded from `2.12.2` or earlier to `2.13.1` or later, old PV for PostgreSQL 13 can be removed since new AWX is running with new PV for PostgreSQL 15.
+> If your AWX Operator has upgraded from `2.12.2` or earlier to `2.13.1` or later, old PVC and PV for PostgreSQL 13 can be removed since new AWX is running with new PV for PostgreSQL 15.
 >
 > ```bash
 > # Recommended only when upgraded from 2.12.2 or earlier to 2.13.1 or later
+> kubectl -n awx delete pvc postgres-13-awx-postgres-13-0
 > kubectl delete pv awx-postgres-13-volume
 > sudo rm -rf /data/postgres-13
 > ```
