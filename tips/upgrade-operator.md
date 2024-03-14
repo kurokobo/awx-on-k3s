@@ -78,7 +78,7 @@ If you are using AWX Operator `0.14.0` or later and want to upgrade to newer ver
 > ```bash
 > # Required only when upgrading from 0.25.0 or earlier to 0.26.0 or later
 > sudo mkdir -p /data/postgres-13
-> sudo chmod 700 /data/postgres-13
+> sudo chmod 755 /data/postgres-13
 > cat <<EOF > pv-postgres-13.yaml
 > ---
 > apiVersion: v1

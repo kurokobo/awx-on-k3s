@@ -296,7 +296,7 @@ $ kubectl -n awx logs statefulset/awx-postgres-13
 mkdir: cannot create directory '/var/lib/postgresql/data': Permission denied
 
 # On PostgreSQL 15
-$ kubectl -n awx logs statefulset/awx-postgres-13
+$ kubectl -n awx logs statefulset/awx-postgres-15
 mkdir: cannot create directory '/var/lib/pgsql/data/userdata': Permission denied
 ```
 
