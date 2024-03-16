@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: awx-postgres-13-volume
+  name: awx-postgres-15-volume
 spec:
   accessModes:
     - ReadWriteOnce
@@ -11,7 +11,7 @@ spec:
     storage: 8Gi
   storageClassName: awx-postgres-volume
   hostPath:
-    path: /data/postgres-13
+    path: /data/postgres-15
 
 ---
 apiVersion: v1

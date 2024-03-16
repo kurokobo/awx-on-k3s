@@ -11,6 +11,11 @@ Note that once you upgrade AWX Operator, your AWX will also be upgraded automati
 
 [There is `image_version` parameter for AWX resource to change which image will be used](https://ansible.readthedocs.io/projects/awx-operator/en/latest/user-guide/advanced-configuration/deploying-a-specific-version-of-awx.html), but it appears that using a version of AWX other than the one bundled with the AWX Operator [is currently not supported](https://ansible.readthedocs.io/projects/awx-operator/en/latest/user-guide/advanced-configuration/deploying-a-specific-version-of-awx.html). Conversely, if you want to upgrade AWX, you need to plan to upgrade AWX Operator first.
 
+> [!WARNING]
+> AWX Operator 2.13.x introduces some major changes and some issues related to these changes are reported. If you don't have any strong reason to use 2.13.x, personally I recommend to use [2.12.1](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1) instead until major issues are resolved.
+>
+> If you have a plan to upgrade existing AWX Operator and AWX from 2.12.x or earlier to 2.13.x anyway, some additional tasks are required. Refer to [the notes below](#-upgrade-from-0140-or-later-eg-from-0140-to-0150).
+
 <!-- omit in toc -->
 ## Table of Contents
 
@@ -32,6 +37,33 @@ Refer [📝README: Backing up using AWX Operator](../README.md#backing-up-using-
 ## 📝 Upgrade from `0.14.0` or later (e.g. from `0.14.0` to `0.15.0`)
 
 If you are using AWX Operator `0.14.0` or later and want to upgrade to newer version, basically upgrade is done by deploying the new version of AWX Operator to the same namespace where the old AWX Operator is running.
+
+> [!WARNING]
+> If you are planning to upgrade AWX Operator **from `2.12.2` or earlier to `2.13.1` or later**, note that since the bundled PostgreSQL version will be changed to 15, so the following additional tasks are required.
+>
+> ```bash
+> # Required only when upgrading from 2.12.2 or earlier to 2.13.1 or later
+> sudo mkdir -p /data/postgres-15/data
+> sudo chown 26:0 /data/postgres-15/data
+> sudo chmod 700 /data/postgres-15/data
+> cat <<EOF > pv-postgres-15.yaml
+> ---
+> apiVersion: v1
+> kind: PersistentVolume
+> metadata:
+>   name: awx-postgres-15-volume
+> spec:
+>   accessModes:
+>     - ReadWriteOnce
+>   persistentVolumeReclaimPolicy: Retain
+>   capacity:
+>     storage: 8Gi
+>   storageClassName: awx-postgres-volume
+>   hostPath:
+>     path: /data/postgres-15
+> EOF
+> kubectl apply -f pv-postgres-15.yaml
+> ```
 
 > [!WARNING]
 > If you are planning to upgrade AWX Operator **from `2.0.0` to `2.0.1` or later**, note that [the `extra_volumes` and `extra_volumes` in `base/awx.yaml` for `2.0.0` as a workaround for specific issue](https://github.com/kurokobo/awx-on-k3s/blob/2.0.0/base/awx.yaml#L42-L51) causes failure of upgrading.
@@ -104,13 +136,24 @@ PLAY RECAP *********************************************************************
 localhost                  : ok=56   changed=0    unreachable=0    failed=0    skipped=35   rescued=0    ignored=0
 ```
 
-If your AWX Operator has upgraded from `0.25.0` or earlier to `0.26.0` or later, old PV for PostgreSQL 12 can be removed since new AWX is running with new PV for PostgreSQL 13.
+> [!NOTE]
+> If your AWX Operator has upgraded from `2.12.2` or earlier to `2.13.1` or later, old PVC and PV for PostgreSQL 13 can be removed since new AWX is running with new PV for PostgreSQL 15.
+>
+> ```bash
+> # Recommended only when upgraded from 2.12.2 or earlier to 2.13.1 or later
+> kubectl -n awx delete pvc postgres-13-awx-postgres-13-0
+> kubectl delete pv awx-postgres-13-volume
+> sudo rm -rf /data/postgres-13
+> ```
 
-```bash
-# Recommended only when upgraded from 0.25.0 or earlier to 0.26.0 or later
-kubectl delete pv awx-postgres-volume
-sudo rm -rf /data/postgres
-```
+> [!NOTE]
+> If your AWX Operator has upgraded from `0.25.0` or earlier to `0.26.0` or later, old PV for PostgreSQL 12 can be removed since new AWX is running with new PV for PostgreSQL 13.
+>
+> ```bash
+> # Recommended only when upgraded from 0.25.0 or earlier to 0.26.0 or later
+> kubectl delete pv awx-postgres-volume
+> sudo rm -rf /data/postgres
+> ```
 
 ## 📝 Upgrade from `0.13.0` (e.g. from `0.13.0` to `0.14.0`)
 

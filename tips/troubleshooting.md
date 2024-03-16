@@ -44,7 +44,7 @@ If the Pods are working properly, its `STATUS` are `Running`. If your Pods are n
 $ kubectl -n awx get pod
 NAME                                               READY   STATUS    RESTARTS   AGE
 awx-operator-controller-manager-57867569c4-ggl29   2/2     Running   0          8m20s
-awx-postgres-13-0                                  1/1     Running   0          7m26s
+awx-postgres-15-0                                  1/1     Running   0          7m26s
 awx-task-5d8cd9b6b9-8ptjt                          0/4     Pending   0          6m55s
 awx-web-66f89bc9cf-6zck5                           0/3     Pending   0          6m9s
 ```
@@ -108,7 +108,7 @@ For AWX Operator and AWX, specifically, the following commands are helpful.
   - `kubectl -n awx logs -f deployment/awx-task -c awx-rsyslog`
   - `kubectl -n awx logs -f deployment/awx-task -c redis`
 - Logs of PostgreSQL
-  - `kubectl -n awx logs -f statefulset/awx-postgres-13`
+  - `kubectl -n awx logs -f statefulset/awx-postgres-15`
 
 ### Reveal "censored" output in the AWX Operator's log
 
@@ -184,6 +184,11 @@ Typical solutions are one of the following:
       web_resource_requirements: {}     👈👈👈
       task_resource_requirements: {}     👈👈👈
       ee_resource_requirements: {}     👈👈👈
+      init_container_resource_requirements: {}     👈👈👈
+      postgres_init_container_resource_requirements: {}     👈👈👈
+      postgres_resource_requirements: {}     👈👈👈
+      redis_resource_requirements: {}     👈👈👈
+      rsyslog_resource_requirements: {}     👈👈👈
     ```
 
   - You can specify more specific value for each containers. Refer [official documentation](https://ansible.readthedocs.io/projects/awx-operator/en/latest/user-guide/advanced-configuration/containers-resource-requirements.html) for details.
@@ -208,7 +213,7 @@ Check the `STATUS` of your PVs and ensure your PVs doesn't have `Available` or `
 $ kubectl get pv
 NAME                     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM                               STORAGECLASS             REASON   AGE
 awx-projects-volume      2Gi        RWO            Retain           Released   awx/awx-projects-claim              awx-projects-volume               17h
-awx-postgres-13-volume   8Gi        RWO            Retain           Released   awx/postgres-13-awx-postgres-13-0   awx-postgres-volume               17h
+awx-postgres-15-volume   8Gi        RWO            Retain           Released   awx/postgres-15-awx-postgres-15-0   awx-postgres-volume               17h
 ```
 
 Probably this is the second (or more) time to deploy AWX for you. These PVs which have `Released` state are tied to your old (and probably no longer exists now) PVCs you created in the past.
@@ -266,9 +271,9 @@ This problem occurs when the AWX pod and the PostgreSQL pod cannot communicate p
 
 To solve this, check or try the following:
 
-- Ensure your PostgreSQL (typically the Pod named `awx-postgres-0` or `awx-postgres-13-0`) is in `Running` state.
+- Ensure your PostgreSQL (typically the Pod named `awx-postgres-0`, `awx-postgres-13-0`, or `awx-postgres-15-0`) is in `Running` state.
 - Ensure `host` under `awx-postgres-configuration` in `base/kustomization.yaml` has correct value.
-  - Specify `awx-postgres` for AWX Operator 0.25.0 or earlier, `awx-postgres-13` for `0.26.0` or later.
+  - Specify `awx-postgres` for AWX Operator 0.25.0 or earlier, `awx-postgres-13` for `0.26.0` to `2.12.2`, `awx-postgres-15` for newer versions.
 - Ensure your `firewalld`, `ufw` or any kind of firewall has been disabled on your K3s host.
 - Ensure your `nm-cloud-setup` service on your K3s host is disabled if exists.
 - Ensure your `awx-postgres-configuration` has correct values, especially if you're using external PostgreSQL.
@@ -286,11 +291,18 @@ awx-postgres-13-0                                  1/1     CrashLoopBackOff   5 
 awx-task-5d8cd9b6b9-8ptjt                          0/4     Running            0          6m55s
 awx-web-66f89bc9cf-6zck5                           0/3     Running            0          6m9s
 
-$ kubectl -n awx logs statefulset/awx-postgres
+# On PostgreSQL 13
+$ kubectl -n awx logs statefulset/awx-postgres-13
 mkdir: cannot create directory '/var/lib/postgresql/data': Permission denied
+
+# On PostgreSQL 15
+$ kubectl -n awx logs statefulset/awx-postgres-15
+mkdir: cannot create directory '/var/lib/pgsql/data/userdata': Permission denied
 ```
 
-You should check the permissions and the owner of directories where used as PV on your K3s host. If you followed my guide, it would be `/data/postgres-13`. There is additional `data` directory created by K3s under `/data/postgres-13`.
+You should check the permissions and the owner of directories where used as PV on your K3s host.
+
+For the PostgreSQL 13 that deployed by **AWX Operator 2.12.2 or earlier**, if you followed my guide, it would be `/data/postgres-13`. There is additional `data` directory created by K3s under `/data/postgres-13`.
 
 ```bash
 $ ls -ld /data/postgres-13 /data/postgres-13/data
@@ -298,21 +310,34 @@ drwxr-xr-x. 2 root root 18 Aug 20 10:09 /data/postgres-13
 drwxr-xr-x. 3 root root 20 Aug 20 10:09 /data/postgres-13/data
 ```
 
-In my environment, `755` and `root:root` (`0:0`) works correctly. So you can try:
+For example, `755` and `root:root` (`0:0`) should work. So you can try following commands.
 
 ```bash
-sudo chmod 755 /data/postgres-13 /data/postgres-13/data
 sudo chown 0:0 /data/postgres-13 /data/postgres-13/data
+sudo chmod 755 /data/postgres-13 /data/postgres-13/data
 ```
 
-Or, you can also try `999:0` as owner/group for the directory.
+Or, you can also try `999:0` as owner/group for the directory. `999` is [the UID of the `postgres` user which used in the container](https://github.com/docker-library/postgres/blob/master/13/bullseye/Dockerfile#L13).
 
 ```bash
-sudo chmod 755 /data/postgres-13 /data/postgres-13/data
 sudo chown 999:0 /data/postgres-13 /data/postgres-13/data
+sudo chmod 755 /data/postgres-13 /data/postgres-13/data
 ```
 
-`999` is [the UID of the `postgres` user which used in the container](https://github.com/docker-library/postgres/blob/master/12/bullseye/Dockerfile#L23).
+For the PostgreSQL 15 that deployed by **AWX Operator 2.13.0 or later**, if you followed my guide, it would be `/data/postgres-15`. There is additional `data` directory created by K3s under `/data/postgres-15`.
+
+```bash
+$ ls -ld /data/postgres-15 /data/postgres-15/data
+drwxr-xr-x. 2 root root 18 Aug 20 10:09 /data/postgres-15
+drwxr-xr-x. 3   26 root 20 Aug 20 10:09 /data/postgres-15/data
+```
+
+For example, `700` and `26:0` should work. So you can try following commands. `26` is [the UID of the user which used in the container](https://github.com/sclorg/postgresql-container/blob/master/15/Dockerfile.c9s#L86).
+
+```bash
+sudo chown 26:0 /data/postgres-15 /data/postgres-15/data
+sudo chmod 700 /data/postgres-15 /data/postgres-15/data
+```
 
 ## Troubles during Daily Use
 

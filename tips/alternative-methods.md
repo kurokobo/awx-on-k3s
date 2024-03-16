@@ -245,7 +245,7 @@ $ kubectl delete -k base
 secret "awx-admin-password" deleted
 secret "awx-postgres-configuration" deleted
 secret "awx-secret-tls" deleted
-persistentvolume "awx-postgres-13-volume" deleted
+persistentvolume "awx-postgres-15-volume" deleted
 persistentvolume "awx-projects-volume" deleted
 persistentvolumeclaim "awx-projects-claim" deleted
 

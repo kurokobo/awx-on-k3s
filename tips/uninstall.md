@@ -28,7 +28,7 @@ awx.awx.ansible.com/awx created
 can be deleted with the following command with same manifest files. Note that PVC for PostgreSQL should be removed manually since this PVC was created by not `kubectl apply -k` but AWX Operator.
 
 ```bash
-$ kubectl -n awx delete pvc postgres-13-awx-postgres-13-0 --wait=false
+$ kubectl -n awx delete pvc postgres-15-awx-postgres-15-0 --wait=false
 $ kubectl delete -k base
 secret "awx-admin-password" deleted
 secret "awx-postgres-configuration" deleted

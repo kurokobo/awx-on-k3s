@@ -123,8 +123,8 @@ Prepare directories for Persistent Volumes defined in `galaxy/galaxy/pv.yaml`.
 sudo mkdir -p /data/galaxy/postgres-13
 sudo mkdir -p /data/galaxy/redis
 sudo mkdir -p /data/galaxy/file
-sudo chmod 755 /data/galaxy/postgres-13
 sudo chown 1000:0 /data/galaxy/file
+sudo chmod 700 /data/galaxy/postgres-13
 ```
 
 ### Deploy Galaxy NG
