@@ -85,8 +85,10 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.7+k3s1 sh -s - --write-
 
 ### Install AWX Operator
 
-> [!NOTE]
-> From AWX Operator 2.13.0, Default PostgreSQL version is bumped from 13 to 15. If you have a plan to upgrade existing AWX Operator and AWX, refer to [📝Tips: Upgrade AWX Operator and AWX](tips/upgrade-operator.md) to perform additional tasks to migrate database.
+> [!WARNING]
+> AWX Operator 2.13.x introduces some major changes and some issues related to these changes are reported. If you don't have any strong reason to use 2.13.x, personally I recommend to use [2.12.1](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1) instead until major issues are resolved.
+>
+> If you have a plan to upgrade existing AWX Operator and AWX from 2.12.x or earlier to 2.13.x anyway, some additional tasks are required. Refer to [📝Tips: Upgrade AWX Operator and AWX](tips/upgrade-operator.md) to further information. Also do not forget creating backup before upgrading.
 
 Clone this repository and change directory.
 
