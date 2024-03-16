@@ -41,9 +41,9 @@ Then prepare directories for your PVs. `/data/projects` is required if you are r
 ```bash
 sudo mkdir -p /data/postgres-15/data
 sudo mkdir -p /data/projects
-sudo chmod 700 /data/postgres-15/data
 sudo chown 26:0 /data/postgres-15/data
 sudo chown 1000:0 /data/projects
+sudo chmod 700 /data/postgres-15/data
 ```
 
 Then deploy PV and PVC. It is recommended that making the size of PVs and PVCs same as the PVs which your AWX used when the backup was taken.

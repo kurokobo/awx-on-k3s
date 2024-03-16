@@ -39,8 +39,8 @@ If you are using AWX Operator `0.14.0` or later and want to upgrade to newer ver
 > ```bash
 > # Required only when upgrading from 2.12.2 or earlier to 2.13.1 or later
 > sudo mkdir -p /data/postgres-15/data
-> sudo chmod 700 /data/postgres-15/data
 > sudo chown 26:0 /data/postgres-15/data
+> sudo chmod 700 /data/postgres-15/data
 > cat <<EOF > pv-postgres-15.yaml
 > ---
 > apiVersion: v1

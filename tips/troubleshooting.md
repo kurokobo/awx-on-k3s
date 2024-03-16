@@ -310,18 +310,18 @@ drwxr-xr-x. 2 root root 18 Aug 20 10:09 /data/postgres-13
 drwxr-xr-x. 3 root root 20 Aug 20 10:09 /data/postgres-13/data
 ```
 
-In my environment, `755` and `root:root` (`0:0`) works correctly. So you can try following commands.
+For example, `755` and `root:root` (`0:0`) should work. So you can try following commands.
 
 ```bash
-sudo chmod 755 /data/postgres-13 /data/postgres-13/data
 sudo chown 0:0 /data/postgres-13 /data/postgres-13/data
+sudo chmod 755 /data/postgres-13 /data/postgres-13/data
 ```
 
 Or, you can also try `999:0` as owner/group for the directory. `999` is [the UID of the `postgres` user which used in the container](https://github.com/docker-library/postgres/blob/master/13/bullseye/Dockerfile#L13).
 
 ```bash
-sudo chmod 755 /data/postgres-13 /data/postgres-13/data
 sudo chown 999:0 /data/postgres-13 /data/postgres-13/data
+sudo chmod 755 /data/postgres-13 /data/postgres-13/data
 ```
 
 For the PostgreSQL 15 that deployed by **AWX Operator 2.13.0 or later**, if you followed my guide, it would be `/data/postgres-15`. There is additional `data` directory created by K3s under `/data/postgres-15`.
@@ -332,11 +332,11 @@ drwxr-xr-x. 2 root root 18 Aug 20 10:09 /data/postgres-15
 drwxr-xr-x. 3   26 root 20 Aug 20 10:09 /data/postgres-15/data
 ```
 
-In my environment, `700` and `26:0` works correctly. So you can try following commands. `26` is [the UID of the user which used in the container](https://github.com/sclorg/postgresql-container/blob/master/15/Dockerfile.c9s#L86).
+For example, `700` and `26:0` should work. So you can try following commands. `26` is [the UID of the user which used in the container](https://github.com/sclorg/postgresql-container/blob/master/15/Dockerfile.c9s#L86).
 
 ```bash
-sudo chmod 700 /data/postgres-15 /data/postgres-15/data
 sudo chown 26:0 /data/postgres-15 /data/postgres-15/data
+sudo chmod 700 /data/postgres-15 /data/postgres-15/data
 ```
 
 ## Troubles during Daily Use

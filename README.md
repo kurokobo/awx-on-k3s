@@ -170,9 +170,9 @@ Prepare directories for Persistent Volumes defined in `base/pv.yaml`. These dire
 ```bash
 sudo mkdir -p /data/postgres-15/data
 sudo mkdir -p /data/projects
-sudo chmod 700 /data/postgres-15/data
 sudo chown 26:0 /data/postgres-15/data
 sudo chown 1000:0 /data/projects
+sudo chmod 700 /data/postgres-15/data
 ```
 
 ### Deploy AWX

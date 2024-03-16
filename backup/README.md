@@ -23,8 +23,8 @@ Prepare directories for Persistent Volumes to store backup files that defined in
 
 ```bash
 sudo mkdir -p /data/backup
-sudo chmod 700 /data/backup
 sudo chown 26:0 /data/backup
+sudo chmod 700 /data/backup
 ```
 
 Then deploy Persistent Volume and Persistent Volume Claim.
