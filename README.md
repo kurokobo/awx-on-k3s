@@ -288,6 +288,8 @@ Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX 
   - The guide to use Ansible Runner to run playbook using Execution Environment.
 - [📁 **Use Customized Pod Specification for your Execution Environment**](containergroup)
   - The guide to use customized Pod of the Execution Environment using **Container Group**.
+- [📁 **Enable Continuous Delivery (CD) for AWX using Argo CD**](argocd)
+  - The guide to deploy Argo CD and use it to enable continuous delivery for AWX.
 - [📁 **Tips**](tips)
   - [📝Create "Manual" type project](tips/manual-project.md)
   - [📝Deploy AWX using external PostgreSQL database](tips/external-db.md)

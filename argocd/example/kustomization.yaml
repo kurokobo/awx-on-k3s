@@ -1,0 +1,35 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: awx-argocd
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+  - name: redhat-operators-pull-secret
+    literals:
+      - operator=awx
+
+  - name: awx-postgres-configuration
+    type: Opaque
+    literals:
+      - host=awx-postgres-13
+      - port=5432
+      - database=awx
+      - username=awx
+      - password=Ansible123!
+      - type=managed
+
+  - name: awx-admin-password
+    type: Opaque
+    literals:
+      - password=Ansible123!
+
+resources:
+  - github.com/ansible/awx-operator/config/default?ref=2.11.0
+  - awx.yaml
+
+images:
+  - name: quay.io/ansible/awx-operator
+    newTag: 2.11.0

@@ -1,0 +1,33 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argocd
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+  - name: argocd-tls
+    type: kubernetes.io/tls
+    files:
+      - tls.crt
+      - tls.key
+  - name: argocd-secret
+    type: Opaque
+    behavior: merge
+    literals:
+      # argocd account bcrypt --password ArgoCD123!
+      - admin.password=$2a$10$xonpIrp0Q.tgNBEPTV9qZ.VRJTDFRFdYeVQvBJi1Eqwg9uA2hgC7S
+      # date --utc +%FT%T%Z
+      - admin.passwordMtime=2023-01-01T00:00:00UTC
+
+configMapGenerator:
+  - name: argocd-cmd-params-cm
+    behavior: merge
+    literals:
+      - server.insecure="true"
+
+resources:
+  - namespace.yaml
+  - https://raw.githubusercontent.com/argoproj/argo-cd/v2.10.3/manifests/install.yaml
+  - ingressroute.yaml
