@@ -4,8 +4,10 @@
 This guide shows minimal step-by-step examples to enable continuous delivery (CD) for AWX Operator and AWX using Argo CD, by covering following topics:
 
 - Deploying Argo CD on K3s
-- Deploying AWX by referring public Git repository
+- Deploying AWX by referring Git repository
 - Putting GitOps into practice: Upgrading AWX
+
+For more details about Argo CD, see [the official documentation](https://argo-cd.readthedocs.io/en/stable/).
 
 <!-- omit in toc -->
 ## Table of Contents
@@ -13,13 +15,17 @@ This guide shows minimal step-by-step examples to enable continuous delivery (CD
 - [Deploy Argo CD](#deploy-argo-cd)
 - [Prepare Git repository](#prepare-git-repository)
 - [Deploy AWX Operator and AWX](#deploy-awx-operator-and-awx)
-- [Install CLI](#install-cli)
+- [Putting GitOps into practice: Upgrading AWX](#putting-gitops-into-practice-upgrading-awx)
+- [Tips](#tips)
+  - [Official Documentation](#official-documentation)
+  - [Using the CLI](#using-the-cli)
+  - [Declarative Setup](#declarative-setup)
 
 ## Deploy Argo CD
 
 This repository contains customized required files to deploy latest stable Argo CD on K3s.
 
-Modify hostname in `ingressroute,yaml`.
+Modify hostname in `argocd/ingressroute,yaml`.
 
 ```yaml
 ...
@@ -27,7 +33,7 @@ spec:
   ...
   routes:
     - kind: Rule
-      match: Host(`argocd.example.com`)     👈👈👈
+      match: Host(`argocd.example.com`)                                                    👈👈👈
       priority: 10
       ...
     - kind: Rule
@@ -101,7 +107,8 @@ Argo CD uses a Git repository as a _single source of truth_, so everything you w
 
 This repository contains `kustomization.yaml` under [📂 example](example) directory to deploy AWX Operator and AWX with following spec.
 
-Note that these configuration is a bit different from the deployment that described in [the main guide](../).
+> [!NOTE]
+> This is for demonstrate purpose so the configuration under [📂 example](example) is simplified than the configuration used in [the main guide](../).
 
 - AWX Operator
   - Use `awx-argocd` namespace
@@ -114,9 +121,12 @@ Note that these configuration is a bit different from the deployment that descri
   - Use PVCs with `local-path` storage class to persist projects and PostgreSQL
     - Since ArgoCD cannot make directories on K3s host directly, this example uses local path provisioner which is the default provisioner for K3s instead of `hostPath` based PV with explicit path.
 
-To proceed this tutorial, fork this repository on GitHub and keep forked repository public. Alternatively you can create new repository on any Git repository and put the files under [📂 example](example) directory to it. Of course you can use [📂 Gitea on K3s](../git) to store manifests.
+To proceed this tutorial, fork this repository on GitHub or create new repository on any Git repository and put the files under [📂 example](example) directory to it. Of course you can use [📂 Gitea on K3s](../git) to store manifests.
 
 ## Deploy AWX Operator and AWX
+
+> [!TIP]
+> If your repository requires authentication, add your repository and credential first by `Settings` > `Repositories` > `CONNECT REPO` on the Web UI. See [the official documentation](https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/) for detailed instructions.
 
 Open the Web UI for Argo CD, then click `NEW APP` on `Applications` page. Fill the form as follows:
 
@@ -126,18 +136,112 @@ Open the Web UI for Argo CD, then click `NEW APP` on `Applications` page. Fill t
 | `GENERAL` | `Project Name` | `default` |
 | `GENERAL` | `SYNC POLICY` | `Automatic` |
 | `SOURCE` | `Repository URL` | The URL for your repository, e.g. `https://github.com/kurokobo/awx-on-k3s.git` |
-| `SOURCE` | `Revision` | `HEAD`, branch, or tag, e.g. `argocd` |
+| `SOURCE` | `Revision` | `HEAD`, branch, or tag, e.g. `HEAD` |
 | `SOURCE` | `Path` | The path to the directory where contains `kustomization.yaml`, e.g. `./argocd/example` |
 | `DESTINATION` | `Cluster URL` | `https://kubernetes.default.svc` |
 
 Finally click `CREATE`.
 
-Soon Argo CD starts synchronize all objects that defined in manifests in your `kustomization.yaml` to exist on your K3s, since you have specified `Automatic` for `SYNC POLICY`.
+Soon Argo CD starts synchronize all objects that defined in manifests in your `kustomization.yaml` to exist on your K3s, since you have specified `Automatic` for `SYNC POLICY`. You can review the resource tree and detailed deployment progress by `Applications` > `awx-argocd` on the Web UI.
 
-## Install CLI
+Once the deployment is completed, you can access AWX on `http://awx-argocd.example.com/` (or with the hostname you've specified).
+
+## Putting GitOps into practice: Upgrading AWX
+
+Upgrading AWX can be done by upgrading AWX Operator.
+
+To upgrade AWX Operator, simply change the version in `argocd/kustomization.yaml` and commit the change to your repository.
+
+For example, to upgrade AWX Operator to 2.12.1, modify `argocd/kustomization.yaml` as follows:
+
+```yaml
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: awx-argocd
+...
+
+resources:
+  - github.com/ansible/awx-operator/config/default?ref=2.12.1     👈👈👈
+  - awx.yaml
+
+images:
+  - name: quay.io/ansible/awx-operator
+    newTag: 2.12.1                                                👈👈👈
+```
+
+Then Argo CD will automatically detect the change and start the synchronization, since you have specified `Automatic` for `SYNC POLICY`.
+
+> [!NOTE]
+> By default, Argo CD polls the repositories every 3 minutes. See [the official documentation](https://argo-cd.readthedocs.io/en/stable/faq/#how-often-does-argo-cd-check-for-changes-to-my-git-or-helm-repository) for more details.
+
+Your repository is a _single source of truth_ and your AWX is stored as codes in your repository, so all the steps to upgrade AWX are only update the codes in your repository. This is the power of GitOps.
+
+## Tips
+
+### Official Documentation
+
+This guide only provides minimal examples to enable Continuous Delivery (CD) for AWX using Argo CD. Argo CD is a powerful tool and has many features. Refer to [the official documentation](https://argo-cd.readthedocs.io/en/stable/) for more details about Argo CD.
+
+### Using the CLI
+
+There is a CLI tool for Argo CD, which is useful to manage Argo CD and applications on Argo CD. Refer to [the CLI installation documentation](https://argo-cd.readthedocs.io/en/stable/cli_installation/) and [the command reference](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/) for more details.
+
+### Declarative Setup
+
+Argo CD stores all configurations as resources on K3s, such as ConfigMaps, Secrets, Applications, and AppProjects. You can review created resources and its definitions as follows, for example:
 
 ```bash
-curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/v2.9.0/argocd-linux-amd64
-sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
-rm argocd-linux-amd64
+$ kubectl -n argocd get appproject
+NAME      AGE
+default   29m
+
+$ kubectl -n argocd get appproject default -o yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  ...
+  name: default
+  namespace: argocd
+  ...
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  destinations:
+  - namespace: '*'
+    server: '*'
+  sourceRepos:
+  - '*'
+...
 ```
+
+```bash
+$ kubectl -n argocd get application
+NAME         SYNC STATUS   HEALTH STATUS
+awx-argocd   Synced        Healthy
+
+$ kubectl -n argocd get application awx-argocd -o yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  ...
+  name: awx-argocd
+  namespace: argocd
+  ...
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: ./argocd/example
+    repoURL: https://github.com/kurokobo/awx-on-k3s.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated: {}
+...
+```
+
+This means that you can manage all configurations as codes.
+
+In this guide, The Web UI is used to define applications, but you can also create applications by applying YAML files. Refer to [the official documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/) for more details about declarative setup for Argo CD itself and applications on Argo CD.
