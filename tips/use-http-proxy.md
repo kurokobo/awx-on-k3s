@@ -72,13 +72,13 @@ Specify your proxy settings in the section `extra_settings:` in `base/awx.yaml` 
 ...
 spec:
   ...
-  extra_settings:     👈👈👈
-    - setting: AWX_TASK_ENV['HTTP_PROXY']     👈👈👈
-      value: "'http://proxy.example.com:3128'"     👈👈👈
-    - setting: AWX_TASK_ENV['HTTPS_PROXY']     👈👈👈
-      value: "'http://proxy.example.com:3128'"     👈👈👈
-    - setting: AWX_TASK_ENV['NO_PROXY']     👈👈👈
-      value: "'127.0.0.1,localhost,.example.com'"     👈👈👈
+  extra_settings:                                   👈👈👈
+    - setting: AWX_TASK_ENV['HTTP_PROXY']           👈👈👈
+      value: "'http://proxy.example.com:3128'"      👈👈👈
+    - setting: AWX_TASK_ENV['HTTPS_PROXY']          👈👈👈
+      value: "'http://proxy.example.com:3128'"      👈👈👈
+    - setting: AWX_TASK_ENV['NO_PROXY']             👈👈👈
+      value: "'127.0.0.1,localhost,.example.com'"   👈👈👈
 ```
 
 Note that the `value` have to be wrapped in single quotes and then double quotes as shown above.
@@ -100,19 +100,19 @@ After logging in you can navigate to `Settings` > `Jobs settings` in the AWX UI 
 > ...
 > spec:
 >   ...
->   task_extra_env: |     👈👈👈
->     - name: HTTP_PROXY     👈👈👈
->       value: http://proxy.example.com:3128     👈👈👈
->     - name: HTTPS_PROXY     👈👈👈
->       value: http://proxy.example.com:3128     👈👈👈
->     - name: NO_PROXY     👈👈👈
->       value: 127.0.0.1,localhost,.example.com     👈👈👈
+>   task_extra_env: |                             👈👈👈
+>     - name: HTTP_PROXY                          👈👈👈
+>       value: http://proxy.example.com:3128      👈👈👈
+>     - name: HTTPS_PROXY                         👈👈👈
+>       value: http://proxy.example.com:3128      👈👈👈
+>     - name: NO_PROXY                            👈👈👈
+>       value: 127.0.0.1,localhost,.example.com   👈👈👈
 >
->   web_extra_env: |     👈👈👈
->     - name: HTTP_PROXY     👈👈👈
->       value: http://proxy.example.com:3128     👈👈👈
->     - name: HTTPS_PROXY     👈👈👈
->       value: http://proxy.example.com:3128     👈👈👈
->     - name: NO_PROXY     👈👈👈
->       value: 127.0.0.1,localhost,.example.com     👈👈👈
+>   web_extra_env: |                              👈👈👈
+>     - name: HTTP_PROXY                          👈👈👈
+>       value: http://proxy.example.com:3128      👈👈👈
+>     - name: HTTPS_PROXY                         👈👈👈
+>       value: http://proxy.example.com:3128      👈👈👈
+>     - name: NO_PROXY                            👈👈👈
+>       value: 127.0.0.1,localhost,.example.com   👈👈👈
 > ```

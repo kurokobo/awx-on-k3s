@@ -17,8 +17,8 @@ Create new directory under `/data/projects` on your K3s host, and place your pla
 ```bash
 $ tree /data/projects/
 /data/projects/
-`-- my-first-manual-project     👈👈👈
-    `-- my-playbook.yaml     👈👈👈
+`-- my-first-manual-project   👈👈👈
+    `-- my-playbook.yaml      👈👈👈
 ```
 
 Go to `Resources` > `Projects` > `Add` in AWX Web UI, fill `Name` field and select `Manual` as `Source Control Type`.

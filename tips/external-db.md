@@ -54,10 +54,10 @@ spec:
   ...
   postgres_configuration_secret: awx-postgres-configuration
 
-  # postgres_storage_class: awx-postgres-volume     👈👈👈
-  # postgres_storage_requirements:     👈👈👈
-  #   requests:     👈👈👈
-  #     storage: 8Gi     👈👈👈
+  # postgres_storage_class: awx-postgres-volume   👈👈👈
+  # postgres_storage_requirements:                👈👈👈
+  #   requests:                                   👈👈👈
+  #     storage: 8Gi                              👈👈👈
 
   projects_persistence: true
   projects_existing_claim: awx-projects-claim
@@ -74,13 +74,13 @@ secretGenerator:
   - name: awx-postgres-configuration
     type: Opaque
     literals:
-      - host=postgres.example.internal     👈👈👈
-      - port=5432     👈👈👈
-      - database=awx     👈👈👈
-      - username=awx     👈👈👈
-      - password=SecurePasswordForMyExternalPostgreSQLForAWX123!     👈👈👈
-      - sslmode=prefer     👈👈👈
-      - type=unmanaged     👈👈👈
+      - host=postgres.example.internal                             👈👈👈
+      - port=5432                                                  👈👈👈
+      - database=awx                                               👈👈👈
+      - username=awx                                               👈👈👈
+      - password=SecurePasswordForMyExternalPostgreSQLForAWX123!   👈👈👈
+      - sslmode=prefer                                             👈👈👈
+      - type=unmanaged                                             👈👈👈
 ```
 
 Note that the `type=unmanaged` is the important configuration to use external database.
@@ -90,20 +90,20 @@ Note that the `type=unmanaged` is the important configuration to use external da
 Comment out following unnecessary lines which related to `awx-postgres-13-volume` in `base/pv.yaml`.
 
 ```yaml
-# ---     👈👈👈
-# apiVersion: v1     👈👈👈
-# kind: PersistentVolume     👈👈👈
-# metadata:     👈👈👈
-#   name: awx-postgres-13-volume     👈👈👈
-# spec:     👈👈👈
-#   accessModes:     👈👈👈
-#     - ReadWriteOnce     👈👈👈
-#   persistentVolumeReclaimPolicy: Retain     👈👈👈
-#   capacity:     👈👈👈
-#     storage: 8Gi     👈👈👈
-#   storageClassName: awx-postgres-volume     👈👈👈
-#   hostPath:     👈👈👈
-#     path: /data/postgres-13     👈👈👈
+# ---                                       👈👈👈
+# apiVersion: v1                            👈👈👈
+# kind: PersistentVolume                    👈👈👈
+# metadata:                                 👈👈👈
+#   name: awx-postgres-13-volume            👈👈👈
+# spec:                                     👈👈👈
+#   accessModes:                            👈👈👈
+#     - ReadWriteOnce                       👈👈👈
+#   persistentVolumeReclaimPolicy: Retain   👈👈👈
+#   capacity:                               👈👈👈
+#     storage: 8Gi                          👈👈👈
+#   storageClassName: awx-postgres-volume   👈👈👈
+#   hostPath:                               👈👈👈
+#     path: /data/postgres-13               👈👈👈
 
 ---
 apiVersion: v1

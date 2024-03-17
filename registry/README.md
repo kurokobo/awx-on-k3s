@@ -35,7 +35,7 @@ Modify `hosts` and `host` in `registry/ingress.yaml`.
         - registry.example.com     👈👈👈
       secretName: registry-secret-tls
   rules:
-    - host: registry.example.com     👈👈👈
+    - host: registry.example.com   👈👈👈
 ...
 ```
 
@@ -53,7 +53,7 @@ Replace `htpasswd` in `registry/configmap.yaml` with your own `htpasswd` string 
 ```yaml
 ...
   htpasswd: |-
-    reguser:$2y$05$VLMvcWCPF0VUuHi0BXBz7eoXGZ6KRl1gataiqTXz4DdSVIXGloKiq     👈👈👈
+    reguser:$2y$05$VLMvcWCPF0VUuHi0BXBz7eoXGZ6KRl1gataiqTXz4DdSVIXGloKiq   👈👈👈
 ```
 
 Prepare directories for Persistent Volumes defined in `registry/pv.yaml`.

@@ -45,8 +45,8 @@ One easy way to do this is to use `dnsmasq`.
        server \
            '--write-kubeconfig-mode' \
            '644' \
-           '--resolv-conf' \     👈👈👈
-           '/etc/rancher/k3s/resolv.conf' \     👈👈👈
+           '--resolv-conf' \                  👈👈👈
+           '/etc/rancher/k3s/resolv.conf' \   👈👈👈
    ```
 
 5. Restart K3s and CoreDNS. The K3s service can be safely restarted without affecting the running resources.

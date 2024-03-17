@@ -83,7 +83,7 @@ Then, comment out or delete reference to `awx.yaml` in `base/kustomization.yaml`
 resources:
   - pv.yaml
   - pvc.yaml
-  # - awx.yaml     👈👈👈
+  # - awx.yaml   👈👈👈
 ```
 
 Then create Namespace, PVs, and Secrets. Now all required resources that will be referenced in the `spec` of the AWX instance have been created.

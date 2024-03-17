@@ -63,8 +63,8 @@ $ kubectl -n awx describe pod awx-task-5d8cd9b6b9-8ptjt
 Events:
   Type     Reason            Age   From               Message
   ----     ------            ----  ----               -------
-  Warning  FailedScheduling  106s  default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory.     👈👈👈
-  Warning  FailedScheduling  105s  default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory.     👈👈👈
+  Warning  FailedScheduling  106s  default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory.   👈👈👈
+  Warning  FailedScheduling  105s  default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory.   👈👈👈
 ```
 
 In most cases, you can find the reason why the Pod is not `Running` from `Events`. In the example above, I can see that it is due to lack of CPU or memory.
@@ -131,7 +131,7 @@ To achieve this, you can uncomment `no_log: false` manually under `spec` for you
 spec:
   ...
   # Uncomment to reveal "censored" logs
-  no_log: false     👈👈👈
+  no_log: false   👈👈👈
   ...
 ```
 
@@ -166,8 +166,8 @@ $ kubectl -n awx describe pod awx-task-5d8cd9b6b9-8ptjt
 Events:
   Type     Reason            Age   From               Message
   ----     ------            ----  ----               -------
-  Warning  FailedScheduling  106s  default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory.     👈👈👈
-  Warning  FailedScheduling  105s  default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory.     👈👈👈
+  Warning  FailedScheduling  106s  default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory.   👈👈👈
+  Warning  FailedScheduling  105s  default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory.   👈👈👈
 ```
 
 Typical solutions are one of the following:
@@ -181,14 +181,14 @@ Typical solutions are one of the following:
     ...
     spec:
       ...
-      web_resource_requirements: {}     👈👈👈
-      task_resource_requirements: {}     👈👈👈
-      ee_resource_requirements: {}     👈👈👈
-      init_container_resource_requirements: {}     👈👈👈
-      postgres_init_container_resource_requirements: {}     👈👈👈
-      postgres_resource_requirements: {}     👈👈👈
-      redis_resource_requirements: {}     👈👈👈
-      rsyslog_resource_requirements: {}     👈👈👈
+      web_resource_requirements: {}                       👈👈👈
+      task_resource_requirements: {}                      👈👈👈
+      ee_resource_requirements: {}                        👈👈👈
+      init_container_resource_requirements: {}            👈👈👈
+      postgres_init_container_resource_requirements: {}   👈👈👈
+      postgres_resource_requirements: {}                  👈👈👈
+      redis_resource_requirements: {}                     👈👈👈
+      rsyslog_resource_requirements: {}                   👈👈👈
     ```
 
   - You can specify more specific value for each containers. Refer [official documentation](https://ansible.readthedocs.io/projects/awx-operator/en/latest/user-guide/advanced-configuration/containers-resource-requirements.html) for details.
@@ -204,7 +204,7 @@ $ kubectl -n awx describe pod awx-task-5d8cd9b6b9-8ptjt
 Events:
   Type     Reason            Age   From               Message
   ----     ------            ----  ----               -------
-  Warning  FailedScheduling  24s   default-scheduler  0/1 nodes are available: 1 pod has unbound immediate PersistentVolumeClaims.     👈👈👈
+  Warning  FailedScheduling  24s   default-scheduler  0/1 nodes are available: 1 pod has unbound immediate PersistentVolumeClaims.   👈👈👈
 ```
 
 Check the `STATUS` of your PVs and ensure your PVs doesn't have `Available` or `Bound` state.
@@ -360,10 +360,10 @@ ExecStart=/usr/local/bin/k3s \
     server \
         '--write-kubeconfig-mode' \
         '644' \
-        '--kubelet-arg' \     👈👈👈
+        '--kubelet-arg' \                 👈👈👈
         'container-log-max-files=4' \     👈👈👈
-        '--kubelet-arg' \     👈👈👈
-        'container-log-max-size=50Mi' \     👈👈👈
+        '--kubelet-arg' \                 👈👈👈
+        'container-log-max-size=50Mi' \   👈👈👈
 ```
 
 Then restart K3s. The K3s service can be safely restarted without affecting the running resources.
@@ -411,9 +411,9 @@ If you want to use `base/awx.yaml` to achieve this, add following three lines to
 ...
 spec:
   ...
-  extra_settings:     👈👈👈
-    - setting: REMOTE_HOST_HEADERS     👈👈👈
-      value: "['HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR', 'REMOTE_HOST']"     👈👈👈
+  extra_settings:                                                       👈👈👈
+    - setting: REMOTE_HOST_HEADERS                                      👈👈👈
+      value: "['HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR', 'REMOTE_HOST']"   👈👈👈
 ```
 
 Then apply this change and wait for your AWX will be reconfigured.

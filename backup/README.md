@@ -41,7 +41,7 @@ Modify the name of the AWXBackup object in `backup/awxbackup.yaml`.
 ...
 kind: AWXBackup
 metadata:
-  name: awxbackup-2021-06-06     👈👈👈
+  name: awxbackup-2021-06-06   👈👈👈
   namespace: awx
 ...
 ```

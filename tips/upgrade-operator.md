@@ -253,7 +253,7 @@ If the K3s node does not have enough free resources to deploy a new AWX instance
 $ kubectl -n awx get pods
 NAME                                               READY   STATUS    RESTARTS   AGE
 awx-7d74496d7d-d66dw                               4/4     Running   0          19d
-awx-84d5c45999-55gb4                               0/4     Pending   0          10s     👈👈👈
+awx-84d5c45999-55gb4                               0/4     Pending   0          10s   👈👈👈
 ```
 
 Try running `kubectl -n awx describe pod <Pod Name>` and check the `Events` section at the end for the cause.
@@ -264,8 +264,8 @@ $ kubectl -n awx describe pod awx-84d5c45999-55gb4
 Events:
   Type     Reason            Age   From               Message
   ----     ------            ----  ----               -------
-  Warning  FailedScheduling  106s  default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory.     👈👈👈
-  Warning  FailedScheduling  105s  default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory.     👈👈👈
+  Warning  FailedScheduling  106s  default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory.   👈👈👈
+  Warning  FailedScheduling  105s  default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory.   👈👈👈
 ```
 
 This means that the node does not have enough CPU or memory resources to start the Pod.

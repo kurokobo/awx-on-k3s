@@ -101,7 +101,7 @@ Service
     AllowUnencrypted = false
     Auth
         Basic = true
-        Kerberos = true     👈👈👈
+        Kerberos = true   👈👈👈
         Negotiate = true
         Certificate = false
         CredSSP = false
@@ -300,7 +300,7 @@ If the `Verbosity` for the Job Template is configured `4 (Connection Debug)` and
 TASK [Ensure windows host is reachable] ****************************************
 ...
 <kuro-win01.kurokobo.internal> ESTABLISH WINRM CONNECTION FOR USER: awx@KUROKOBO.INTERNAL on PORT 5985 TO kuro-win01.kurokobo.internal
-calling kinit with pexpect for principal awx@KUROKOBO.INTERNAL     👈👈👈
+calling kinit with pexpect for principal awx@KUROKOBO.INTERNAL   👈👈👈
 ...
 ok: [kuro-win01.kurokobo.internal] => {
     "changed": false,
@@ -350,14 +350,14 @@ NAME                                               READY   STATUS    RESTARTS   
 awx-postgres-0                                     1/1     Running   0          41h
 awx-76445c946f-btfzz                               4/4     Running   0          41h
 awx-operator-controller-manager-7594795b6b-565wm   2/2     Running   0          41h
-automation-job-42-tdvs5                            1/1     Running   0          4s     👈👈👈
+automation-job-42-tdvs5                            1/1     Running   0          4s   👈👈👈
 ```
 
 Now you can access `bash` inside the EE by `kubectl -n <namespace> exec -it <pod name> -- bash`:
 
 ```bash
 $ kubectl -n awx exec -it automation-job-42-tdvs5 -- bash
-bash-5.1$     👈👈👈
+bash-5.1$   👈👈👈
 ```
 
 Then proceed investigation.
@@ -557,9 +557,9 @@ If manually invoked `kinit` succeeds but the task in your playbook such as `ansi
      containers:
        - image: 'quay.io/ansible/awx-ee:latest'
          name: worker
-         env:     👈👈👈
-           - name: KRB5_TRACE     👈👈👈
-             value: /tmp/krb5.log     👈👈👈
+         env:                       👈👈👈
+           - name: KRB5_TRACE       👈👈👈
+             value: /tmp/krb5.log   👈👈👈
          args:
            - ansible-runner
            - worker

@@ -60,7 +60,7 @@ Modify the name of the AWXRestore object in `restore/awxrestore.yaml`.
 ...
 kind: AWXRestore
 metadata:
-  name: awxrestore-2021-06-06     👈👈👈
+  name: awxrestore-2021-06-06   👈👈👈
   namespace: awx
 ...
 ```
@@ -70,7 +70,7 @@ If you want to restore from AWXBackup object, specify its name in `restore/awxre
 ```yaml
 ...
   # Parameters to restore from AWXBackup object
-  backup_name: awxbackup-2021-06-06     👈👈👈
+  backup_name: awxbackup-2021-06-06   👈👈👈
 ...
 ```
 
@@ -79,8 +79,8 @@ If the AWXBackup object no longer exists, place the backup files under `/data/ba
 ```yaml
 ...
   # Parameters to restore from existing files on PVC (without AWXBackup object)
-  backup_pvc: awx-backup-claim     👈👈👈
-  backup_dir: /backups/tower-openshift-backup-2021-06-06-105149     👈👈👈
+  backup_pvc: awx-backup-claim                                    👈👈👈
+  backup_dir: /backups/tower-openshift-backup-2021-06-06-105149   👈👈👈
 ...
 ```
 
