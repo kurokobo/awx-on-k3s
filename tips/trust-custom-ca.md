@@ -56,7 +56,7 @@ Place your certificates under `base` directory.
 $ ls -l base
 total 32
 -rw-rw-r--. 1 kuro kuro  801 Feb 27 00:23 awx.yaml
--rw-rw-r--. 1 kuro kuro 1339 Feb 27 00:44 cacert.pem     👈👈👈
+-rw-rw-r--. 1 kuro kuro 1339 Feb 27 00:44 cacert.pem   👈👈👈
 -rw-rw-r--. 1 kuro kuro  610 Feb 27 00:23 kustomization.yaml
 ...
 ```
@@ -100,11 +100,11 @@ Note that this example provides both `ldap-ca.crt` and `bundle-ca.crt`, but you 
 ...
 secretGenerator:
   ...
-  - name: awx-custom-certs     👈👈👈
-    type: Opaque     👈👈👈
-    files:     👈👈👈
+  - name: awx-custom-certs                              👈👈👈
+    type: Opaque                                        👈👈👈
+    files:                                              👈👈👈
       - ldap-ca.crt=<Name Of Your Certificate File>     👈👈👈
-      - bundle-ca.crt=<Name Of Your Certificate File>     👈👈👈
+      - bundle-ca.crt=<Name Of Your Certificate File>   👈👈👈
   ...
 ```
 
@@ -119,7 +119,7 @@ Note that this example provides both `ldap_cacert_secret` (should have `ldap-ca.
 spec:
   ...
   ldap_cacert_secret: awx-custom-certs     👈👈👈
-  bundle_cacert_secret: awx-custom-certs     👈👈👈
+  bundle_cacert_secret: awx-custom-certs   👈👈👈
   ...
 ```
 
@@ -187,7 +187,7 @@ verify return:1
 depth=0 C = JP, ST = Example State, O = EXAMPLE.COM, CN = ldap.example.com
 verify return:1
 ---
-Certificate chain     👈👈👈 Ensure that the full certificate chain is recognized
+Certificate chain                👈👈👈 Ensure that the full certificate chain is recognized
  0 s:C = JP, ST = Example State, O = EXAMPLE.COM, CN = ldap.example.com
    i:C = JP, ST = Example State, O = EXAMPLE.COM, CN = ica.example.com
    ...
@@ -201,12 +201,12 @@ Certificate chain     👈👈👈 Ensure that the full certificate chain is rec
 ...
 ---
 SSL handshake has read 3210 bytes and written 413 bytes
-Verification: OK     👈👈👈 Ensure there is no verification error
+Verification: OK                 👈👈👈 Ensure there is no verification error
 ---
 ...
 SSL-Session:
     ...
-    Verify return code: 0 (ok)     👈👈👈 Ensure there is no verification error
+    Verify return code: 0 (ok)   👈👈👈 Ensure there is no verification error
     ...
 ```
 

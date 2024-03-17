@@ -141,7 +141,7 @@ spec:
   ...
   ingress_type: ingress
   ingress_hosts:
-    - hostname: awx.example.com     👈👈👈
+    - hostname: awx.example.com   👈👈👈
       tls_secret: awx-secret-tls
 ...
 ```
@@ -157,13 +157,13 @@ Modify the two `password` entries in `base/kustomization.yaml`. Note that the `p
       - port=5432
       - database=awx
       - username=awx
-      - password=Ansible123!     👈👈👈
+      - password=Ansible123!   👈👈👈
       - type=managed
 
   - name: awx-admin-password
     type: Opaque
     literals:
-      - password=Ansible123!     👈👈👈
+      - password=Ansible123!   👈👈👈
 ...
 ```
 

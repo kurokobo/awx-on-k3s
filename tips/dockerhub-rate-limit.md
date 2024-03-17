@@ -72,10 +72,10 @@ Then, add following four lines to under `secretGenerator` in `base/kustomization
 ...
 secretGenerator:
   ...
-  - name: awx-registry-secret     👈👈👈
-    type: kubernetes.io/dockerconfigjson     👈👈👈
-    files:     👈👈👈
-      - .dockerconfigjson=config.json     👈👈👈
+  - name: awx-registry-secret              👈👈👈
+    type: kubernetes.io/dockerconfigjson   👈👈👈
+    files:                                 👈👈👈
+      - .dockerconfigjson=config.json      👈👈👈
   ...
 resources:
   ...
@@ -89,7 +89,7 @@ Finally, add following line to `base/awx.yaml`.
 ...
 spec:
   ...
-  image_pull_secret: awx-registry-secret     👈👈👈
+  image_pull_secret: awx-registry-secret   👈👈👈
   ...
 ```
 

@@ -75,8 +75,8 @@ Add these two lines to your `awx.yaml`,
 ```yaml
 spec:
   ...
-  ingress_annotations: |     👈👈👈
-    traefik.ingress.kubernetes.io/router.middlewares: kube-system-hsts@kubernetescrd     👈👈👈
+  ingress_annotations: |                                                               👈👈👈
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-hsts@kubernetescrd   👈👈👈
 ```
 
 then invoke `apply` again. Once the command has been invoked, then AWX Operator will start to modify related resources. Note that the AWX Pod will be recreated, so AWX will be temporarily disabled.
@@ -90,7 +90,7 @@ secret/awx-secret-tls configured
 persistentvolume/awx-postgres-15-volume unchanged
 persistentvolume/awx-projects-volume unchanged
 persistentvolumeclaim/awx-projects-claim unchanged
-awx.awx.ansible.com/awx configured     👈👈👈
+awx.awx.ansible.com/awx configured   👈👈👈
 ```
 
 Once this completed, the logs of `deployments/awx-operator-controller-manager` end with:
@@ -157,8 +157,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: <resource name>
-  annotations:     👈👈👈
-    traefik.ingress.kubernetes.io/router.middlewares: kube-system-hsts@kubernetescrd     👈👈👈
+  annotations:                                                                         👈👈👈
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-hsts@kubernetescrd   👈👈👈
 ...
 ```
 

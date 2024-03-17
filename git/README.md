@@ -32,7 +32,7 @@ Modify `hosts` and `host` in `git/ingress.yaml`.
         - git.example.com     👈👈👈
       secretName: git-secret-tls
   rules:
-    - host: git.example.com     👈👈👈
+    - host: git.example.com   👈👈👈
 ...
 ```
 

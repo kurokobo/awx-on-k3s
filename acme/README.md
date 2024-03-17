@@ -59,18 +59,18 @@ cert-manager-webhook-6668fbb57d-r9dmj     1/1     Running   0          21h
 
 To use **DNS-01** challenge with **Azure DNS** with **Service Principal**, the following information is required.
 
-- **Client ID**
-  - [Azure Active Directory] > [App registrations] > Your Application > [Application ID]
-- **Client Secret**
-  - [Azure Active Directory] > [App registrations] > Your Application > [Certificates & secrets] > [Client secrets] > [Value]
 - **Subscription ID**
-  - [DNS zones] > Your Zone > [Subscription ID]
-- **Tenant ID**
-  - [Azure Active Directory] > [Properties] > [Tenant ID]
+  - `DNS zones` > Your Zone > `Subscription ID`
 - **Name of Resource Group**
-  - [DNS zones] > Your Zone > [Resource group]
+  - `DNS zones` > Your Zone > `Resource group`
 - **Name of DNS Zone**
-  - [DNS zones] > Your Zone
+  - `DNS zones` > Your Zone
+- **Tenant ID**
+  - `Microsoft Entra ID` > `Properties` > `Tenant ID`
+- **Client ID**
+  - `Microsoft Entra ID` > `App registrations` > Your Application > `Application (client) ID`
+- **Client Secret**
+  - `Microsoft Entra ID` > `App registrations` > Your Application > `Certificates & secrets` > `Client secrets` > `Value`
 
 Then modify required fields in `acme/issuer.yaml`.
 
@@ -78,9 +78,9 @@ Then modify required fields in `acme/issuer.yaml`.
 ...
 spec:
   acme:
-    email: cert@example.com     👈👈👈
+    email: cert@example.com                                          👈👈👈
 
-    server: https://acme-staging-v02.api.letsencrypt.org/directory     👈👈👈
+    server: https://acme-staging-v02.api.letsencrypt.org/directory   👈👈👈
 
     privateKeySecretRef:
       name: awx-issuer-account-key
@@ -88,12 +88,12 @@ spec:
     solvers:
       - dns01:
           azureDNS:
-            clientID: 00000000-0000-0000-0000-000000000000     👈👈👈
-            subscriptionID: 00000000-0000-0000-0000-000000000000     👈👈👈
-            tenantID: 00000000-0000-0000-0000-000000000000     👈👈👈
-            resourceGroupName: example-rg     👈👈👈
-            hostedZoneName: example.com     👈👈👈
             environment: AzurePublicCloud
+            subscriptionID: 00000000-0000-0000-0000-000000000000     👈👈👈
+            resourceGroupName: example-rg                            👈👈👈
+            hostedZoneName: example.com                              👈👈👈
+            tenantID: 00000000-0000-0000-0000-000000000000           👈👈👈
+            clientID: 00000000-0000-0000-0000-000000000000           👈👈👈
             clientSecretSecretRef:
               name: azuredns-config
               key: client-secret
@@ -106,7 +106,7 @@ To store Client Secret for the Service Principal to Secret resource in Kubernete
   - name: azuredns-config
     type: Opaque
     literals:
-      - client-secret=0000000000000000000000000000000000     👈👈👈
+      - client-secret=0000000000000000000000000000000000   👈👈👈
 ...
 ```
 
@@ -135,11 +135,11 @@ spec:
   ...
   ingress_type: ingress
   ingress_hosts:
-    - hostname: awx.example.com     👈👈👈
+    - hostname: awx.example.com          👈👈👈
       tls_secret: awx-secret-tls
 
-  ingress_annotations: |     👈👈👈
-    cert-manager.io/issuer: awx-issuer     👈👈👈
+  ingress_annotations: |                 👈👈👈
+    cert-manager.io/issuer: awx-issuer   👈👈👈
 ```
 
 Finally, comment out or delete all of the `awx-secret-tls` part in `base/kustomization.yaml`, as the actual contents of `awx-secret-tls` are automatically managed by cert-manager and do not need to be specified manually.
@@ -150,11 +150,11 @@ generatorOptions:
   disableNameSuffixHash: true
 
 secretGenerator:
-  # - name: awx-secret-tls     👈👈👈
-  #   type: kubernetes.io/tls     👈👈👈
-  #   files:     👈👈👈
-  #     - tls.crt     👈👈👈
-  #     - tls.key     👈👈👈
+  # - name: awx-secret-tls      👈👈👈
+  #   type: kubernetes.io/tls   👈👈👈
+  #   files:                    👈👈👈
+  #     - tls.crt               👈👈👈
+  #     - tls.key               👈👈👈
 
   - name: awx-postgres-configuration
     type: Opaque

@@ -20,12 +20,12 @@ spec:
     solvers:
       - dns01:
           azureDNS:
-            clientID: 00000000-0000-0000-0000-000000000000
+            environment: AzurePublicCloud
             subscriptionID: 00000000-0000-0000-0000-000000000000
-            tenantID: 00000000-0000-0000-0000-000000000000
             resourceGroupName: example-rg
             hostedZoneName: example.com
-            environment: AzurePublicCloud
+            tenantID: 00000000-0000-0000-0000-000000000000
+            clientID: 00000000-0000-0000-0000-000000000000
             clientSecretSecretRef:
               name: azuredns-config
               key: client-secret

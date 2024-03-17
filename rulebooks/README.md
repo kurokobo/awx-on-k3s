@@ -85,9 +85,9 @@ spec:
   ...
   ingress_type: ingress
   ingress_tls_secret: eda-secret-tls
-  hostname: eda.example.com     👈👈👈
+  hostname: eda.example.com                         👈👈👈
 
-  automation_server_url: https://awx.example.com/     👈👈👈
+  automation_server_url: https://awx.example.com/   👈👈👈
   automation_server_ssl_verify: no
 ...
 ```
@@ -103,13 +103,13 @@ Modify two `password`s in `rulebooks/server/kustomization.yaml`.
       - port=5432
       - database=eda
       - username=eda
-      - password=Ansible123!     👈👈👈
+      - password=Ansible123!   👈👈👈
       - type=managed
 
   - name: eda-admin-password
     type: Opaque
     literals:
-      - password=Ansible123!     👈👈👈
+      - password=Ansible123!   👈👈👈
 ...
 ```
 
@@ -364,17 +364,17 @@ Modify `hosts`, `host`, and `name` under `service` in `rulebooks/webhook/ingress
 spec:
   tls:
     - hosts:
-        - eda.example.com     👈👈👈
+        - eda.example.com                       👈👈👈
       secretName: eda-secret-tls
   rules:
-    - host: eda.example.com     👈👈👈
+    - host: eda.example.com                     👈👈👈
       http:
         paths:
           - path: /webhooks/demo
             pathType: ImplementationSpecific
             backend:
               service:
-                name: activation-job-1-1-5000     👈👈👈
+                name: activation-job-1-1-5000   👈👈👈
                 port:
                   number: 5000
 ```
@@ -388,7 +388,7 @@ $ kubectl apply -f rulebooks/webhook/ingress.yaml
 $ kubectl -n eda get ingress
 NAME                  CLASS     HOSTS             ADDRESS         PORTS     AGE
 eda-ingress           traefik   eda.example.com   192.168.0.219   80, 443   4h45m
-eda-ingress-webhook   traefik   eda.example.com   192.168.0.219   80, 443   1s     👈👈👈
+eda-ingress-webhook   traefik   eda.example.com   192.168.0.219   80, 443   1s   👈👈👈
 ```
 
 ### Trigger Rule using Webhook

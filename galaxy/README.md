@@ -91,7 +91,7 @@ spec:
   ...
   ingress_type: ingress
   ingress_tls_secret: galaxy-secret-tls
-  hostname: galaxy.example.com     👈👈👈
+  hostname: galaxy.example.com   👈👈👈
   ...
 ```
 
@@ -106,14 +106,14 @@ Modify two `password`s in `galaxy/galaxy/kustomization.yaml`.
       - port=5432
       - database=galaxy
       - username=galaxy
-      - password=Galaxy123!     👈👈👈
+      - password=Galaxy123!   👈👈👈
       - sslmode=prefer
       - type=managed
 
   - name: galaxy-admin-password
     type: Opaque
     literals:
-      - password=Galaxy123!     👈👈👈
+      - password=Galaxy123!   👈👈👈
 ...
 ```
 
