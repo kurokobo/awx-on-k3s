@@ -197,7 +197,7 @@ NAME                               READY   AGE
 statefulset.apps/eda-postgres-13   1/1     3m38s
 
 NAME                                    CLASS     HOSTS             ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/eda-ingress   traefik   eda.example.com   192.168.0.219   80, 443   2m49s
+ingress.networking.k8s.io/eda-ingress   traefik   eda.example.com   192.168.0.221   80, 443   2m49s
 
 NAME                               DATA   AGE
 configmap/kube-root-ca.crt         1      5m7s
@@ -387,8 +387,8 @@ $ kubectl apply -f rulebooks/webhook/ingress.yaml
 
 $ kubectl -n eda get ingress
 NAME                  CLASS     HOSTS             ADDRESS         PORTS     AGE
-eda-ingress           traefik   eda.example.com   192.168.0.219   80, 443   4h45m
-eda-ingress-webhook   traefik   eda.example.com   192.168.0.219   80, 443   1s   👈👈👈
+eda-ingress           traefik   eda.example.com   192.168.0.221   80, 443   4h45m
+eda-ingress-webhook   traefik   eda.example.com   192.168.0.221   80, 443   1s   👈👈👈
 ```
 
 ### Trigger Rule using Webhook

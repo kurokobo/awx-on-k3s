@@ -87,7 +87,7 @@ NAME                                  DESIRED   CURRENT   READY   AGE
 replicaset.apps/registry-7457f6c64b   1         1         1       9s
 
 NAME                                         CLASS    HOSTS                  ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/registry-ingress   <none>   registry.example.com   192.168.0.219   80, 443
+ingress.networking.k8s.io/registry-ingress   <none>   registry.example.com   192.168.0.221   80, 443
 ```
 
 Now your container registry can be used through `registry.example.com` or the hostname you specified.

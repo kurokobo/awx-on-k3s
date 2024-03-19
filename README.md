@@ -17,7 +17,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 - [References](#references)
 - [Requirements](#requirements)
 - [Deployment Instruction](#deployment-instruction)
-  - [Prepare CentOS Stream 8 host](#prepare-centos-stream-8-host)
+  - [Prepare CentOS Stream 9 host](#prepare-centos-stream-9-host)
   - [Install K3s](#install-k3s)
   - [Install AWX Operator](#install-awx-operator)
   - [Prepare required files to deploy AWX](#prepare-required-files-to-deploy-awx)
@@ -28,7 +28,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 ## Environment
 
 - Tested on:
-  - CentOS Stream 8 (Minimal)
+  - CentOS Stream 9 (Minimal)
   - K3s v1.28.7+k3s1
 - Products that will be deployed:
   - AWX Operator 2.13.1
@@ -56,7 +56,7 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 ## Deployment Instruction
 
-### Prepare CentOS Stream 8 host
+### Prepare CentOS Stream 9 host
 
 Disable firewalld and nm-cloud-setup if enabled. This is [recommended by K3s](https://docs.k3s.io/advanced#red-hat-enterprise-linux--centos).
 
@@ -237,7 +237,7 @@ NAME                             COMPLETIONS   DURATION   AGE
 job.batch/awx-migration-24.0.0   1/1           2m4s       4m36s
 
 NAME                                    CLASS     HOSTS             ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/awx-ingress   traefik   awx.example.com   192.168.0.219   80, 443   6m6s
+ingress.networking.k8s.io/awx-ingress   traefik   awx.example.com   192.168.0.221   80, 443   6m6s
 
 NAME                                  TYPE                DATA   AGE
 secret/redhat-operators-pull-secret   Opaque              1      7m33s

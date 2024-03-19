@@ -55,9 +55,9 @@ cd awx-on-k3s/builder
 
 ### Environment in This Example
 
-- CentOS Stream 8 (Minimal)
-- Python 3.9
-- Docker 20.10.17
+- CentOS Stream 9 (Minimal)
+- Python 3.11
+- Docker 25.0.4
 - Ansible Builder 3.0.1
 
 ### Install Ansible Builder
@@ -138,8 +138,8 @@ Once the command is complete, your custom EE image is built and stored on Docker
 
 ```bash
 $ docker image ls
-REPOSITORY                        TAG               IMAGE ID       CREATED              SIZE
-registry.example.com/ansible/ee   2.15-custom       d804667597e9   20 seconds ago       284MB
+REPOSITORY                        TAG           IMAGE ID       CREATED          SIZE
+registry.example.com/ansible/ee   2.15-custom   d804667597e9   20 seconds ago   284MB
 ```
 
 ## Use EE

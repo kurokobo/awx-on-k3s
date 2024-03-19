@@ -144,7 +144,7 @@ kubectl -n galaxy logs -f deployments/galaxy-operator-controller-manager
 When the deployment completes successfully, the logs end with:
 
 ```txt
-$ kubectl -n galaxy logs -f deployments/pulp-operator-controller-manager
+$ kubectl -n galaxy logs -f deployments/galaxy-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (galaxy.ansible.com/v1beta1, Kind=Galaxy, galaxy/galaxy) -----
 PLAY RECAP *********************************************************************
@@ -195,7 +195,7 @@ NAME                                  READY   AGE
 statefulset.apps/galaxy-postgres-13   1/1     3m45s
 
 NAME                                       CLASS     HOSTS                ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/galaxy-ingress   traefik   galaxy.example.com   192.168.0.219   80, 443   2m9s
+ingress.networking.k8s.io/galaxy-ingress   traefik   galaxy.example.com   192.168.0.221   80, 443   2m9s
 
 NAME                                   TYPE                DATA   AGE
 secret/galaxy-admin-password           Opaque              1      4m44s

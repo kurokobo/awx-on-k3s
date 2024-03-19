@@ -180,7 +180,7 @@ In this example, we make the Execution Environment to work with the Pod with fol
 - Mount PVC as `/etc/demo`
 - Run on the node with the label `awx-node-type: demo` using `nodeSelector`
 - Have custom environment variable `MY_CUSTOM_ENV`
-- Use custom DNS server `192.168.0.219` in addition to the default DNS servers
+- Use custom DNS server `192.168.0.221` in addition to the default DNS servers
 
 ### Prepare host and Kubernetes
 
@@ -201,11 +201,11 @@ kubectl apply -k containergroup/case2
 Add label to the node.
 
 ```bash
-$ kubectl label node kuro-awx01.kuro.lab awx-node-type=demo
+$ kubectl label node kuro-c9s01.kuro.lab awx-node-type=demo
 
 $ kubectl get node --show-labels
 NAME                  STATUS   ROLES                  AGE    VERSION        LABELS
-kuro-awx01.kuro.lab   Ready    control-plane,master   3d7h   v1.21.2+k3s1   awx-node-type=demo,...
+kuro-c9s01.kuro.lab   Ready    control-plane,master   3d7h   v1.21.2+k3s1   awx-node-type=demo,...
 ```
 
 Copy `awx` role and `awx` rolebinding to new `ee-demo`, to assign `awx` role on `ee-demo` to `awx` serviceaccount on `awx` namespace.
@@ -274,7 +274,7 @@ spec:
     awx-node-type: demo
   dnsConfig:
     nameservers:
-      - 192.168.0.219
+      - 192.168.0.221
   volumes:
     - name: demo-volume
       persistentVolumeClaim:
@@ -289,7 +289,7 @@ This is the customized manifest to achieve;
 - Mounting PVC as `/etc/demo`
 - Running on the node with the label `awx-node-type: demo` using `nodeSelector`
 - Having custom environment variable `MY_CUSTOM_ENV`
-- Using custom DNS server `192.168.0.219` in addition to the default DNS servers
+- Using custom DNS server `192.168.0.221` in addition to the default DNS servers
 
 You can also change `image`, but it will be overridden by specifying Execution Environment for the Job Template, Project Default, or Global Default.
 
@@ -338,7 +338,7 @@ spec:
     ...
   dnsConfig:
     nameservers:
-    - 192.168.0.219
+    - 192.168.0.221
   nodeSelector:
     awx-node-type: demo
   ...
