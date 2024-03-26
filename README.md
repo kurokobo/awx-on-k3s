@@ -79,6 +79,7 @@ sudo dnf install -y git curl
 
 Install a specific version of K3s with `--write-kubeconfig-mode 644` to make the config file (`/etc/rancher/k3s/k3s.yaml`) readable by non-root users.
 
+<!-- shell: k3s: install -->
 ```bash
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.7+k3s1 sh -s - --write-kubeconfig-mode 644
 ```
@@ -103,12 +104,14 @@ git checkout 2.13.1
 
 Then invoke `kubectl apply -k operator` to deploy AWX Operator.
 
+<!-- shell: operator: deploy -->
 ```bash
 kubectl apply -k operator
 ```
 
 The AWX Operator will be deployed to the namespace `awx`.
 
+<!-- shell: operator: get resources -->
 ```bash
 $ kubectl -n awx get all
 NAME                                                   READY   STATUS    RESTARTS   AGE
@@ -128,6 +131,7 @@ replicaset.apps/awx-operator-controller-manager-68d787cfbd   1         1        
 
 Generate a Self-Signed certificate. Note that an IP address can't be specified. If you want to use a certificate from a public ACME CA such as Let's Encrypt or ZeroSSL instead of a Self-Signed certificate, follow the guide on [📁 **Use SSL Certificate from Public ACME CA**](acme) first and come back to this step when done.
 
+<!-- shell: instance: generate certificates -->
 ```bash
 AWX_HOST="awx.example.com"
 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./base/tls.crt -keyout ./base/tls.key -subj "/CN=${AWX_HOST}/O=${AWX_HOST}" -addext "subjectAltName = DNS:${AWX_HOST}"
@@ -169,6 +173,7 @@ Modify the two `password` entries in `base/kustomization.yaml`. Note that the `p
 
 Prepare directories for Persistent Volumes defined in `base/pv.yaml`. These directories will be used to store your databases and project files. Note that the size of the PVs and PVCs are specified in some of the files in this repository, but since their backends are `hostPath`, its value is just like a label and there is no actual capacity limitation.
 
+<!-- shell: instance: create directories -->
 ```bash
 sudo mkdir -p /data/postgres-15/data
 sudo mkdir -p /data/projects
@@ -181,12 +186,14 @@ sudo chmod 700 /data/postgres-15/data
 
 Deploy AWX, this takes few minutes to complete.
 
+<!-- shell: instance: deploy -->
 ```bash
 kubectl apply -k base
 ```
 
 To monitor the progress of the deployment, check the logs of `deployments/awx-operator-controller-manager`:
 
+<!-- shell: instance: gather logs -->
 ```bash
 kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ```
@@ -203,6 +210,7 @@ localhost                  : ok=90   changed=0    unreachable=0    failed=0    s
 
 The required objects should now have been deployed next to AWX Operator in the `awx` namespace.
 
+<!-- shell: instance: get resources -->
 ```bash
 $ kubectl -n awx get awx,all,ingress,secrets
 NAME                      AGE

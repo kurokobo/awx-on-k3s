@@ -176,13 +176,13 @@ This means that if your Kubernetes has all the EE images you need in its cache i
 docker save registry.example.com/ansible/ee:2.15-custom -o custom-ee.tar
 
 # Import the Tar file to containerd
-sudo /usr/local/bin/k3s ctr images import --compress-blobs --base-name registry.example.com/ansible/ee:2.15-custom custom-ee.tar
+sudo $(which k3s) ctr images import --compress-blobs --base-name registry.example.com/ansible/ee:2.15-custom custom-ee.tar
 ```
 
 Ensure your imported image is listed.
 
 ```bash
-$ sudo /usr/local/bin/k3s crictl images
+$ sudo $(which k3s) crictl images
 IMAGE                             TAG           IMAGE ID            SIZE
 ...
 registry.example.com/ansible/ee   2.15-custom   d804667597e9e       96.3MB

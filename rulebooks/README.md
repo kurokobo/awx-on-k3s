@@ -47,12 +47,14 @@ cd awx-on-k3s
 
 Then invoke `kubectl apply -k rulebooks/operator` to deploy EDA Server Operator.
 
+<!-- shell: operator: deploy -->
 ```bash
 kubectl apply -k rulebooks/operator
 ```
 
 The EDA Server Operator will be deployed to the namespace `eda`.
 
+<!-- shell: operator: get resources -->
 ```bash
 $ kubectl -n eda get all
 NAME                                                          READY   STATUS    RESTARTS   AGE
@@ -72,6 +74,7 @@ replicaset.apps/eda-server-operator-controller-manager-7bf7578d44   1         1 
 
 Generate a Self-Signed certificate for the Web UI and API for EDA Server. Note that IP address can't be specified.
 
+<!-- shell: instance: generate certificates -->
 ```bash
 EDA_HOST="eda.example.com"
 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./rulebooks/server/tls.crt -keyout ./rulebooks/server/tls.key -subj "/CN=${EDA_HOST}/O=${EDA_HOST}" -addext "subjectAltName = DNS:${EDA_HOST}"
@@ -115,6 +118,7 @@ Modify two `password`s in `rulebooks/server/kustomization.yaml`.
 
 Prepare directories for Persistent Volumes defined in `base/pv.yaml`. This directory will be used to store your database.
 
+<!-- shell: instance: create directories -->
 ```bash
 sudo mkdir -p /data/eda/postgres-13/data
 sudo chown 26:0 /data/eda/postgres-13/data
@@ -125,12 +129,14 @@ sudo chmod 700 /data/eda/postgres-13/data
 
 Deploy EDA Server, this takes few minutes to complete.
 
+<!-- shell: instance: deploy -->
 ```bash
 kubectl apply -k rulebooks/server
 ```
 
 To monitor the progress of the deployment, check the logs of `deployment/eda-server-operator-controller-manager`:
 
+<!-- shell: instance: gather logs -->
 ```bash
 kubectl -n eda logs -f deployment/eda-server-operator-controller-manager
 ```
@@ -147,6 +153,7 @@ localhost                  : ok=57   changed=0    unreachable=0    failed=0    s
 
 Required objects has been deployed next to AWX Operator in `awx` namespace.
 
+<!-- shell: instance: get resources -->
 ```bash
 $ kubectl -n eda get eda,all,ingress,configmap,secret
 NAME                      AGE

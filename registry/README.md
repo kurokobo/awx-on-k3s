@@ -22,6 +22,7 @@ Deploying your private container registry on your K3s to use with AWX.
 
 Generate a Self-Signed Certificate. Note that IP address can't be specified.
 
+<!-- shell: instance: generate certificates -->
 ```bash
 REGISTRY_HOST="registry.example.com"
 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./registry/tls.crt -keyout ./registry/tls.key -subj "/CN=${REGISTRY_HOST}/O=${REGISTRY_HOST}" -addext "subjectAltName = DNS:${REGISTRY_HOST}"
@@ -58,6 +59,7 @@ Replace `htpasswd` in `registry/configmap.yaml` with your own `htpasswd` string 
 
 Prepare directories for Persistent Volumes defined in `registry/pv.yaml`.
 
+<!-- shell: instance: create directories -->
 ```bash
 sudo mkdir -p /data/registry
 ```
@@ -66,12 +68,14 @@ sudo mkdir -p /data/registry
 
 Deploy private container registry.
 
+<!-- shell: instance: deploy -->
 ```bash
 kubectl apply -k registry
 ```
 
 Required resources has been deployed in `registry` namespace.
 
+<!-- shell: instance: get resources -->
 ```bash
 $ kubectl -n registry get all,ingress
 NAME                            READY   STATUS    RESTARTS   AGE
@@ -189,6 +193,7 @@ Note that required `imagePullSecrets` will be automatically created by AWX once 
 
 The `tls` section is required to disable SSL Verification as the endpoint is HTTPS with a Self-Signed Certificate.
 
+<!-- shell: config: insecure registry -->
 ```bash
 sudo tee /etc/rancher/k3s/registries.yaml <<EOF
 configs:
@@ -206,11 +211,12 @@ sudo systemctl restart k3s
 
 If this is successfully applied, you can check the applied configuration in the `config.registry` section of the following command.
 
+<!-- shell: config: dump config -->
 ```bash
-sudo /usr/local/bin/k3s crictl info
+sudo $(which k3s) crictl info
 
 # With jq
-sudo /usr/local/bin/k3s crictl info | jq .config.registry
+sudo $(which k3s) crictl info | jq .config.registry
 ```
 
 If you want Kubernetes to be able to pull images directly from this private registry, alternatively you can also manually create `imagePullSecrets` for the Pod instead of writing your credentials in `auth` in `registries.yaml`. [Another guide about rate limiting on Docker Hub](../tips/dockerhub-rate-limit.md) explains how to use `ImagePullSecrets`.

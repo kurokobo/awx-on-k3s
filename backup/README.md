@@ -21,6 +21,7 @@ You can also refer [the official instructions](https://github.com/ansible/awx-op
 
 Prepare directories for Persistent Volumes to store backup files that defined in `backup/pv.yaml`. This guide use the `hostPath` based PV to make it easy to understand.
 
+<!-- shell: backup: create directories -->
 ```bash
 sudo mkdir -p /data/backup
 sudo chown 26:0 /data/backup
@@ -29,6 +30,7 @@ sudo chmod 700 /data/backup
 
 Then deploy Persistent Volume and Persistent Volume Claim.
 
+<!-- shell: backup: deploy -->
 ```bash
 kubectl apply -k backup
 ```
@@ -48,19 +50,21 @@ metadata:
 
 Then invoke backup by applying this manifest file.
 
+<!-- shell: backup: backup -->
 ```bash
 kubectl apply -f backup/awxbackup.yaml
 ```
 
 To monitor the progress of the deployment, check the logs of `deployments/awx-operator-controller-manager`:
 
+<!-- shell: backup: gather logs -->
 ```bash
 kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ```
 
 When the backup completes successfully, the logs end with:
 
-```txt
+```bash
 $ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWXBackup, awxbackup-2021-06-06/awx) -----
@@ -70,6 +74,7 @@ localhost                  : ok=7    changed=0    unreachable=0    failed=0    s
 
 This will create AWXBackup object in the namespace and also create backup files in the Persistent Volume. In this example those files are available at `/data/backup`.
 
+<!-- shell: backup: get resources -->
 ```bash
 $ kubectl -n awx get awxbackup
 NAME                   AGE
