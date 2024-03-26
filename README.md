@@ -1,5 +1,5 @@
 <!-- omit in toc -->
-# AWX on Single Node K3s
+# 📘 AWX on Single Node K3s
 
 An example implementation of AWX on single node K3s using AWX Operator, with easy-to-use simplified configuration with ownership of data and passwords.
 
@@ -11,21 +11,21 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 **If you want to view the guide for the specific version of AWX Operator, switch the page to the desired tag instead of the `main` branch.**
 
 <!-- omit in toc -->
-## Table of Contents
+## 📝 Table of Contents
 
-- [Environment](#environment)
-- [References](#references)
-- [Requirements](#requirements)
-- [Deployment Instruction](#deployment-instruction)
-  - [Prepare CentOS Stream 9 host](#prepare-centos-stream-9-host)
-  - [Install K3s](#install-k3s)
-  - [Install AWX Operator](#install-awx-operator)
-  - [Prepare required files to deploy AWX](#prepare-required-files-to-deploy-awx)
-  - [Deploy AWX](#deploy-awx)
-- [Back up and Restore AWX using AWX Operator](#back-up-and-restore-awx-using-awx-operator)
-- [Additional Guides](#additional-guides)
+- [📝 Environment](#-environment)
+- [📝 References](#-references)
+- [📝 Requirements](#-requirements)
+- [📝 Deployment Instruction](#-deployment-instruction)
+  - [✅ Prepare CentOS Stream 9 host](#-prepare-centos-stream-9-host)
+  - [✅ Install K3s](#-install-k3s)
+  - [✅ Install AWX Operator](#-install-awx-operator)
+  - [✅ Prepare required files to deploy AWX](#-prepare-required-files-to-deploy-awx)
+  - [✅ Deploy AWX](#-deploy-awx)
+- [📝 Back up and Restore AWX using AWX Operator](#-back-up-and-restore-awx-using-awx-operator)
+- [📝 Additional Guides](#-additional-guides)
 
-## Environment
+## 📝 Environment
 
 - Tested on:
   - CentOS Stream 9 (Minimal)
@@ -35,30 +35,30 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - AWX 24.0.0
   - PostgreSQL 15
 
-## References
+## 📝 References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
 - [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/24.0.0/INSTALL.md) @24.0.0
 - [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.13.1/README.md) @2.13.1
 
-## Requirements
+## 📝 Requirements
 
 - **Computing resources**
   - **2 CPUs with x86-64-v2 support**.
-  - **4 GiB RAM minimum**
+  - **4 GiB RAM minimum**.
   - It's recommended to add more CPUs and RAM (like 4 CPUs and 8 GiB RAM or more) to avoid performance issue and job scheduling issue.
   - The files in this repository are configured to ignore resource requirements which specified by AWX Operator by default.
 - **Storage resources**
   - At least **10 GiB for `/var/lib/rancher`** and **10 GiB for `/data`** are safe for fresh install.
+    - `/var/lib/rancher` will be created and consumed by K3s and related data like container images and overlayfs.
+    - `/data` will be created in this guide and used to store AWX-related databases and files.
   - **Both will be grown during lifetime** and **actual consumption highly depends on your environment and your use case**, so you should to pay attention to the consumption and add more capacity if required.
-  - `/var/lib/rancher` will be created and consumed by K3s and related data like container images and overlayfs.
-  - `/data` will be created in this guide and used to store AWX-related databases and files.
 
-## Deployment Instruction
+## 📝 Deployment Instruction
 
-### Prepare CentOS Stream 9 host
+### ✅ Prepare CentOS Stream 9 host
 
-Disable firewalld and nm-cloud-setup if enabled. This is [recommended by K3s](https://docs.k3s.io/advanced#red-hat-enterprise-linux--centos).
+Disable firewalld and nm-cloud-setup if enabled. This is [recommended by K3s](https://docs.k3s.io/installation/requirements?os=rhel#operating-systems).
 
 ```bash
 # Disable firewalld
@@ -75,7 +75,7 @@ Install the required packages to deploy AWX Operator and AWX.
 sudo dnf install -y git curl
 ```
 
-### Install K3s
+### ✅ Install K3s
 
 Install a specific version of K3s with `--write-kubeconfig-mode 644` to make the config file (`/etc/rancher/k3s/k3s.yaml`) readable by non-root users.
 
@@ -84,7 +84,7 @@ Install a specific version of K3s with `--write-kubeconfig-mode 644` to make the
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.7+k3s1 sh -s - --write-kubeconfig-mode 644
 ```
 
-### Install AWX Operator
+### ✅ Install AWX Operator
 
 > [!WARNING]
 > AWX Operator 2.13.x introduces some major changes and some issues related to these changes are reported. If you don't have any strong reason to use 2.13.x, personally I recommend to use [2.12.1](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1) instead until major issues are resolved.
@@ -127,7 +127,7 @@ NAME                                                         DESIRED   CURRENT  
 replicaset.apps/awx-operator-controller-manager-68d787cfbd   1         1         1       16s
 ```
 
-### Prepare required files to deploy AWX
+### ✅ Prepare required files to deploy AWX
 
 Generate a Self-Signed certificate. Note that an IP address can't be specified. If you want to use a certificate from a public ACME CA such as Let's Encrypt or ZeroSSL instead of a Self-Signed certificate, follow the guide on [📁 **Use SSL Certificate from Public ACME CA**](acme) first and come back to this step when done.
 
@@ -182,7 +182,7 @@ sudo chown 1000:0 /data/projects
 sudo chmod 700 /data/postgres-15/data
 ```
 
-### Deploy AWX
+### ✅ Deploy AWX
 
 Deploy AWX, this takes few minutes to complete.
 
@@ -265,13 +265,13 @@ Note that you have to access via the hostname that you specified in `base/awx.ya
 
 At this point, AWX can be accessed via HTTP as well as HTTPS. If you want to force users to use HTTPS, see [📝Tips: Enable HTTP Strict Transport Security (HSTS)](tips/enable-hsts.md).
 
-## Back up and Restore AWX using AWX Operator
+## 📝 Back up and Restore AWX using AWX Operator
 
 The AWX Operator `0.10.0` or later has the ability to back up and restore AWX in easy way.
 
 Refer [📁 **Back up AWX using AWX Operator**](backup) and [📁 **Restore AWX using AWX Operator**](restore) for details.
 
-## Additional Guides
+## 📝 Additional Guides
 
 - [📁 **Back up AWX using AWX Operator**](backup)
   - The guide to make backup of your AWX using AWX Operator.
