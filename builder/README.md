@@ -55,9 +55,9 @@ cd awx-on-k3s/builder
 
 ### Environment in This Example
 
-- CentOS Stream 8 (Minimal)
-- Python 3.9
-- Docker 20.10.17
+- CentOS Stream 9 (Minimal)
+- Python 3.11
+- Docker 25.0.4
 - Ansible Builder 3.0.1
 
 ### Install Ansible Builder
@@ -138,8 +138,8 @@ Once the command is complete, your custom EE image is built and stored on Docker
 
 ```bash
 $ docker image ls
-REPOSITORY                        TAG               IMAGE ID       CREATED              SIZE
-registry.example.com/ansible/ee   2.15-custom       d804667597e9   20 seconds ago       284MB
+REPOSITORY                        TAG           IMAGE ID       CREATED          SIZE
+registry.example.com/ansible/ee   2.15-custom   d804667597e9   20 seconds ago   284MB
 ```
 
 ## Use EE
@@ -176,13 +176,13 @@ This means that if your Kubernetes has all the EE images you need in its cache i
 docker save registry.example.com/ansible/ee:2.15-custom -o custom-ee.tar
 
 # Import the Tar file to containerd
-sudo /usr/local/bin/k3s ctr images import --compress-blobs --base-name registry.example.com/ansible/ee:2.15-custom custom-ee.tar
+sudo $(which k3s) ctr images import --compress-blobs --base-name registry.example.com/ansible/ee:2.15-custom custom-ee.tar
 ```
 
 Ensure your imported image is listed.
 
 ```bash
-$ sudo /usr/local/bin/k3s crictl images
+$ sudo $(which k3s) crictl images
 IMAGE                             TAG           IMAGE ID            SIZE
 ...
 registry.example.com/ansible/ee   2.15-custom   d804667597e9e       96.3MB

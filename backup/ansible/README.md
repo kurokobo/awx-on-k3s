@@ -46,6 +46,7 @@ Note that this playbook enables `clean_backup_on_delete` by default that only wo
 
 Create a Service Account, Role, and RoleBinding to manage the `AWXBackup` resource.
 
+<!-- shell: backup: serviceaccount -->
 ```bash
 # Specify NameSpace where your AWXBackup resources will be created.
 $ NAMESPACE=awx
@@ -118,6 +119,7 @@ In this case, the PostgreSQL db will be dumped while the job is running, so comp
 1. Add a new Container Group to make the API token usable inside the EE.
    - Enable `Customize pod specification` and put the following YAML string. `serviceAccountName` and `automountServiceAccountToken` are important to make the API token usable inside the EE.
 
+     <!-- yaml: backup: container group -->
      ```yaml
      apiVersion: v1
      kind: Pod

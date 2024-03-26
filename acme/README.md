@@ -41,6 +41,7 @@ This guide does not provide any information how to configure Azure, other DNS se
 
 Deploy cert-manager first.
 
+<!-- shell: instance: deploy cert manager -->
 ```bash
 kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.14.4/cert-manager.yaml
 ```
@@ -112,6 +113,7 @@ To store Client Secret for the Service Principal to Secret resource in Kubernete
 
 Once the file has been modified to suit your environment, deploy the Issuer.
 
+<!-- shell: instance: deploy issuer -->
 ```bash
 kubectl apply -k acme
 ```

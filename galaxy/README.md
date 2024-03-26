@@ -53,12 +53,14 @@ cd awx-on-k3s
 
 Then invoke `kubectl apply -k galaxy/operator` to deploy Galaxy Operator.
 
+<!-- shell: operator: deploy -->
 ```bash
 kubectl apply -k galaxy/operator
 ```
 
 The Galaxy Operator will be deployed to the namespace `galaxy`.
 
+<!-- shell: operator: get resources -->
 ```bash
 $ kubectl -n galaxy get all
 NAME                                                      READY   STATUS    RESTARTS   AGE
@@ -78,6 +80,7 @@ replicaset.apps/galaxy-operator-controller-manager-69bdb6886d   1         1     
 
 Generate a Self-Signed Certificate and key pair. Note that IP address can't be specified.
 
+<!-- shell: instance: generate certificates -->
 ```bash
 GALAXY_HOST="galaxy.example.com"
 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./galaxy/galaxy/tls.crt -keyout ./galaxy/galaxy/tls.key -subj "/CN=${GALAXY_HOST}/O=${GALAXY_HOST}" -addext "subjectAltName = DNS:${GALAXY_HOST}"
@@ -119,6 +122,7 @@ Modify two `password`s in `galaxy/galaxy/kustomization.yaml`.
 
 Prepare directories for Persistent Volumes defined in `galaxy/galaxy/pv.yaml`.
 
+<!-- shell: instance: create directories -->
 ```bash
 sudo mkdir -p /data/galaxy/postgres-13
 sudo mkdir -p /data/galaxy/redis
@@ -131,12 +135,14 @@ sudo chmod 755 /data/galaxy/postgres-13
 
 Deploy Galaxy NG, this takes few minutes to complete.
 
+<!-- shell: instance: deploy -->
 ```bash
 kubectl apply -k galaxy/galaxy
 ```
 
 To monitor the progress of the deployment, check the logs of `deployments/galaxy-operator-controller-manager`:
 
+<!-- shell: instance: gather logs -->
 ```bash
 kubectl -n galaxy logs -f deployments/galaxy-operator-controller-manager
 ```
@@ -144,7 +150,7 @@ kubectl -n galaxy logs -f deployments/galaxy-operator-controller-manager
 When the deployment completes successfully, the logs end with:
 
 ```txt
-$ kubectl -n galaxy logs -f deployments/pulp-operator-controller-manager
+$ kubectl -n galaxy logs -f deployments/galaxy-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (galaxy.ansible.com/v1beta1, Kind=Galaxy, galaxy/galaxy) -----
 PLAY RECAP *********************************************************************
@@ -153,6 +159,7 @@ localhost                  : ok=128  changed=25   unreachable=0    failed=0    s
 
 Required objects has been deployed next to Pulp Operator in `galaxy` namespace.
 
+<!-- shell: instance: get resources -->
 ```bash
 $ kubectl -n galaxy get galaxy,all,ingress,secrets
 NAME                               AGE
@@ -195,7 +202,7 @@ NAME                                  READY   AGE
 statefulset.apps/galaxy-postgres-13   1/1     3m45s
 
 NAME                                       CLASS     HOSTS                ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/galaxy-ingress   traefik   galaxy.example.com   192.168.0.219   80, 443   2m9s
+ingress.networking.k8s.io/galaxy-ingress   traefik   galaxy.example.com   192.168.0.221   80, 443   2m9s
 
 NAME                                   TYPE                DATA   AGE
 secret/galaxy-admin-password           Opaque              1      4m44s
@@ -465,10 +472,10 @@ sudo systemctl restart k3s
 If this is successfully applied, you can check the applied configuration in the `config.registry` section of the following command.
 
 ```bash
-sudo /usr/local/bin/crictl info
+sudo $(which k3s) crictl info
 
 # With jq
-sudo /usr/local/bin/crictl info | jq .config.registry
+sudo $(which k3s) crictl info | jq .config.registry
 ```
 
 Now you can use Execution Environment on Galaxy NG through AWX as following.

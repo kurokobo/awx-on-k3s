@@ -26,18 +26,23 @@ Some manual additions, such as [the HSTS configuration](../tips/enable-hsts.md) 
 
 If your AWX instance is running, it is recommended that it be deleted along with PVC and PV for the PostgreSQL first, in order to restore to be succeeded.
 
+<!-- shell: restore: uninstall -->
 ```bash
 # Delete AWX resource, PVC, and PV
+kubectl -n awx delete pvc postgres-15-awx-postgres-15-0 --wait=false
 kubectl -n awx delete awx awx
-kubectl -n awx delete pvc postgres-15-awx-postgres-15-0
 kubectl delete pv awx-postgres-15-volume
+```
 
+<!-- shell: restore: delete directories -->
+```bash
 # Delete any data in the PV
 sudo rm -rf /data/postgres-15
 ```
 
 Then prepare directories for your PVs. `/data/projects` is required if you are restoring the entire AWX to a new environment.
 
+<!-- shell: restore: create directories -->
 ```bash
 sudo mkdir -p /data/postgres-15/data
 sudo mkdir -p /data/projects
@@ -48,6 +53,7 @@ sudo chmod 700 /data/postgres-15/data
 
 Then deploy PV and PVC. It is recommended that making the size of PVs and PVCs same as the PVs which your AWX used when the backup was taken.
 
+<!-- shell: restore: deploy -->
 ```bash
 kubectl apply -k restore
 ```
@@ -86,19 +92,21 @@ If the AWXBackup object no longer exists, place the backup files under `/data/ba
 
 Then invoke restore by applying this manifest file.
 
+<!-- shell: restore: restore -->
 ```bash
 kubectl apply -f restore/awxrestore.yaml
 ```
 
 To monitor the progress of the deployment, check the logs of `deployments/awx-operator-controller-manager`:
 
+<!-- shell: restore: gather logs -->
 ```bash
 kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ```
 
 When the restore complete successfully, the logs end with:
 
-```txt
+```bash
 $ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
@@ -108,6 +116,7 @@ localhost                  : ok=92   changed=0    unreachable=0    failed=0    s
 
 This will create AWXRestore object in the namespace, and now your AWX is restored.
 
+<!-- shell: restore: get resources -->
 ```bash
 $ kubectl -n awx get awxrestore
 NAME                    AGE

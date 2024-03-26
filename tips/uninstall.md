@@ -10,23 +10,11 @@
 
 ### Uninstall resources on Kubernetes
 
-In kubernetes, you can deploy resources with `kubectl create -f (-k)` or `kubectl apply -f (-k)` by specifying manifest files, and similarly, you can use manifest files to delete resources by `kubectl delete -f (-k)` command.
+The resources that you've deployed by `kubectl create -f (-k)` or `kubectl apply -f (-k)` commands can be also removed `kubectl delete -f (-k)` command by passing the same manifest files.
 
-For example, some resources deployed with the following command;
+These are the example commands to delete existing AWX on K3s. Note that PVC for PostgreSQL should be removed manually since this PVC was created by not `kubectl apply -k` but AWX Operator.
 
-```bash
-$ kubectl apply -k base
-secret/awx-admin-password created
-secret/awx-postgres-configuration created
-secret/awx-secret-tls created
-persistentvolume/awx-postgres-volume created
-persistentvolume/awx-projects-volume created
-persistentvolumeclaim/awx-projects-claim created
-awx.awx.ansible.com/awx created
-```
-
-can be deleted with the following command with same manifest files. Note that PVC for PostgreSQL should be removed manually since this PVC was created by not `kubectl apply -k` but AWX Operator.
-
+<!-- shell: instance: uninstall -->
 ```bash
 $ kubectl -n awx delete pvc postgres-15-awx-postgres-15-0 --wait=false
 $ kubectl delete -k base
@@ -39,7 +27,7 @@ persistentvolumeclaim "awx-projects-claim" deleted
 awx.awx.ansible.com "awx" deleted
 ```
 
-Or, you can delete all resources in specific namespace by deleting that namespace. PVs cannot be deleted in this way since the PVs are namespace-independent resources, so they need to be deleted manually.
+You can also delete all resources in the specific namespace by deleting the namespace. Any PVs cannot be deleted in this way since the PVs are namespace-independent resources, so they need to be deleted manually.
 
 ```bash
 $ kubectl delete ns awx
@@ -51,12 +39,14 @@ persistentvolume "<volume name>" deleted
 
 ### Remove data in PVs
 
-All manifest files in this repository, the PVs were persisted under `/data/<volume name>` on the K3s host using `hostPath`.
+All PVs that deployed by any guides on this repository are designed to persist data under `/data` using `hostPath`. But removing PVs by `kubectl delete pv` command does not remove actual data in the host filesystem. So if you want to remove the data in the PVs, you need to remove it manually.
 
-If you want to initialize the data and start all over again, for example, you can delete the data manually.
+These are the example commands to remove the data in the PVs for AWX.
 
+<!-- shell: pv: remove -->
 ```bash
-sudo rm -rf /data/<volume name>
+sudo rm -rf /data/projects
+sudo rm -rf /data/postgres-15
 ```
 
 ### Uninstall K3s
