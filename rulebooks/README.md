@@ -148,7 +148,7 @@ $ kubectl -n eda logs -f deployment/eda-server-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (eda.ansible.com/v1alpha1, Kind=EDA, eda/eda) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=57   changed=0    unreachable=0    failed=0    skipped=20   rescued=0    ignored=0
+localhost                  : ok=58   changed=0    unreachable=0    failed=0    skipped=20   rescued=0    ignored=0
 ```
 
 Required objects has been deployed next to AWX Operator in `awx` namespace.
@@ -157,66 +157,62 @@ Required objects has been deployed next to AWX Operator in `awx` namespace.
 ```bash
 $ kubectl -n eda get eda,all,ingress,configmap,secret
 NAME                      AGE
-eda.eda.ansible.com/eda   4m2s
+eda.eda.ansible.com/eda   4m19s
 
-NAME                                                          READY   STATUS    RESTARTS   AGE
-pod/eda-server-operator-controller-manager-6ff679b85d-djcrt   2/2     Running   0          5m6s
-pod/eda-redis-7d78cdf7d5-f4nsz                                1/1     Running   0          3m47s
-pod/eda-postgres-13-0                                         1/1     Running   0          3m38s
-pod/eda-ui-69569559b8-k4rdq                                   1/1     Running   0          2m50s
-pod/eda-default-worker-5cd8664bcd-zv2v8                       1/1     Running   0          2m46s
-pod/eda-default-worker-5cd8664bcd-7bvc6                       1/1     Running   0          2m46s
-pod/eda-activation-worker-65bbc877fd-g6nj4                    1/1     Running   0          2m43s
-pod/eda-activation-worker-65bbc877fd-6c7lm                    1/1     Running   0          2m43s
-pod/eda-activation-worker-65bbc877fd-wbp92                    1/1     Running   0          2m43s
-pod/eda-scheduler-bbf6554f4-v6x5s                             1/1     Running   0          2m40s
-pod/eda-api-798787c5bf-pp82t                                  2/2     Running   0          2m53s
+NAME                                                         READY   STATUS    RESTARTS   AGE
+pod/eda-server-operator-controller-manager-b7f64bc9b-f6c45   2/2     Running   0          6m49s
+pod/eda-redis-747596546f-rj8mx                               1/1     Running   0          4m3s
+pod/eda-postgres-13-0                                        1/1     Running   0          3m52s
+pod/eda-ui-78d6d4c9d7-fndz4                                  1/1     Running   0          2m54s
+pod/eda-activation-worker-5db4894b46-tgk9g                   1/1     Running   0          2m49s
+pod/eda-default-worker-7bbfd84567-dnbvr                      1/1     Running   0          2m51s
+pod/eda-scheduler-588d78b9bd-fpfpw                           1/1     Running   0          2m47s
+pod/eda-api-888c5d77c-95r2z                                  2/2     Running   0          2m57s
 
 NAME                                                             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-service/eda-server-operator-controller-manager-metrics-service   ClusterIP   10.43.22.48     <none>        8443/TCP   5m6s
-service/eda-redis-svc                                            ClusterIP   10.43.2.121     <none>        6379/TCP   3m49s
-service/eda-postgres-13                                          ClusterIP   None            <none>        5432/TCP   3m40s
-service/eda-api                                                  ClusterIP   10.43.57.93     <none>        8000/TCP   2m55s
-service/eda-daphne                                               ClusterIP   10.43.249.197   <none>        8001/TCP   2m55s
-service/eda-ui                                                   ClusterIP   10.43.250.22    <none>        80/TCP     2m51s
-service/eda-default-worker                                       ClusterIP   10.43.66.37     <none>        8080/TCP   2m47s
-service/eda-activation-worker                                    ClusterIP   10.43.221.86    <none>        8080/TCP   2m45s
+service/eda-server-operator-controller-manager-metrics-service   ClusterIP   10.43.181.52    <none>        8443/TCP   6m49s
+service/eda-redis-svc                                            ClusterIP   10.43.141.149   <none>        6379/TCP   4m4s
+service/eda-postgres-13                                          ClusterIP   None            <none>        5432/TCP   3m56s
+service/eda-api                                                  ClusterIP   10.43.209.69    <none>        8000/TCP   2m58s
+service/eda-daphne                                               ClusterIP   10.43.182.145   <none>        8001/TCP   2m58s
+service/eda-ui                                                   ClusterIP   10.43.49.181    <none>        80/TCP     2m55s
 
 NAME                                                     READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/eda-server-operator-controller-manager   1/1     1            1           5m6s
-deployment.apps/eda-redis                                1/1     1            1           3m47s
-deployment.apps/eda-ui                                   1/1     1            1           2m50s
-deployment.apps/eda-default-worker                       2/2     2            2           2m46s
-deployment.apps/eda-activation-worker                    3/3     3            3           2m43s
-deployment.apps/eda-scheduler                            1/1     1            1           2m40s
-deployment.apps/eda-api                                  1/1     1            1           2m53s
+deployment.apps/eda-server-operator-controller-manager   1/1     1            1           6m49s
+deployment.apps/eda-redis                                1/1     1            1           4m3s
+deployment.apps/eda-ui                                   1/1     1            1           2m54s
+deployment.apps/eda-default-worker                       1/1     1            1           2m51s
+deployment.apps/eda-activation-worker                    1/1     1            1           2m49s
+deployment.apps/eda-scheduler                            1/1     1            1           2m47s
+deployment.apps/eda-api                                  1/1     1            1           2m57s
 
-NAME                                                                DESIRED   CURRENT   READY   AGE
-replicaset.apps/eda-server-operator-controller-manager-6ff679b85d   1         1         1       5m6s
-replicaset.apps/eda-redis-7d78cdf7d5                                1         1         1       3m47s
-replicaset.apps/eda-ui-69569559b8                                   1         1         1       2m50s
-replicaset.apps/eda-default-worker-5cd8664bcd                       2         2         2       2m46s
-replicaset.apps/eda-activation-worker-65bbc877fd                    3         3         3       2m43s
-replicaset.apps/eda-scheduler-bbf6554f4                             1         1         1       2m40s
-replicaset.apps/eda-api-798787c5bf                                  1         1         1       2m53s
+NAME                                                               DESIRED   CURRENT   READY   AGE
+replicaset.apps/eda-server-operator-controller-manager-b7f64bc9b   1         1         1       6m49s
+replicaset.apps/eda-redis-747596546f                               1         1         1       4m3s
+replicaset.apps/eda-ui-78d6d4c9d7                                  1         1         1       2m54s
+replicaset.apps/eda-default-worker-7bbfd84567                      1         1         1       2m51s
+replicaset.apps/eda-activation-worker-5db4894b46                   1         1         1       2m49s
+replicaset.apps/eda-scheduler-588d78b9bd                           1         1         1       2m47s
+replicaset.apps/eda-api-888c5d77c                                  1         1         1       2m57s
 
 NAME                               READY   AGE
-statefulset.apps/eda-postgres-13   1/1     3m38s
+statefulset.apps/eda-postgres-13   1/1     3m55s
 
 NAME                                    CLASS     HOSTS             ADDRESS         PORTS     AGE
-ingress.networking.k8s.io/eda-ingress   traefik   eda.example.com   192.168.0.221   80, 443   2m49s
+ingress.networking.k8s.io/eda-ingress   traefik   eda.example.com   192.168.0.221   80, 443   2m52s
 
 NAME                               DATA   AGE
-configmap/kube-root-ca.crt         1      5m7s
-configmap/eda-eda-env-properties   9      2m56s
-configmap/eda-server-operator      0      5m5s
+configmap/kube-root-ca.crt         1      6m50s
+configmap/eda-eda-env-properties   11     3m
+configmap/eda-eda-configmap        1      3m
+configmap/eda-server-operator      0      6m37s
 
 NAME                                     TYPE                DATA   AGE
-secret/redhat-operators-pull-secret      Opaque              1      5m6s
-secret/eda-admin-password                Opaque              1      4m2s
-secret/eda-database-configuration        Opaque              6      4m2s
-secret/eda-secret-tls                    kubernetes.io/tls   2      4m2s
-secret/eda-db-fields-encryption-secret   Opaque              1      3m4s
+secret/redhat-operators-pull-secret      Opaque              1      6m49s
+secret/eda-admin-password                Opaque              1      4m19s
+secret/eda-database-configuration        Opaque              6      4m19s
+secret/eda-secret-tls                    kubernetes.io/tls   2      4m19s
+secret/eda-db-fields-encryption-secret   Opaque              1      3m9s
 ```
 
 Now your EDA Server is available at `https://eda.example.com/` or the hostname you specified.
@@ -282,7 +278,7 @@ Fill the form as follows, then click `Create decision environment` button on the
 | Key | Value |
 | - | - |
 | Name | `Minimal DE` |
-| Image | `quay.io/ansible/ansible-rulebook:stable-1.0` |
+| Image | `quay.io/ansible/ansible-rulebook:v1.0.6` |
 
 #### Add Project on EDA Server
 
@@ -315,6 +311,7 @@ Fill the form as follows, then click `Create rulebook activation` button on the 
 | Project | `Demo Project` |
 | Rulebook | `demo_webhook.yaml` |
 | Decision environment | `Minimal DE` |
+| Controller token | `awx.example.com` |
 
 Refresh the page and wait for the `Activation status` for the Rulebook to be `Running`.
 
@@ -424,7 +421,7 @@ Define the Decision Environment with the following information, just as you conf
 | Key | Value |
 | - | - |
 | Name | `Minimal DE with MQTT` |
-| Image | `docker.io/kurokobo/ansible-rulebook:stable-1.0-mqtt` |
+| Image | `docker.io/kurokobo/ansible-rulebook:v1.0.6-mqtt` |
 
 Note that the image specified above is based on `quay.io/ansible/ansible-rulebook:stable-1.0` and includes [`kubealex.eda`](https://galaxy.ansible.com/ui/repo/published/kubealex/eda/) collection that includes `kubealex.eda.mqtt` plugin. The Dockerfile for this image is available under [mqtt/de directory](./mqtt/de).
 
