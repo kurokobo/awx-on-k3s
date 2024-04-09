@@ -23,11 +23,11 @@ spec:
     resource_requirements:
       requests: {}
   default_worker:
-    replicas: 2
+    replicas: 1
     resource_requirements:
       requests: {}
   activation_worker:
-    replicas: 3
+    replicas: 1
     resource_requirements:
       requests: {}
   redis:
