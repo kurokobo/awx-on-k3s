@@ -433,6 +433,7 @@ Then define Rulebook Activation as follows. Note that you should modify actual v
 | Project | `Demo Project` |
 | Rulebook | `demo_mqtt.yaml` |
 | Decision environment | `Minimal DE with MQTT` |
+| Controller token | `awx.example.com` |
 | Variables | `mqtt_host: mqtt.example.com`<br>`mqtt_port: 31883`<br>`mqtt_topic: demo` |
 
 Activate the Rulebook, and publish specific message that matches the condition in the Rule to the topic you've defined.
