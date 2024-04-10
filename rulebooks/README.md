@@ -99,7 +99,7 @@ Modify two `password`s in `rulebooks/server/kustomization.yaml`.
 
 ```yaml
 ...
-  - name: eda-database-configuration
+  - name: eda-postgres-configuration
     type: Opaque
     literals:
       - host=eda-postgres-13
@@ -210,7 +210,7 @@ configmap/eda-server-operator      0      6m37s
 NAME                                     TYPE                DATA   AGE
 secret/redhat-operators-pull-secret      Opaque              1      6m49s
 secret/eda-admin-password                Opaque              1      4m19s
-secret/eda-database-configuration        Opaque              6      4m19s
+secret/eda-postgres-configuration        Opaque              6      4m19s
 secret/eda-secret-tls                    kubernetes.io/tls   2      4m19s
 secret/eda-db-fields-encryption-secret   Opaque              1      3m9s
 ```
