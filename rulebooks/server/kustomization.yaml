@@ -13,7 +13,7 @@ secretGenerator:
       - tls.crt
       - tls.key
 
-  - name: eda-database-configuration
+  - name: eda-postgres-configuration
     type: Opaque
     literals:
       - host=eda-postgres-13
