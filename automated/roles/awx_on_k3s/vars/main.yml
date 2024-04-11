@@ -1,0 +1,24 @@
+---
+# vars file for awx_on_k3s
+awx_on_k3s_awx_dirs:
+  - path: /data/postgres-15/data
+    owner: 26:0
+    mode: "0700"
+  - path: /data/projects
+    owner: 1000:0
+    mode: "0755"
+awx_on_k3s_galaxy_dirs:
+  - path: /data/galaxy/postgres-13
+    owner: root
+    mode: "0755"
+  - path: /data/galaxy/redis
+    owner: root
+    mode: "0755"
+  - path: /data/galaxy/file
+    owner: 1000:0
+    mode: "0755"
+awx_on_k3s_eda_dirs:
+  - path: /data/eda/postgres-13/data
+    owner: 26:0
+    mode: "0700"
+...

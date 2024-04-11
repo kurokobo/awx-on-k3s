@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: awx-postgres-15-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 8Gi
+  storageClassName: awx-postgres-volume
+  hostPath:
+    path: /data/postgres-15
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: awx-projects-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 2Gi
+  storageClassName: awx-projects-volume
+  hostPath:
+    path: /data/projects

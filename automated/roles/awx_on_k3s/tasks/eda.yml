@@ -1,0 +1,68 @@
+---
+- name: Copy eda config
+  ansible.builtin.copy:
+    src: "eda/"
+    dest: "{{ awx_on_k3s_deployment_dir }}/eda"
+    mode: "0644"
+
+- name: Deploy eda Operator
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('kubernetes.core.kustomize', dir=operator_dir) }}"
+  vars:
+    operator_dir: "{{ awx_on_k3s_deployment_dir }}/eda/operator"
+
+- name: Check if tls keys already exist
+  ansible.builtin.stat:
+    path: "{{ awx_on_k3s_deployment_dir }}/eda/server/tls.key"
+  register: r_awx_tls_key
+
+- name: Generate tls when they do not exist
+  when: not r_awx_tls_key['stat']['exists']
+  block:
+    - name: Create private key (RSA, 4096 bits)
+      community.crypto.openssl_privatekey:
+        path: "{{ awx_on_k3s_deployment_dir }}/eda/server/tls.key"
+        mode: "0644"
+
+    - name: Create certificate signing request (CSR) for self-signed certificate
+      community.crypto.openssl_csr_pipe:
+        privatekey_path: "{{ awx_on_k3s_deployment_dir }}/eda/server/tls.key"
+        common_name: "{{ awx_on_k3s_awx_host }}"
+        subject_alt_name:
+          - "DNS:{{ awx_on_k3s_awx_host }}"
+      register: csr
+
+    - name: Create self-signed certificate from CSR
+      community.crypto.x509_certificate:
+        path: "{{ awx_on_k3s_deployment_dir }}/eda/server/tls.crt"
+        csr_content: "{{ csr.csr }}"
+        privatekey_path: "{{ awx_on_k3s_deployment_dir }}/eda/server/tls.key"
+        provider: selfsigned
+        mode: "0644"
+
+- name: Ensure directories exist and have correct permissions
+  ansible.builtin.file:
+    path: "{{ item['path'] }}"
+    state: directory
+    owner: "{{ item['owner'] }}"
+    mode: "{{ item['mode'] }}"
+  loop: "{{ awx_on_k3s_eda_dirs }}"
+
+- name: Ensure eda.yaml config is good
+  ansible.builtin.template:
+    src: "eda/{{ item }}.yaml.j2"
+    dest: "{{ awx_on_k3s_deployment_dir }}/eda/server/{{ item }}.yaml"
+    mode: "0644"
+  loop:
+    - eda
+    - kustomization
+
+- name: Deploy eda
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('kubernetes.core.kustomize', dir=base_dir) }}"
+  vars:
+    base_dir: "{{ awx_on_k3s_deployment_dir }}/eda/server/"
+
+...

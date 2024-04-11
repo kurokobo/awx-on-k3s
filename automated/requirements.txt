@@ -1,0 +1,3 @@
+cryptography
+kubernetes
+kubernetes-validate

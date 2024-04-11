@@ -1,0 +1,41 @@
+---
+- name: Add lines to /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "{{ item }}"
+  loop: "{{ awx_on_k3s_hosts_lines }}"
+  notify:
+    - Daemon-reload
+    - Restart dnsmasq
+
+- name: Install dnsmasq
+  ansible.builtin.package:
+    name: dnsmasq
+    state: present
+
+- name: Start dnsmasq with default configuration
+  ansible.builtin.service:
+    name: dnsmasq
+    state: started
+    enabled: true
+  notify:
+    - Daemon-reload
+
+- name: Ensure directory paths exist
+  ansible.builtin.file:
+    path: /etc/rancher/k3s
+    state: directory
+    mode: "0755"
+
+- name: Create new resolv.conf to use K3s
+  ansible.builtin.copy:
+    dest: /etc/rancher/k3s/resolv.conf
+    content: "nameserver {{ ansible_facts['default_ipv4']['address'] }}"
+    mode: "0644"
+  notify:
+    - Daemon-reload
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+...

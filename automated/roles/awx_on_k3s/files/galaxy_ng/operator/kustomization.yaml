@@ -1,0 +1,20 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: galaxy
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+  - literals:
+    - operator=eda
+    name: redhat-operators-pull-secret
+
+resources:
+  # - github.com/ansible/galaxy-operator/config/default?ref=2024.02.29
+  - github.com/djdanielsson/galaxy-operator/config/default?ref=main
+
+images:
+  - name: quay.io/ansible/galaxy-operator
+    newTag: 2024.4.3

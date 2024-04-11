@@ -1,0 +1,38 @@
+---
+# Ansible Linter rules
+# Mock modules or roles in order to pass ansible-playbook --syntax-check
+mock_modules:
+  - ansible.controller.controller_api
+
+# Exclude paths from linter
+exclude_paths:
+  - '.github/'
+  - 'changelogs/'
+  - 'playbooks/install_configure.yml'
+  - 'aap_configuration_template/playbooks/install_configure.yml'
+
+# Make output parsable
+parseable: true
+
+# Set output to quiet
+quiet: false
+
+# Path to rules dir
+# rulesdir:
+
+# Ansible Linter rules
+skip_list:
+  - yaml[colons] # Violations reported by yamllint.
+  - yaml[line-length]  # Violations reported by yamllint.
+  - yaml[new-line-at-end-of-file]  # Violations reported by yamllint.
+
+warn_list:  # or 'skip_list' to silence them completely
+  - git-latest # Allow for newest git version
+  - package-latest # Allow newest package version
+  - template-instead-of-copy  # Templated files should use template instead of copy
+  - command-instead-of-shell  # Use shell only when shell functionality is required.
+  - var-naming[no-role-prefix] # Because I don't want to follow this rule at this time
+
+# Set verbosity
+verbosity: 1
+...
