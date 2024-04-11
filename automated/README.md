@@ -5,6 +5,12 @@ A role to deploy AWX, Galaxy_NG, and EDA on k3s. Based on https://github.com/kur
 
 Requirements
 ------------
+Creating a custom virtual environment (currently doesn't seem to work without it), and installing these packages.
+```
+python3 -m venv ansible
+source ansible/bin/active
+pip3 install -r requirements.txt
+```
 
 Python modules:
 ```console
@@ -52,6 +58,7 @@ Example Playbook
   become: true
   vars:
     awx_on_k3s_local_hosts: true
+    ansible_python_interpreter: UPDATE/TO/YOUR/VENV/PATH
   environment:
     K8S_AUTH_KUBECONFIG: /etc/rancher/k3s/k3s.yaml
   tasks:

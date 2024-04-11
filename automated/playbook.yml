@@ -5,7 +5,8 @@
   become: true
   vars:
     awx_on_k3s_local_hosts: true
-    awx_on_k3s_deploy_k3s: false
+    # awx_on_k3s_deploy_k3s: false
+    ansible_python_interpreter: UPDATE/TO/YOUR/VENV/PATH
   environment:
     K8S_AUTH_KUBECONFIG: /etc/rancher/k3s/k3s.yaml
   tasks:

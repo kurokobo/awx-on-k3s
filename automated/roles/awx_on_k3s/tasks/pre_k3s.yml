@@ -5,12 +5,13 @@
     state: stopped
     enabled: false
   failed_when: false
-  notify:
-    - Reboot
+  # notify:
+  #   - Reboot
   loop: "{{ awx_on_k3s_disable_services }}"
 
-- name: pre_k3s | Flush handlers
-  ansible.builtin.meta: flush_handlers
+# Cannot reboot when running against localhost but in the future could be run from other system
+# - name: pre_k3s | Flush handlers
+#   ansible.builtin.meta: flush_handlers
 
 - name: pre_k3s | Ensure required packages are installed
   ansible.builtin.package:
