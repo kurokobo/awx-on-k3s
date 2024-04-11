@@ -35,7 +35,7 @@ spec:
     resource_requirements:
       requests: {}
   database:
-    database_secret: eda-database-configuration
+    database_secret: eda-postgres-configuration
     postgres_storage_class: eda-postgres-volume
     storage_requirements:
       requests:
