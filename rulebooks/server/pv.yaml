@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: eda-postgres-13-volume
+  name: eda-postgres-15-volume
 spec:
   accessModes:
     - ReadWriteOnce
@@ -11,4 +11,4 @@ spec:
     storage: 8Gi
   storageClassName: eda-postgres-volume
   hostPath:
-    path: /data/eda/postgres-13
+    path: /data/eda/postgres-15

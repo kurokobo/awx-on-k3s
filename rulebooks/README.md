@@ -102,7 +102,7 @@ Modify two `password`s in `rulebooks/server/kustomization.yaml`.
   - name: eda-postgres-configuration
     type: Opaque
     literals:
-      - host=eda-postgres-13
+      - host=eda-postgres-15
       - port=5432
       - database=eda
       - username=eda
@@ -120,9 +120,9 @@ Prepare directories for Persistent Volumes defined in `base/pv.yaml`. This direc
 
 <!-- shell: instance: create directories -->
 ```bash
-sudo mkdir -p /data/eda/postgres-13/data
-sudo chown 26:0 /data/eda/postgres-13/data
-sudo chmod 700 /data/eda/postgres-13/data
+sudo mkdir -p /data/eda/postgres-15/data
+sudo chown 26:0 /data/eda/postgres-15/data
+sudo chmod 700 /data/eda/postgres-15/data
 ```
 
 ### Deploy EDA Server
@@ -162,7 +162,7 @@ eda.eda.ansible.com/eda   4m19s
 NAME                                                         READY   STATUS    RESTARTS   AGE
 pod/eda-server-operator-controller-manager-b7f64bc9b-f6c45   2/2     Running   0          6m49s
 pod/eda-redis-747596546f-rj8mx                               1/1     Running   0          4m3s
-pod/eda-postgres-13-0                                        1/1     Running   0          3m52s
+pod/eda-postgres-15-0                                        1/1     Running   0          3m52s
 pod/eda-ui-78d6d4c9d7-fndz4                                  1/1     Running   0          2m54s
 pod/eda-activation-worker-5db4894b46-tgk9g                   1/1     Running   0          2m49s
 pod/eda-default-worker-7bbfd84567-dnbvr                      1/1     Running   0          2m51s
@@ -172,7 +172,7 @@ pod/eda-api-888c5d77c-95r2z                                  2/2     Running   0
 NAME                                                             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
 service/eda-server-operator-controller-manager-metrics-service   ClusterIP   10.43.181.52    <none>        8443/TCP   6m49s
 service/eda-redis-svc                                            ClusterIP   10.43.141.149   <none>        6379/TCP   4m4s
-service/eda-postgres-13                                          ClusterIP   None            <none>        5432/TCP   3m56s
+service/eda-postgres-15                                          ClusterIP   None            <none>        5432/TCP   3m56s
 service/eda-api                                                  ClusterIP   10.43.209.69    <none>        8000/TCP   2m58s
 service/eda-daphne                                               ClusterIP   10.43.182.145   <none>        8001/TCP   2m58s
 service/eda-ui                                                   ClusterIP   10.43.49.181    <none>        80/TCP     2m55s
@@ -196,7 +196,7 @@ replicaset.apps/eda-scheduler-588d78b9bd                           1         1  
 replicaset.apps/eda-api-888c5d77c                                  1         1         1       2m57s
 
 NAME                               READY   AGE
-statefulset.apps/eda-postgres-13   1/1     3m55s
+statefulset.apps/eda-postgres-15   1/1     3m55s
 
 NAME                                    CLASS     HOSTS             ADDRESS         PORTS     AGE
 ingress.networking.k8s.io/eda-ingress   traefik   eda.example.com   192.168.0.221   80, 443   2m52s

@@ -16,7 +16,7 @@ secretGenerator:
   - name: eda-postgres-configuration
     type: Opaque
     literals:
-      - host=eda-postgres-13
+      - host=eda-postgres-15
       - port=5432
       - database=eda
       - username=eda
