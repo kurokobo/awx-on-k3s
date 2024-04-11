@@ -1,5 +1,5 @@
 ---
-- name: Disable services
+- name: pre_k3s | Disable services
   ansible.builtin.service:
     name: "{{ item }}"
     state: stopped
@@ -9,17 +9,17 @@
     - Reboot
   loop: "{{ awx_on_k3s_disable_services }}"
 
-- name: Flush handlers
+- name: pre_k3s | Flush handlers
   ansible.builtin.meta: flush_handlers
 
-- name: Ensure required packages are installed
+- name: pre_k3s | Ensure required packages are installed
   ansible.builtin.package:
     name:
       - git
       - curl
     state: present
 
-- name: Ensure python packages are installed
+- name: pre_k3s | Ensure python packages are installed
   ansible.builtin.pip:
     name:
       - cryptography

@@ -1,37 +1,37 @@
 ---
-- name: Create config directory
+- name: awx | Create config directory
   ansible.builtin.file:
     path: "{{ awx_on_k3s_deployment_dir }}"
     state: directory
     mode: "0755"
 
-- name: Copy awx config
+- name: awx | Copy awx config
   ansible.builtin.copy:
     src: "awx/"
     dest: "{{ awx_on_k3s_deployment_dir }}/awx"
     mode: "0644"
 
-- name: Deploy AWX Operator
+- name: awx | Deploy AWX Operator
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('kubernetes.core.kustomize', dir=operator_dir) }}"
   vars:
     operator_dir: "{{ awx_on_k3s_deployment_dir }}/awx/operator"
 
-- name: Check if tls keys already exist
+- name: awx | Check if tls keys already exist
   ansible.builtin.stat:
     path: "{{ awx_on_k3s_deployment_dir }}/awx/server/tls.key"
   register: r_awx_tls_key
 
-- name: Generate tls when they do not exist
+- name: awx | Generate tls when they do not exist
   when: not r_awx_tls_key['stat']['exists']
   block:
-    - name: Create private key (RSA, 4096 bits)
+    - name: awx | Create private key (RSA, 4096 bits)
       community.crypto.openssl_privatekey:
         path: "{{ awx_on_k3s_deployment_dir }}/awx/server/tls.key"
         mode: "0644"
 
-    - name: Create certificate signing request (CSR) for self-signed certificate
+    - name: awx | Create certificate signing request (CSR) for self-signed certificate
       community.crypto.openssl_csr_pipe:
         privatekey_path: "{{ awx_on_k3s_deployment_dir }}/awx/server/tls.key"
         common_name: "{{ awx_on_k3s_awx_host }}"
@@ -39,7 +39,7 @@
           - "DNS:{{ awx_on_k3s_awx_host }}"
       register: csr
 
-    - name: Create self-signed certificate from CSR
+    - name: awx | Create self-signed certificate from CSR
       community.crypto.x509_certificate:
         path: "{{ awx_on_k3s_deployment_dir }}/awx/server/tls.crt"
         csr_content: "{{ csr.csr }}"
@@ -47,7 +47,7 @@
         provider: selfsigned
         mode: "0644"
 
-- name: Ensure directories exist and have correct permissions
+- name: awx | Ensure directories exist and have correct permissions
   ansible.builtin.file:
     path: "{{ item['path'] }}"
     state: directory
@@ -55,7 +55,7 @@
     mode: "{{ item['mode'] }}"
   loop: "{{ awx_on_k3s_awx_dirs }}"
 
-- name: Ensure awx.yaml config is good
+- name: awx | Ensure awx.yaml config is good
   ansible.builtin.template:
     src: "awx/{{ item }}.yaml.j2"
     dest: "{{ awx_on_k3s_deployment_dir }}/awx/server/{{ item }}.yaml"
@@ -64,7 +64,7 @@
     - awx
     - kustomization
 
-- name: Deploy AWX
+- name: awx | Deploy AWX
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('kubernetes.core.kustomize', dir=base_dir) }}"

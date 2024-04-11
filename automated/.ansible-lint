@@ -1,38 +1,131 @@
 ---
-# Ansible Linter rules
-# Mock modules or roles in order to pass ansible-playbook --syntax-check
-mock_modules:
-  - ansible.controller.controller_api
+# .ansible-lint
 
-# Exclude paths from linter
+profile: production # min, basic, moderate,safety, shared, production
+
+# Allows dumping of results in SARIF format
+# sarif_file: result.sarif
+
+# exclude_paths included in this file are parsed relative to this file's location
+# and not relative to the CWD of execution. CLI arguments passed to the --exclude
+# option are parsed relative to the CWD of execution.
 exclude_paths:
-  - '.github/'
-  - 'changelogs/'
-  - 'playbooks/install_configure.yml'
-  - 'aap_configuration_template/playbooks/install_configure.yml'
+  - .cache/ # implicit unless exclude_paths is defined in config
+  - .vscode/
+  - .github/
+  - files/
 
-# Make output parsable
-parseable: true
+# parseable: true
+# quiet: true
+# strict: true
+# verbosity: 1
 
-# Set output to quiet
-quiet: false
+# Mock modules or roles in order to pass ansible-playbook --syntax-check
+# mock_modules:
+#   - zuul_return
+    # note the foo.bar is invalid as being neither a module or a collection
+#   - fake_namespace.fake_collection.fake_module
+#   - fake_namespace.fake_collection.fake_module.fake_submodule
+# mock_roles:
+#   - mocked_role
+#   - author.role_name # old standalone galaxy role
+#   - fake_namespace.fake_collection.fake_role # role within a collection
 
-# Path to rules dir
+# Enable checking of loop variable prefixes in roles
+loop_var_prefix: "^(__|{role}_)"
+
+# Enforce variable names to follow pattern below, in addition to Ansible own
+# requirements, like avoiding python identifiers. To disable add `var-naming`
+# to skip_list.
+var_naming_pattern: "^[a-z_][a-z0-9_]*$"
+
+use_default_rules: true
+# Load custom rules from this specific folder
 # rulesdir:
+#   - ./rule/directory/
 
-# Ansible Linter rules
+# Ansible-lint is able to recognize and load skip rules stored inside
+# `.ansible-lint-ignore` (or `.config/ansible-lint-ignore.txt`) files.
+# To skip a rule just enter filename and tag, like "playbook.yml package-latest"
+# on a new line.
+# Optionally you can add comments after the tag, prefixed by "#". We discourage
+# the use of skip_list below because that will hide violations from the output.
+# When putting ignores inside the ignore file, they are marked as ignored, but
+# still visible, making it easier to address later.
 skip_list:
   - yaml[colons] # Violations reported by yamllint.
   - yaml[line-length]  # Violations reported by yamllint.
   - yaml[new-line-at-end-of-file]  # Violations reported by yamllint.
 
-warn_list:  # or 'skip_list' to silence them completely
+# Ansible-lint does not automatically load rules that have the 'opt-in' tag.
+# You must enable opt-in rules by listing each rule 'id' below.
+enable_list:
+  - args
+  - empty-string-compare # opt-in
+  - no-log-password # opt-in
+  - no-same-owner # opt-in
+  - name[prefix] # opt-in
+  # add yaml here if you want to avoid ignoring yaml checks when yamllint
+  # library is missing. Normally its absence just skips using that rule.
+  - yaml
+# Report only a subset of tags and fully ignore any others
+# tags:
+#   - jinja[spacing]
+
+# Ansible-lint does not fail on warnings from the rules or tags listed below
+warn_list:
+  - experimental # experimental is included in the implicit list
   - git-latest # Allow for newest git version
   - package-latest # Allow newest package version
   - template-instead-of-copy  # Templated files should use template instead of copy
   - command-instead-of-shell  # Use shell only when shell functionality is required.
   - var-naming[no-role-prefix] # Because I don't want to follow this rule at this time
 
-# Set verbosity
-verbosity: 1
+# Some rules can transform files to fix (or make it easier to fix) identified
+# errors. `ansible-lint --fix` will reformat YAML files and run these transforms.
+# By default it will run all transforms (effectively `write_list: ["all"]`).
+# You can disable running transforms by setting `write_list: ["none"]`.
+# Or only enable a subset of rule transforms by listing rules/tags here.
+# write_list:
+#   - all
+
+# Offline mode disables installation of requirements.yml and schema refreshing
+offline: true
+
+# Define required Ansible's variables to satisfy syntax check
+# extra_vars:
+#   foo: bar
+#   multiline_string_variable: |
+#     line1
+#     line2
+#   complex_variable: ":{;\t$()"
+
+# Uncomment to enforce action validation with tasks, usually is not
+# needed as Ansible syntax check also covers it.
+# skip_action_validation: false
+
+# List of additional kind:pattern to be added at the top of the default
+# match list, first match determines the file kind.
+kinds:
+  # - playbook: "**/examples/*.{yml,yaml}"
+  # - galaxy: "**/folder/galaxy.yml"
+  # - tasks: "**/tasks/*.yml"
+  # - vars: "**/vars/*.yml"
+  # - meta: "**/meta/main.yml"
+  - yaml: "**/*.yaml-too"
+
+# List of additional collections to allow in only-builtins rule.
+# only_builtins_allow_collections:
+#   - example_ns.example_collection
+
+# List of additions modules to allow in only-builtins rule.
+# only_builtins_allow_modules:
+#   - example_module
+
+# Allow setting custom prefix for name[prefix] rule
+task_name_prefix: "{stem} | "
+# Complexity related settings
+
+# Limit the depth of the nested blocks:
+# max_block_depth: 20
 ...

@@ -1,11 +1,11 @@
 ---
-- name: Copy galaxy_ng config
+- name: galaxy_ng | Copy galaxy_ng config
   ansible.builtin.copy:
     src: "galaxy_ng/"
     dest: "{{ awx_on_k3s_deployment_dir }}/galaxy_ng"
     mode: "0644"
 
-- name: Deploy galaxy_ng Operator
+- name: galaxy_ng | Deploy galaxy_ng Operator
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('kubernetes.core.kustomize', dir=operator_dir) }}"
@@ -15,20 +15,20 @@
   vars:
     operator_dir: "{{ awx_on_k3s_deployment_dir }}/galaxy_ng/operator"
 
-- name: Check if tls keys already exist
+- name: galaxy_ng | Check if tls keys already exist
   ansible.builtin.stat:
     path: "{{ awx_on_k3s_deployment_dir }}/galaxy_ng/server/tls.key"
   register: r_awx_tls_key
 
-- name: Generate tls when they do not exist
+- name: galaxy_ng | Generate tls when they do not exist
   when: not r_awx_tls_key['stat']['exists']
   block:
-    - name: Create private key (RSA, 4096 bits)
+    - name: galaxy_ng | Create private key (RSA, 4096 bits)
       community.crypto.openssl_privatekey:
         path: "{{ awx_on_k3s_deployment_dir }}/galaxy_ng/server/tls.key"
         mode: "0644"
 
-    - name: Create certificate signing request (CSR) for self-signed certificate
+    - name: galaxy_ng | Create certificate signing request (CSR) for self-signed certificate
       community.crypto.openssl_csr_pipe:
         privatekey_path: "{{ awx_on_k3s_deployment_dir }}/galaxy_ng/server/tls.key"
         common_name: "{{ awx_on_k3s_awx_host }}"
@@ -36,7 +36,7 @@
           - "DNS:{{ awx_on_k3s_awx_host }}"
       register: csr
 
-    - name: Create self-signed certificate from CSR
+    - name: galaxy_ng | Create self-signed certificate from CSR
       community.crypto.x509_certificate:
         path: "{{ awx_on_k3s_deployment_dir }}/galaxy_ng/server/tls.crt"
         csr_content: "{{ csr.csr }}"
@@ -44,7 +44,7 @@
         provider: selfsigned
         mode: "0644"
 
-- name: Ensure directories exist and have correct permissions
+- name: galaxy_ng | Ensure directories exist and have correct permissions
   ansible.builtin.file:
     path: "{{ item['path'] }}"
     state: directory
@@ -52,7 +52,7 @@
     mode: "{{ item['mode'] }}"
   loop: "{{ awx_on_k3s_galaxy_dirs }}"
 
-- name: Ensure galaxy.yaml config is good
+- name: galaxy_ng | Ensure galaxy.yaml config is good
   ansible.builtin.template:
     src: "galaxy_ng/{{ item }}.yaml.j2"
     dest: "{{ awx_on_k3s_deployment_dir }}/galaxy_ng/server/{{ item }}.yaml"
@@ -61,7 +61,7 @@
     - galaxy
     - kustomization
 
-- name: Deploy galaxy_ng
+- name: galaxy_ng | Deploy galaxy_ng
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('kubernetes.core.kustomize', dir=base_dir) }}"

@@ -14,10 +14,6 @@
     file: deploy_k3s.yml
   when: awx_on_k3s_deploy_k3s
 
-# - name: Import kubectl.yml
-#   ansible.builtin.import_tasks:
-#     file: kubectl.yml
-
 - name: Import awx.yml
   ansible.builtin.import_tasks:
     file: awx.yml

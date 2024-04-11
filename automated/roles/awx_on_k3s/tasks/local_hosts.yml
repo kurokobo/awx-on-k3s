@@ -1,5 +1,5 @@
 ---
-- name: Add lines to /etc/hosts
+- name: local_hosts | Add lines to /etc/hosts
   ansible.builtin.lineinfile:
     path: /etc/hosts
     line: "{{ item }}"
@@ -8,12 +8,12 @@
     - Daemon-reload
     - Restart dnsmasq
 
-- name: Install dnsmasq
+- name: local_hosts | Install dnsmasq
   ansible.builtin.package:
     name: dnsmasq
     state: present
 
-- name: Start dnsmasq with default configuration
+- name: local_hosts | Start dnsmasq with default configuration
   ansible.builtin.service:
     name: dnsmasq
     state: started
@@ -21,13 +21,13 @@
   notify:
     - Daemon-reload
 
-- name: Ensure directory paths exist
+- name: local_hosts | Ensure directory paths exist
   ansible.builtin.file:
     path: /etc/rancher/k3s
     state: directory
     mode: "0755"
 
-- name: Create new resolv.conf to use K3s
+- name: local_hosts | Create new resolv.conf to use K3s
   ansible.builtin.copy:
     dest: /etc/rancher/k3s/resolv.conf
     content: "nameserver {{ ansible_facts['default_ipv4']['address'] }}"
@@ -35,7 +35,7 @@
   notify:
     - Daemon-reload
 
-- name: Flush handlers
+- name: local_hosts | Flush handlers
   ansible.builtin.meta: flush_handlers
 
 ...
