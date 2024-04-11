@@ -27,7 +27,7 @@ Role Variables
 |`awx_on_k3s_deployment_dir`|/awx_on_k3s|true|str||
 |`awx_on_k3s_deploy_k3s`|true|true|bool||
 |`awx_on_k3s_disable_services`|[firewalld, nm-cloud-setup.service, nm-cloud-setup.timer]|true|list||
-|`awx_on_k3s_hosts_lines`|false|(see defaults/main.yml)|list||
+|`awx_on_k3s_hosts_lines`|(see defaults/main.yml)|false|list||
 
 Dependencies
 ------------
