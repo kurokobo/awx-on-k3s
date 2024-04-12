@@ -18,6 +18,7 @@ spec:
 
   postgres_configuration_secret: awx-postgres-configuration
 
+  postgres_data_volume_init: true
   postgres_storage_class: awx-postgres-volume
   postgres_storage_requirements:
     requests:
@@ -36,8 +37,6 @@ spec:
   postgres_resource_requirements: {}
   redis_resource_requirements: {}
   rsyslog_resource_requirements: {}
-
-  postgres_data_volume_init: true
 
   # Uncomment to reveal "censored" logs
   #no_log: false
