@@ -154,7 +154,7 @@ $ kubectl -n galaxy logs -f deployments/galaxy-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (galaxy.ansible.com/v1beta1, Kind=Galaxy, galaxy/galaxy) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=128  changed=25   unreachable=0    failed=0    skipped=85   rescued=0    ignored=0
+localhost                  : ok=131  changed=25   unreachable=0    failed=0    skipped=82   rescued=0    ignored=0
 ```
 
 Required objects has been deployed next to Pulp Operator in `galaxy` namespace.
