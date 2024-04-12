@@ -5,10 +5,8 @@ metadata:
   name: awx
 spec:
   # These parameters are designed for use with:
-  # - AWX Operator: 2.0.0
-  #   https://github.com/ansible/awx-operator/blob/2.0.0/README.md
-  # - AWX: 22.0.0
-  #   https://github.com/ansible/awx/blob/22.0.0/INSTALL.md
+  # - AWX Operator: 2.15.0
+  #   https://github.com/ansible/awx-operator/blob/2.15.0/README.md
 
   admin_user: admin
   admin_password_secret: awx-admin-password
@@ -20,6 +18,7 @@ spec:
 
   postgres_configuration_secret: awx-postgres-configuration
 
+  postgres_data_volume_init: true
   postgres_storage_class: awx-postgres-volume
   postgres_storage_requirements:
     requests:
@@ -38,8 +37,6 @@ spec:
   postgres_resource_requirements: {}
   redis_resource_requirements: {}
   rsyslog_resource_requirements: {}
-
-  postgres_data_volume_init: true
 
   # Uncomment to reveal "censored" logs
   #no_log: false

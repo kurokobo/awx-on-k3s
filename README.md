@@ -29,22 +29,23 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - Tested on:
   - CentOS Stream 9 (Minimal)
-  - K3s v1.28.7+k3s1
+  - K3s v1.29.3+k3s1
 - Products that will be deployed:
-  - AWX Operator 2.14.0
-  - AWX 24.1.0
+  - AWX Operator 2.15.0
+  - AWX 24.2.0
   - PostgreSQL 15
 
 ## 📝 References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/24.1.0/INSTALL.md) @24.1.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.14.0/README.md) @2.14.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/24.2.0/INSTALL.md) @24.2.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.15.0/README.md) @2.15.0
 
 ## 📝 Requirements
 
 - **Computing resources**
-  - **2 CPUs with x86-64-v2 support**.
+  - **2 CPUs minimum**.
+    - Both **AMD64** (x86_64) with x86-64-v2 support, and **ARM64**  (aarch64) are supported.
   - **4 GiB RAM minimum**.
   - It's recommended to add more CPUs and RAM (like 4 CPUs and 8 GiB RAM or more) to avoid performance issue and job scheduling issue.
   - The files in this repository are configured to ignore resource requirements which specified by AWX Operator by default.
@@ -81,16 +82,10 @@ Install a specific version of K3s with `--write-kubeconfig-mode 644` to make the
 
 <!-- shell: k3s: install -->
 ```bash
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.7+k3s1 sh -s - --write-kubeconfig-mode 644
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.29.3+k3s1 sh -s - --write-kubeconfig-mode 644
 ```
 
 ### ✅ Install AWX Operator
-
-> [!WARNING]
-> AWX Operator 2.13.x introduces some major changes and some issues related to these changes are reported. These issues include an issue that have the potential to lose data depending on your configuration.
-> Since the issues still exist in 2.14.0, if you don't have any strong reason to use new version, personally I recommend you to use [2.12.1](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1) instead until major issues are resolved.
->
-> If you have a plan to upgrade existing AWX Operator and AWX from 2.12.x or earlier to 2.13.x or later anyway, some additional tasks are required. Refer to [📝Tips: Upgrade AWX Operator and AWX](tips/upgrade-operator.md) to further information. Also do not forget creating backup before upgrading.
 
 Clone this repository and change directory.
 
@@ -100,7 +95,7 @@ If you want to use files suitable for a specific version of AWX Operator, [refer
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 2.14.0
+git checkout 2.15.0
 ```
 
 Then invoke `kubectl apply -k operator` to deploy AWX Operator.
@@ -178,9 +173,7 @@ Prepare directories for Persistent Volumes defined in `base/pv.yaml`. These dire
 ```bash
 sudo mkdir -p /data/postgres-15/data
 sudo mkdir -p /data/projects
-sudo chown 26:0 /data/postgres-15/data
 sudo chown 1000:0 /data/projects
-sudo chmod 700 /data/postgres-15/data
 ```
 
 ### ✅ Deploy AWX
@@ -221,7 +214,7 @@ NAME                                                  READY   STATUS      RESTAR
 pod/awx-operator-controller-manager-59b86c6fb-4zz9r   2/2     Running     0          7m22s
 pod/awx-postgres-15-0                                 1/1     Running     0          6m33s
 pod/awx-web-549f7fdbc5-htpl9                          3/3     Running     0          6m5s
-pod/awx-migration-24.1.0-kglht                        0/1     Completed   0          4m36s
+pod/awx-migration-24.2.0-kglht                        0/1     Completed   0          4m36s
 pod/awx-task-7d4fcdd449-mqkp2                         4/4     Running     0          6m4s
 
 NAME                                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
@@ -243,7 +236,7 @@ NAME                               READY   AGE
 statefulset.apps/awx-postgres-15   1/1     6m33s
 
 NAME                             COMPLETIONS   DURATION   AGE
-job.batch/awx-migration-24.1.0   1/1           2m4s       4m36s
+job.batch/awx-migration-24.2.0   1/1           2m4s       4m36s
 
 NAME                                    CLASS     HOSTS             ADDRESS         PORTS     AGE
 ingress.networking.k8s.io/awx-ingress   traefik   awx.example.com   192.168.0.221   80, 443   6m6s

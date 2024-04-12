@@ -34,7 +34,7 @@ In this guide, [Galaxy Operator](https://github.com/ansible/galaxy-operator) is 
 > [!WARNING]
 > Galaxy NG deployed with this procedure will not be used as container registry due to [a known issue](https://github.com/ansible/galaxy-operator/issues/74). If you want to use fully working Galaxy NG, follow [the old version of this guide that uses Pulp Operator instead](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1/galaxy#deploy-on-kubernetes-pulp-operator).
 
-- Galaxy Operator 2024.02.29
+- Galaxy Operator 2024.4.3
 - Galaxy NG
   - Service: 5d56bddb
   - UI: 59cf7798
@@ -125,10 +125,10 @@ Prepare directories for Persistent Volumes defined in `galaxy/galaxy/pv.yaml`.
 <!-- shell: instance: create directories -->
 ```bash
 sudo mkdir -p /data/galaxy/postgres-13
-sudo mkdir -p /data/galaxy/redis
+sudo chmod 755 /data/galaxy/postgres-13
 sudo mkdir -p /data/galaxy/file
 sudo chown 1000:0 /data/galaxy/file
-sudo chmod 755 /data/galaxy/postgres-13
+sudo mkdir -p /data/galaxy/redis
 ```
 
 ### Deploy Galaxy NG
@@ -154,7 +154,7 @@ $ kubectl -n galaxy logs -f deployments/galaxy-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (galaxy.ansible.com/v1beta1, Kind=Galaxy, galaxy/galaxy) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=128  changed=25   unreachable=0    failed=0    skipped=85   rescued=0    ignored=0
+localhost                  : ok=131  changed=25   unreachable=0    failed=0    skipped=82   rescued=0    ignored=0
 ```
 
 Required objects has been deployed next to Pulp Operator in `galaxy` namespace.
