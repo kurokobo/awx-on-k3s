@@ -185,7 +185,6 @@ Typical solutions are one of the following:
       task_resource_requirements: {}                      👈👈👈
       ee_resource_requirements: {}                        👈👈👈
       init_container_resource_requirements: {}            👈👈👈
-      postgres_init_container_resource_requirements: {}   👈👈👈
       postgres_resource_requirements: {}                  👈👈👈
       redis_resource_requirements: {}                     👈👈👈
       rsyslog_resource_requirements: {}                   👈👈👈
