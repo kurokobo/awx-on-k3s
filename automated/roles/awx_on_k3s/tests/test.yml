@@ -1,7 +1,0 @@
----
-- name: Test
-  hosts: localhost
-  remote_user: root
-  roles:
-    - awx_on_k3s
-...

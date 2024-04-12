@@ -12,7 +12,7 @@ secretGenerator:
       - operator=eda
 
 resources:
-  - github.com/ansible/galaxy-operator/config/default?ref=2024.02.29
+  - github.com/ansible/galaxy-operator/config/default?ref=main
 
 images:
   - name: quay.io/ansible/galaxy-operator

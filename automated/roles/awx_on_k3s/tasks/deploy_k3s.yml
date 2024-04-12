@@ -1,6 +1,0 @@
----
-- name: Install k3s
-  ansible.builtin.shell: set -o pipefail && curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.7+k3s1 sh -s - --write-kubeconfig-mode 644 {% if awx_on_k3s_local_hosts is defined %}--resolv-conf /etc/rancher/k3s/resolv.conf{% endif %}
-  changed_when: true
-
-...

@@ -1,0 +1,334 @@
+---
+- name: Deploy AWX on k3s
+  hosts: all
+  gather_facts: true
+  become: true
+  vars:
+    awx_on_k3s_local_hosts: true
+    awx_on_k3s_deploy_k3s: false
+    awx_on_k3s_secure_logging: true
+    awx_on_k3s_deploy_awx: true
+    awx_on_k3s_deploy_galaxy: true
+    awx_on_k3s_deploy_eda: true
+    ansible_python_interpreter: UPDATE/TO/YOUR/VENV/PATH
+    awx_on_k3s_awx_host: awx.lab.test.local
+    awx_on_k3s_awx_admin_pass: 'Password1234!'
+    awx_on_k3s_galaxy_host: galaxy.lab.test.local
+    awx_on_k3s_galaxy_admin_pass: 'Password1234!'
+    awx_on_k3s_eda_host: eda.lab.test.local
+    awx_on_k3s_eda_admin_pass: 'Password1234!'
+    awx_on_k3s_disable_services:
+      - firewalld
+      - nm-cloud-setup.service
+      - nm-cloud-setup.timer
+    awx_on_k3s_hosts_lines:
+      - "{{ ansible_facts['default_ipv4']['address'] }} {{ awx_on_k3s_awx_host }}"
+      - "{{ ansible_facts['default_ipv4']['address'] }} {{ awx_on_k3s_galaxy_host }}"
+      - "{{ ansible_facts['default_ipv4']['address'] }} {{ awx_on_k3s_eda_host }}"
+    awx_on_k3s_awx_dirs:
+      - path: /data/postgres-15/data
+        owner: 26:0
+        mode: "0775"
+      - path: /data/projects
+        owner: 1000:0
+        mode: "0755"
+    awx_on_k3s_galaxy_dirs:
+      - path: /data/galaxy/postgres-13
+        owner: root
+        mode: "0755"
+      - path: /data/galaxy/redis
+        owner: root
+        mode: "0755"
+      - path: /data/galaxy/file
+        owner: 1000:0
+        mode: "0755"
+    awx_on_k3s_eda_dirs:
+      - path: /data/eda/postgres-13/data
+        owner: 26:0
+        mode: "0775"
+
+  environment:
+    K8S_AUTH_KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  tasks:
+    - name: Disable services
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+      failed_when: false
+      # notify:
+      #   - Reboot
+      loop: "{{ awx_on_k3s_disable_services }}"
+
+    # Cannot reboot when running against localhost but in the future could be run from other system
+    # - name: Flush handlers
+    #   ansible.builtin.meta: flush_handlers
+
+    - name: Ensure required packages are installed
+      ansible.builtin.package:
+        name:
+          - git
+          - curl
+        state: present
+
+    - name: Ensure python packages are installed
+      ansible.builtin.pip:
+        name:
+          - cryptography
+          - kubernetes
+          - kubernetes-validate
+        state: present
+
+    - name: For /etc/hosts option
+      when: awx_on_k3s_local_hosts
+      block:
+        - name: Add lines to /etc/hosts
+          ansible.builtin.lineinfile:
+            path: /etc/hosts
+            line: "{{ item }}"
+          loop: "{{ awx_on_k3s_hosts_lines }}"
+          notify:
+            - Daemon-reload
+            - Restart dnsmasq
+
+        - name: Install dnsmasq
+          ansible.builtin.package:
+            name: dnsmasq
+            state: present
+
+        - name: Start dnsmasq with default configuration
+          ansible.builtin.service:
+            name: dnsmasq
+            state: started
+            enabled: true
+          notify:
+            - Daemon-reload
+
+        - name: Ensure directory paths exist
+          ansible.builtin.file:
+            path: /etc/rancher/k3s
+            state: directory
+            mode: "0755"
+
+        - name: Create new resolv.conf to use K3s
+          ansible.builtin.copy:
+            dest: /etc/rancher/k3s/resolv.conf
+            content: "nameserver {{ ansible_facts['default_ipv4']['address'] }}"
+            mode: "0644"
+          notify:
+            - Daemon-reload
+
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+    - name: Install k3s
+      ansible.builtin.shell: set -o pipefail && curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.7+k3s1 sh -s - --write-kubeconfig-mode 644 {% if awx_on_k3s_local_hosts is defined %}--resolv-conf /etc/rancher/k3s/resolv.conf{% endif %} # noqa yaml[line-length]
+      changed_when: true
+      when: awx_on_k3s_deploy_k3s
+
+    - name: Deploy AWX
+      when: awx_on_k3s_deploy_awx
+      block:
+        - name: Deploy AWX Operator
+          kubernetes.core.k8s:
+            state: present
+            definition: "{{ lookup('kubernetes.core.kustomize', dir='./operator') }}"
+
+        - name: Check if tls keys already exist
+          ansible.builtin.stat:
+            path: "./base/tls.key"
+          register: r_awx_tls_key
+
+        - name: Generate tls when they do not exist
+          when: not r_awx_tls_key['stat']['exists']
+          block:
+            - name: Create private key (RSA, 4096 bits)
+              community.crypto.openssl_privatekey:
+                path: "./base/tls.key"
+                mode: "0644"
+
+            - name: Create certificate signing request (CSR) for self-signed certificate
+              community.crypto.openssl_csr_pipe:
+                privatekey_path: "./base/tls.key"
+                common_name: "{{ awx_on_k3s_awx_host }}"
+                subject_alt_name:
+                  - "DNS:{{ awx_on_k3s_awx_host }}"
+              register: csr
+
+            - name: Create self-signed certificate from CSR
+              community.crypto.x509_certificate:
+                path: "./base/tls.crt"
+                csr_content: "{{ csr.csr }}"
+                privatekey_path: "./base/tls.key"
+                provider: selfsigned
+                mode: "0644"
+
+        - name: Ensure directories exist and have correct permissions
+          ansible.builtin.file:
+            path: "{{ item['path'] }}"
+            state: directory
+            owner: "{{ item['owner'] }}"
+            mode: "{{ item['mode'] }}"
+          loop: "{{ awx_on_k3s_awx_dirs }}"
+
+        - name: Update hostname for awx
+          ansible.builtin.lineinfile:
+            path: ./base/awx.yaml
+            regexp: '    - hostname:'
+            line: '    - hostname: {{ awx_on_k3s_awx_host }}'
+
+        - name: Update admin password for awx
+          ansible.builtin.lineinfile:
+            path: ./base/kustomization.yaml
+            regexp: '      - password='
+            line: '      - password={{ awx_on_k3s_awx_admin_pass }}'
+          no_log: "{{ awx_on_k3s_secure_logging }}"
+
+        - name: Deploy AWX
+          kubernetes.core.k8s:
+            state: present
+            definition: "{{ lookup('kubernetes.core.kustomize', dir='./base/') }}"
+
+    - name: Deploy galaxy
+      when: awx_on_k3s_deploy_galaxy
+      block:
+        - name: Deploy galaxy Operator
+          kubernetes.core.k8s:
+            state: present
+            definition: "{{ lookup('kubernetes.core.kustomize', dir='./galaxy/operator') }}"
+            validate:
+              fail_on_error: false
+              strict: false
+
+        - name: Check if tls keys already exist
+          ansible.builtin.stat:
+            path: "./galaxy/galaxy/tls.key"
+          register: r_awx_tls_key
+
+        - name: Generate tls when they do not exist
+          when: not r_awx_tls_key['stat']['exists']
+          block:
+            - name: Create private key (RSA, 4096 bits)
+              community.crypto.openssl_privatekey:
+                path: "./galaxy/galaxy/tls.key"
+                mode: "0644"
+
+            - name: Create certificate signing request (CSR) for self-signed certificate
+              community.crypto.openssl_csr_pipe:
+                privatekey_path: "./galaxy/galaxy/tls.key"
+                common_name: "{{ awx_on_k3s_awx_host }}"
+                subject_alt_name:
+                  - "DNS:{{ awx_on_k3s_awx_host }}"
+              register: csr
+
+            - name: Create self-signed certificate from CSR
+              community.crypto.x509_certificate:
+                path: "./galaxy/galaxy/tls.crt"
+                csr_content: "{{ csr.csr }}"
+                privatekey_path: "./galaxy/galaxy/tls.key"
+                provider: selfsigned
+                mode: "0644"
+
+        - name: Ensure directories exist and have correct permissions
+          ansible.builtin.file:
+            path: "{{ item['path'] }}"
+            state: directory
+            owner: "{{ item['owner'] }}"
+            mode: "{{ item['mode'] }}"
+          loop: "{{ awx_on_k3s_galaxy_dirs }}"
+
+        - name: Update hostname for galaxy
+          ansible.builtin.lineinfile:
+            path: ./galaxy/galaxy/galaxy.yaml
+            regexp: '  hostname:'
+            line: '  hostname: {{ awx_on_k3s_galaxy_host }}'
+
+        - name: Update admin password for galaxy
+          ansible.builtin.lineinfile:
+            path: ./galaxy/galaxy/kustomization.yaml
+            regexp: '      - password='
+            line: '      - password={{ awx_on_k3s_galaxy_admin_pass }}'
+          no_log: "{{ awx_on_k3s_secure_logging }}"
+
+        - name: Deploy galaxy
+          kubernetes.core.k8s:
+            state: present
+            definition: "{{ lookup('kubernetes.core.kustomize', dir='./galaxy/galaxy/') }}"
+
+    - name: Deploy eda
+      when: awx_on_k3s_deploy_eda
+      block:
+        - name: Deploy eda Operator
+          kubernetes.core.k8s:
+            state: present
+            definition: "{{ lookup('kubernetes.core.kustomize', dir='./rulebooks/operator') }}"
+
+        - name: Check if tls keys already exist
+          ansible.builtin.stat:
+            path: "./rulebooks/server/tls.key"
+          register: r_awx_tls_key
+
+        - name: Generate tls when they do not exist
+          when: not r_awx_tls_key['stat']['exists']
+          block:
+            - name: Create private key (RSA, 4096 bits)
+              community.crypto.openssl_privatekey:
+                path: "./rulebooks/server/tls.key"
+                mode: "0644"
+
+            - name: Create certificate signing request (CSR) for self-signed certificate
+              community.crypto.openssl_csr_pipe:
+                privatekey_path: "./rulebooks/server/tls.key"
+                common_name: "{{ awx_on_k3s_awx_host }}"
+                subject_alt_name:
+                  - "DNS:{{ awx_on_k3s_awx_host }}"
+              register: csr
+
+            - name: Create self-signed certificate from CSR
+              community.crypto.x509_certificate:
+                path: "./rulebooks/server/tls.crt"
+                csr_content: "{{ csr.csr }}"
+                privatekey_path: "./rulebooks/server/tls.key"
+                provider: selfsigned
+                mode: "0644"
+
+        - name: Ensure directories exist and have correct permissions
+          ansible.builtin.file:
+            path: "{{ item['path'] }}"
+            state: directory
+            owner: "{{ item['owner'] }}"
+            mode: "{{ item['mode'] }}"
+          loop: "{{ awx_on_k3s_eda_dirs }}"
+
+        - name: Update hostname for eda
+          ansible.builtin.lineinfile:
+            path: ./rulebooks/server/eda.yaml
+            regexp: '  hostname:.*'
+            line: '  hostname: {{ awx_on_k3s_eda_host }}'
+
+        - name: Update admin password for eda
+          ansible.builtin.lineinfile:
+            path: ./rulebooks/server/kustomization.yaml
+            regexp: '      - password='
+            line: '      - password={{ awx_on_k3s_eda_admin_pass }}'
+          no_log: "{{ awx_on_k3s_secure_logging }}"
+
+        - name: Deploy eda
+          kubernetes.core.k8s:
+            state: present
+            definition: "{{ lookup('kubernetes.core.kustomize', dir='./rulebooks/server/') }}"
+
+  handlers:
+    - name: Reboot
+      ansible.builtin.reboot:
+
+    - name: Daemon-reload
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
+    - name: Restart dnsmasq
+      ansible.builtin.service:
+        name: dnsmasq
+        state: restarted
+
+...
