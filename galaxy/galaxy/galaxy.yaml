@@ -4,13 +4,13 @@ metadata:
   name: galaxy
 spec:
   # These parameters are designed for use with:
-  # - Galaxy Operator: 2024.02.29
-  #   https://github.com/ansible/galaxy-operator/blob/2024.02.29/README.md
+  # - Galaxy Operator: 2024.4.3
+  #   https://github.com/ansible/galaxy-operator/blob/2024.4.3/README.md
 
   image: quay.io/ansible/galaxy-ng
-  image_version: 5d56bddb
+  image_version: f3c93fc1
   image_web: quay.io/ansible/galaxy-ui
-  image_web_version: 59cf7798
+  image_web_version: b2fa0d0d
 
   admin_password_secret: galaxy-admin-password
 
@@ -23,6 +23,7 @@ spec:
   file_storage_access_mode: ReadWriteOnce
   file_storage_size: 8Gi
 
+  postgres_configuration_secret: galaxy-postgres-configuration
   postgres_storage_class: galaxy-postgres-volume
   postgres_storage_requirements: 
     requests:

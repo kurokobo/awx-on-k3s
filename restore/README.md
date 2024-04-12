@@ -45,10 +45,10 @@ Then prepare directories for your PVs. `/data/projects` is required if you are r
 <!-- shell: restore: create directories -->
 ```bash
 sudo mkdir -p /data/postgres-15/data
-sudo mkdir -p /data/projects
 sudo chown 26:0 /data/postgres-15/data
-sudo chown 1000:0 /data/projects
 sudo chmod 700 /data/postgres-15/data
+sudo mkdir -p /data/projects
+sudo chown 1000:0 /data/projects
 ```
 
 Then deploy PV and PVC. It is recommended that making the size of PVs and PVCs same as the PVs which your AWX used when the backup was taken.
@@ -111,7 +111,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=92   changed=0    unreachable=0    failed=0    skipped=79   rescued=0    ignored=1
+localhost                  : ok=92   changed=0    unreachable=0    failed=0    skipped=80   rescued=0    ignored=1
 ```
 
 This will create AWXRestore object in the namespace, and now your AWX is restored.
