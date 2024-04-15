@@ -86,6 +86,11 @@ kubectl -n awx logs -f <POD> -c <CONTAINER>
 kubectl -n awx logs -f deployment/<DEPLOYMENT>
 kubectl -n awx logs -f deployment/<DEPLOYMENT> -c <CONTAINER>
 
+# Get the logs of specific Pod which is handled by Job resource.
+# If the Pod includes multiple containers, container name has to be specified.
+kubectl -n awx logs -f job/<JOB>
+kubectl -n awx logs -f job/<JOB> -c <CONTAINER>
+
 # Get the logs of specific Pod which is handled by StatefulSet resource
 # If the Pod includes multiple containers, container name has to be specified.
 kubectl -n awx logs -f statefulset/<STATEFULSET>
@@ -99,6 +104,8 @@ For AWX Operator and AWX, specifically, the following commands are helpful.
 - Logs of AWX related init containers
   - `kubectl -n awx logs -f deployment/awx-task -c init`
   - `kubectl -n awx logs -f deployment/awx-task -c init-projects`
+- Logs of AWX related job container
+  - `kubectl -n awx logs -f job/awx-migration-<VERSION>`
 - Logs of AWX related containers
   - `kubectl -n awx logs -f deployment/awx-web -c awx-web`
   - `kubectl -n awx logs -f deployment/awx-web -c awx-rsyslog`
@@ -107,7 +114,9 @@ For AWX Operator and AWX, specifically, the following commands are helpful.
   - `kubectl -n awx logs -f deployment/awx-task -c awx-ee`
   - `kubectl -n awx logs -f deployment/awx-task -c awx-rsyslog`
   - `kubectl -n awx logs -f deployment/awx-task -c redis`
-- Logs of PostgreSQL
+- Logs of PostgreSQL related init container
+  - `kubectl -n awx logs -f statefulset/awx-postgres-15 -c init`
+- Logs of PostgreSQL related container
   - `kubectl -n awx logs -f statefulset/awx-postgres-15`
 
 ### Reveal "censored" output in the AWX Operator's log
