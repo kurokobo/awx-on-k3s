@@ -6,7 +6,9 @@ This is necessary for AWX to resolve the hostname for your private Git repositor
 
 One easy way to do this is to use `dnsmasq`.
 
-1. Add entries to `/etc/hosts` on your K3s host. Note that the IP addresses have to be replaced with your K3s host's one.
+Note that any IP addresses in the following steps have to be replaced with your K3s host's one.
+
+1. Add entries to `/etc/hosts` on your K3s host.
 
    ```bash
    sudo tee -a /etc/hosts <<EOF
@@ -17,14 +19,27 @@ One easy way to do this is to use `dnsmasq`.
    EOF
    ```
 
-2. Install and start `dnsmasq` with default configuration.
+2. Install `dnsmasq`.
 
    ```bash
    sudo dnf install dnsmasq
+   ```
+
+3. Add minimal configuration file for `dnsmasq`.
+
+   ```bash
+   sudo tee /etc/dnsmasq.d/10-k3s.conf <<EOF
+   listen-address=192.168.0.221
+   EOF
+   ```
+
+4. Enable and start `dnsmasq`.
+
+   ```bash
    sudo systemctl enable dnsmasq --now
    ```
 
-3. Create new `resolv.conf` to use K3s. Note that the IP addresses have to be replaced with your K3s host's one.
+5. Create new `resolv.conf` for K3s.
 
    ```bash
    sudo tee /etc/rancher/k3s/resolv.conf <<EOF
@@ -32,11 +47,11 @@ One easy way to do this is to use `dnsmasq`.
    EOF
    ```
 
-4. Add `--resolv-conf /etc/rancher/k3s/resolv.conf` as an argument for `k3s server` command.
+6. Add `--resolv-conf /etc/rancher/k3s/resolv.conf` as an argument for `k3s server` command.
 
    ```bash
    # Change configuration using script:
-   $ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644 --resolv-conf /etc/rancher/k3s/resolv.conf
+   $ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.7+k3s1 sh -s - --write-kubeconfig-mode 644 --resolv-conf /etc/rancher/k3s/resolv.conf
 
    # If you don't want to use the script, modify /etc/systemd/system/k3s.service manually:
    $ cat /etc/systemd/system/k3s.service
@@ -49,15 +64,15 @@ One easy way to do this is to use `dnsmasq`.
            '/etc/rancher/k3s/resolv.conf' \   👈👈👈
    ```
 
-5. Restart K3s and CoreDNS. The K3s service can be safely restarted without affecting the running resources.
+7. Restart K3s and CoreDNS. The K3s service can be safely restarted without affecting the running resources.
 
    ```bash
    sudo systemctl daemon-reload
    sudo systemctl restart k3s
-   kubectl -n kube-system delete pod -l k8s-app=kube-dns
+   kubectl -n kube-system rollout restart deployment coredns
    ```
 
-6. Ensure that your hostname can be resolved as defined in `/etc/hosts`.
+8. Ensure that your hostname can be resolved as defined in `/etc/hosts`.
 
    ```bash
    $ kubectl run -it --rm --restart=Never busybox --image=busybox:1.28 -- nslookup git.example.com
@@ -69,7 +84,7 @@ One easy way to do this is to use `dnsmasq`.
    pod "busybox" deleted
    ```
 
-7. If you update your `/etc/hosts`, restarting `dnsmasq` is required.
+9. If you update your `/etc/hosts`, restarting `dnsmasq` is required.
 
    ```bash
    sudo systemctl restart dnsmasq
