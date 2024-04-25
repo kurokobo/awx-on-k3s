@@ -87,6 +87,9 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.7+k3s1 sh -s - --write-
 
 ### ✅ Install AWX Operator
 
+> [!WARNING]
+> For AWX Operator 2.16.0, there are some bugs reported. See the release note for further information. If you don't have any specific reason to use 2.16.0, it's recommended to use [2.15.0](https://github.com/kurokobo/awx-on-k3s/tree/2.15.0) instead.
+
 Clone this repository and change directory.
 
 If you want to use files suitable for a specific version of AWX Operator, [refer to tags in this repository](https://github.com/kurokobo/awx-on-k3s/tags) and specify the desired tag in `git checkout`. Especially for `0.13.0` or earlier versions of AWX Operator, refer to [📝Tips: Deploy older version of AWX Operator](tips/deploy-older-operator.md).
