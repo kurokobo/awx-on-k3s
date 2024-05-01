@@ -29,17 +29,17 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
 
 - Tested on:
   - CentOS Stream 9 (Minimal)
-  - K3s v1.28.7+k3s1
+  - K3s v1.29.4+k3s1
 - Products that will be deployed:
-  - AWX Operator 2.16.0
-  - AWX 24.3.0
+  - AWX Operator 2.16.1
+  - AWX 24.3.1
   - PostgreSQL 15
 
 ## 📝 References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/24.3.0/INSTALL.md) @24.3.0
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.16.0/README.md) @2.16.0
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/24.3.1/INSTALL.md) @24.3.1
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.16.1/README.md) @2.16.1
 
 ## 📝 Requirements
 
@@ -82,13 +82,10 @@ Install a specific version of K3s with `--write-kubeconfig-mode 644` to make the
 
 <!-- shell: k3s: install -->
 ```bash
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.28.7+k3s1 sh -s - --write-kubeconfig-mode 644
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.29.4+k3s1 sh -s - --write-kubeconfig-mode 644
 ```
 
 ### ✅ Install AWX Operator
-
-> [!WARNING]
-> For AWX Operator 2.16.0, there are some bugs reported. See [the release note](https://github.com/ansible/awx/releases/tag/24.3.0) for further information. If you don't have any specific reason to use 2.16.0, it's recommended to use [2.15.0](https://github.com/kurokobo/awx-on-k3s/tree/2.15.0) instead.
 
 Clone this repository and change directory.
 
@@ -98,7 +95,7 @@ If you want to use files suitable for a specific version of AWX Operator, [refer
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 2.16.0
+git checkout 2.16.1
 ```
 
 Then invoke `kubectl apply -k operator` to deploy AWX Operator.
@@ -217,7 +214,7 @@ NAME                                                  READY   STATUS      RESTAR
 pod/awx-operator-controller-manager-59b86c6fb-4zz9r   2/2     Running     0          7m22s
 pod/awx-postgres-15-0                                 1/1     Running     0          6m33s
 pod/awx-web-549f7fdbc5-htpl9                          3/3     Running     0          6m5s
-pod/awx-migration-24.3.0-kglht                        0/1     Completed   0          4m36s
+pod/awx-migration-24.3.1-kglht                        0/1     Completed   0          4m36s
 pod/awx-task-7d4fcdd449-mqkp2                         4/4     Running     0          6m4s
 
 NAME                                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
@@ -239,7 +236,7 @@ NAME                               READY   AGE
 statefulset.apps/awx-postgres-15   1/1     6m33s
 
 NAME                             COMPLETIONS   DURATION   AGE
-job.batch/awx-migration-24.3.0   1/1           2m4s       4m36s
+job.batch/awx-migration-24.3.1   1/1           2m4s       4m36s
 
 NAME                                    CLASS     HOSTS             ADDRESS         PORTS     AGE
 ingress.networking.k8s.io/awx-ingress   traefik   awx.example.com   192.168.0.221   80, 443   6m6s

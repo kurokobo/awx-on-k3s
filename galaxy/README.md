@@ -34,10 +34,10 @@ In this guide, [Galaxy Operator](https://github.com/ansible/galaxy-operator) is 
 > [!WARNING]
 > Galaxy NG deployed with this procedure will not be used as container registry due to [a known issue](https://github.com/ansible/galaxy-operator/issues/74). If you want to use fully working Galaxy NG, follow [the old version of this guide that uses Pulp Operator instead](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1/galaxy#deploy-on-kubernetes-pulp-operator).
 
-- Galaxy Operator 2024.4.3
+- Galaxy Operator 2024.4.30
 - Galaxy NG
-  - Service: 5d56bddb
-  - UI: 59cf7798
+  - Service: b7b07e96
+  - UI: 19fd5a2b
 
 ## Deployment Instruction
 
@@ -125,7 +125,6 @@ Prepare directories for Persistent Volumes defined in `galaxy/galaxy/pv.yaml`.
 <!-- shell: instance: create directories -->
 ```bash
 sudo mkdir -p /data/galaxy/postgres-13
-sudo chmod 755 /data/galaxy/postgres-13
 sudo mkdir -p /data/galaxy/file
 sudo chown 1000:0 /data/galaxy/file
 sudo mkdir -p /data/galaxy/redis
