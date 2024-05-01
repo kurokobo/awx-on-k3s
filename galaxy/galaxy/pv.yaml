@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: galaxy-postgres-13-volume
+  name: galaxy-postgres-15-volume
 spec:
   accessModes:
     - ReadWriteOnce
@@ -11,7 +11,7 @@ spec:
     storage: 8Gi
   storageClassName: galaxy-postgres-volume
   hostPath:
-    path: /data/galaxy/postgres-13
+    path: /data/galaxy/postgres-15
 
 ---
 apiVersion: v1

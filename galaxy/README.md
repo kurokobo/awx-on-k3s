@@ -34,7 +34,7 @@ In this guide, [Galaxy Operator](https://github.com/ansible/galaxy-operator) is 
 > [!WARNING]
 > Galaxy NG deployed with this procedure will not be used as container registry due to [a known issue](https://github.com/ansible/galaxy-operator/issues/74). If you want to use fully working Galaxy NG, follow [the old version of this guide that uses Pulp Operator instead](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1/galaxy#deploy-on-kubernetes-pulp-operator).
 
-- Galaxy Operator 2024.4.30
+- Galaxy Operator 2024.5.1
 - Galaxy NG
   - Service: b7b07e96
   - UI: 19fd5a2b
@@ -105,7 +105,7 @@ Modify two `password`s in `galaxy/galaxy/kustomization.yaml`.
   - name: galaxy-postgres-configuration
     type: Opaque
     literals:
-      - host=galaxy-postgres-13
+      - host=galaxy-postgres-15
       - port=5432
       - database=galaxy
       - username=galaxy
@@ -124,7 +124,7 @@ Prepare directories for Persistent Volumes defined in `galaxy/galaxy/pv.yaml`.
 
 <!-- shell: instance: create directories -->
 ```bash
-sudo mkdir -p /data/galaxy/postgres-13
+sudo mkdir -p /data/galaxy/postgres-15
 sudo mkdir -p /data/galaxy/file
 sudo chown 1000:0 /data/galaxy/file
 sudo mkdir -p /data/galaxy/redis
@@ -153,7 +153,7 @@ $ kubectl -n galaxy logs -f deployments/galaxy-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (galaxy.ansible.com/v1beta1, Kind=Galaxy, galaxy/galaxy) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=131  changed=25   unreachable=0    failed=0    skipped=82   rescued=0    ignored=0
+localhost                  : ok=140  changed=25   unreachable=0    failed=0    skipped=87   rescued=0    ignored=0
 ```
 
 Required objects has been deployed next to Pulp Operator in `galaxy` namespace.
@@ -166,7 +166,7 @@ galaxy.galaxy.ansible.com/galaxy   4m44s
 
 NAME                                                      READY   STATUS    RESTARTS   AGE
 pod/galaxy-operator-controller-manager-69bdb6886d-klh28   2/2     Running   0          4m29s
-pod/galaxy-postgres-13-0                                  1/1     Running   0          3m45s
+pod/galaxy-postgres-15-0                                  1/1     Running   0          3m45s
 pod/galaxy-redis-994cbcbff-46m95                          1/1     Running   0          3m26s
 pod/galaxy-worker-5ffd987855-g56rt                        1/1     Running   0          3m30s
 pod/galaxy-api-75d6bf46b8-lbt4z                           1/1     Running   0          3m19s
@@ -175,7 +175,7 @@ pod/galaxy-web-7f75d4c888-bg5pt                           1/1     Running   0   
 
 NAME                                                         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)     AGE
 service/galaxy-operator-controller-manager-metrics-service   ClusterIP   10.43.73.43    <none>        8443/TCP    4m29s
-service/galaxy-postgres-13                                   ClusterIP   None           <none>        5432/TCP    3m45s
+service/galaxy-postgres-15                                   ClusterIP   None           <none>        5432/TCP    3m45s
 service/galaxy-web-svc                                       ClusterIP   10.43.114.49   <none>        24880/TCP   3m39s
 service/galaxy-content-svc                                   ClusterIP   10.43.9.181    <none>        24816/TCP   3m37s
 service/galaxy-redis-svc                                     ClusterIP   10.43.20.127   <none>        6379/TCP    3m27s
@@ -198,7 +198,7 @@ replicaset.apps/galaxy-content-6d7dd695c5                       1         1     
 replicaset.apps/galaxy-web-7f75d4c888                           1         1         1       3m40s
 
 NAME                                  READY   AGE
-statefulset.apps/galaxy-postgres-13   1/1     3m45s
+statefulset.apps/galaxy-postgres-15   1/1     3m45s
 
 NAME                                       CLASS     HOSTS                ADDRESS         PORTS     AGE
 ingress.networking.k8s.io/galaxy-ingress   traefik   galaxy.example.com   192.168.0.221   80, 443   2m9s
