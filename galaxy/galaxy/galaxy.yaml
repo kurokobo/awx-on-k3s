@@ -4,13 +4,13 @@ metadata:
   name: galaxy
 spec:
   # These parameters are designed for use with:
-  # - Galaxy Operator: 2024.5.1
-  #   https://github.com/ansible/galaxy-operator/blob/2024.5.1/README.md
+  # - Galaxy Operator: 2024.5.8
+  #   https://github.com/ansible/galaxy-operator/blob/2024.5.8/README.md
 
   image: quay.io/ansible/galaxy-ng
-  image_version: b7b07e96
+  image_version: 9d2f8ce1
   image_web: quay.io/ansible/galaxy-ui
-  image_web_version: 19fd5a2b
+  image_web_version: 6116e760
 
   admin_password_secret: galaxy-admin-password
 
