@@ -34,10 +34,10 @@ In this guide, [Galaxy Operator](https://github.com/ansible/galaxy-operator) is 
 > [!WARNING]
 > Galaxy NG deployed with this procedure will not be used as container registry due to [a known issue](https://github.com/ansible/galaxy-operator/issues/74). If you want to use fully working Galaxy NG, follow [the old version of this guide that uses Pulp Operator instead](https://github.com/kurokobo/awx-on-k3s/tree/2.12.1/galaxy#deploy-on-kubernetes-pulp-operator).
 
-- Galaxy Operator 2024.5.1
+- Galaxy Operator 2024.5.8
 - Galaxy NG
-  - Service: b7b07e96
-  - UI: 19fd5a2b
+  - Service: 9d2f8ce1
+  - UI: 6116e760
 
 ## Deployment Instruction
 
