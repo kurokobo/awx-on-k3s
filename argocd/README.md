@@ -95,7 +95,6 @@ NAME                                             READY   AGE
 statefulset.apps/argocd-application-controller   1/1     31s
 
 NAME                             AGE
-appproject.argoproj.io/awx       29s
 appproject.argoproj.io/default   28s
 ```
 
