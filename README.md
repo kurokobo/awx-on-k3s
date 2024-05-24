@@ -31,15 +31,15 @@ An example implementation of AWX on single node K3s using AWX Operator, with eas
   - CentOS Stream 9 (Minimal)
   - K3s v1.29.4+k3s1
 - Products that will be deployed:
-  - AWX Operator 2.16.1
-  - AWX 24.3.1
+  - AWX Operator 2.17.0
+  - AWX 24.4.0
   - PostgreSQL 15
 
 ## 📝 References
 
 - [K3s - Lightweight Kubernetes](https://docs.k3s.io/)
-- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/24.3.1/INSTALL.md) @24.3.1
-- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.16.1/README.md) @2.16.1
+- [INSTALL.md on ansible/awx](https://github.com/ansible/awx/blob/24.4.0/INSTALL.md) @24.4.0
+- [README.md on ansible/awx-operator](https://github.com/ansible/awx-operator/blob/2.17.0/README.md) @2.17.0
 
 ## 📝 Requirements
 
@@ -95,7 +95,7 @@ If you want to use files suitable for a specific version of AWX Operator, [refer
 cd ~
 git clone https://github.com/kurokobo/awx-on-k3s.git
 cd awx-on-k3s
-git checkout 2.16.1
+git checkout 2.17.0
 ```
 
 Then invoke `kubectl apply -k operator` to deploy AWX Operator.
@@ -214,7 +214,7 @@ NAME                                                  READY   STATUS      RESTAR
 pod/awx-operator-controller-manager-59b86c6fb-4zz9r   2/2     Running     0          7m22s
 pod/awx-postgres-15-0                                 1/1     Running     0          6m33s
 pod/awx-web-549f7fdbc5-htpl9                          3/3     Running     0          6m5s
-pod/awx-migration-24.3.1-kglht                        0/1     Completed   0          4m36s
+pod/awx-migration-24.4.0-kglht                        0/1     Completed   0          4m36s
 pod/awx-task-7d4fcdd449-mqkp2                         4/4     Running     0          6m4s
 
 NAME                                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
@@ -236,7 +236,7 @@ NAME                               READY   AGE
 statefulset.apps/awx-postgres-15   1/1     6m33s
 
 NAME                             COMPLETIONS   DURATION   AGE
-job.batch/awx-migration-24.3.1   1/1           2m4s       4m36s
+job.batch/awx-migration-24.4.0   1/1           2m4s       4m36s
 
 NAME                                    CLASS     HOSTS             ADDRESS         PORTS     AGE
 ingress.networking.k8s.io/awx-ingress   traefik   awx.example.com   192.168.0.221   80, 443   6m6s
