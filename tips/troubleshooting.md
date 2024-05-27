@@ -102,7 +102,10 @@ For AWX Operator and AWX, specifically, the following commands are helpful.
 - Logs of AWX Operator
   - `kubectl -n awx logs -f deployment/awx-operator-controller-manager`
 - Logs of AWX related init containers
-  - `kubectl -n awx logs -f deployment/awx-task -c init`
+  - `kubectl -n awx logs -f deployment/awx-web -c init`
+  - `kubectl -n awx logs -f deployment/awx-web -c init-projects`
+  - `kubectl -n awx logs -f deployment/awx-task -c init-database`
+  - `kubectl -n awx logs -f deployment/awx-task -c init-receptor`
   - `kubectl -n awx logs -f deployment/awx-task -c init-projects`
 - Logs of AWX related job container
   - `kubectl -n awx logs -f job/awx-migration-<VERSION>`
