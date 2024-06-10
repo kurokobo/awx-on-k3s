@@ -77,7 +77,7 @@ Note that this sample manifest does not include any databases, so the SQLite3 ha
 | Configuration  | Recommended Value                                        |
 | -------------- | -------------------------------------------------------- |
 | Database Type  | `SQLite3`                                                |
-| Server Domain | `git.example.com` or the hostname you specified |
+| Server Domain  | `git.example.com` or the hostname you specified          |
 | Gitea Base URL | `https://git.example.com/` or the hostname you specified |
 
 ## Configure AWX to use Git Repository with Self-Signed Certificate
