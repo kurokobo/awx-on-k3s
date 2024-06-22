@@ -5,8 +5,8 @@ metadata:
   name: awx
 spec:
   # These parameters are designed for use with:
-  # - AWX Operator: 2.18.0
-  #   https://github.com/ansible/awx-operator/blob/2.18.0/README.md
+  # - AWX Operator: 2.19.0
+  #   https://github.com/ansible/awx-operator/blob/2.19.0/README.md
 
   admin_user: admin
   admin_password_secret: awx-admin-password

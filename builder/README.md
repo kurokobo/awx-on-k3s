@@ -58,7 +58,7 @@ cd awx-on-k3s/builder
 - CentOS Stream 9 (Minimal)
 - Python 3.11
 - Docker 25.0.4
-- Ansible Builder 3.0.1
+- Ansible Builder 3.1.0
 
 ### Install Ansible Builder
 
@@ -117,19 +117,36 @@ File context/_build/scripts/install-from-bindep will be created.
 File context/_build/scripts/introspect.py will be created.
 File context/_build/scripts/check_galaxy will be created.
 File context/_build/scripts/check_ansible will be created.
+File context/_build/scripts/pip_install will be created.
 File context/_build/scripts/entrypoint will be created.
 Ansible Builder is building your execution environment image. Tags: registry.example.com/ansible/ee:2.15-custom
 Running command:
   docker build -f context/Dockerfile -t registry.example.com/ansible/ee:2.15-custom context
-Sending build context to Docker daemon  50.18kB
-Step 1/77 : ARG EE_BASE_IMAGE="quay.io/centos/centos:stream9-minimal"
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 3.14kB done
+#1 DONE 0.1s
 ...
-Step 77/77 : CMD ["bash"]
- ---> Running in 2eff2dca84d2
-Removing intermediate container 2eff2dca84d2
- ---> d804667597e9
-Successfully built d804667597e9
-Successfully tagged registry.example.com/ansible/ee:2.15-custom
+
+#5 [base 1/7] FROM quay.io/centos/centos:stream9-minimal@sha256:08da5b444b6f7bdc1e4253e36fd3bd52d712d9c19c1b9e426fd733c5865c9d30
+...
+
+#12 [galaxy 1/7] ADD _build/configs/ansible.cfg ~/.ansible.cfg
+...
+
+#13 [builder 1/7] WORKDIR /build
+...
+
+#18 [final 1/9] RUN /output/scripts/check_ansible /usr/bin/python3.11
+...
+
+#35 exporting to image
+#35 exporting layers
+#35 exporting layers 1.1s done
+#35 writing image sha256:34147e320cd92bf40c545c785e7718dc65936d1b68179f0620b329a286095064 done
+#35 naming to registry.example.com/ansible/ee:2.15-custom done
+#35 DONE 1.1s
 
 Complete! The build context can be found at: /home/********/awx-on-k3s/builder/context
 ```
@@ -139,7 +156,7 @@ Once the command is complete, your custom EE image is built and stored on Docker
 ```bash
 $ docker image ls
 REPOSITORY                        TAG           IMAGE ID       CREATED          SIZE
-registry.example.com/ansible/ee   2.15-custom   d804667597e9   20 seconds ago   284MB
+registry.example.com/ansible/ee   2.15-custom   34147e320cd9   20 seconds ago   285MB
 ```
 
 ## Use EE
@@ -158,7 +175,7 @@ Simply you can push your EE image to some container registry. Any registry can b
 $ docker push registry.example.com/ansible/ee:2.15-custom
 The push refers to repository [registry.example.com/ansible/ee]
 ...
-2.15-custom: digest: sha256:193b380672c64768231973c58a154fb8eec0f0aae1891e63aea3918308a06716 size: 3456
+2.15-custom: digest: sha256:b0d4638a788a74d893075f5600a00e5aef51ada67e46bde2071615fc936ef0d8 size: 3661
 ```
 
 Then you can specify `registry.example.com/ansible/ee:2.15-custom` as your own custom EE in AWX. Specify registry credentials if your container registry requires authentication.
@@ -185,7 +202,7 @@ Ensure your imported image is listed.
 $ sudo $(which k3s) crictl images
 IMAGE                             TAG           IMAGE ID            SIZE
 ...
-registry.example.com/ansible/ee   2.15-custom   d804667597e9e       96.3MB
+registry.example.com/ansible/ee   2.15-custom   34147e320cd92       295MB
 ...
 ```
 
@@ -242,6 +259,7 @@ File context/_build/scripts/install-from-bindep will be created.
 File context/_build/scripts/introspect.py will be created.
 File context/_build/scripts/check_galaxy will be created.
 File context/_build/scripts/check_ansible will be created.
+File context/_build/scripts/pip_install will be created.
 File context/_build/scripts/entrypoint will be created.
 Complete! The build context can be found at: /home/********/awx-on-k3s/builder/context
 ```
