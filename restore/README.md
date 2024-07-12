@@ -111,7 +111,7 @@ $ kubectl -n awx logs -f deployments/awx-operator-controller-manager
 ...
 ----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
 PLAY RECAP *********************************************************************
-localhost                  : ok=92   changed=0    unreachable=0    failed=0    skipped=80   rescued=0    ignored=1
+localhost                  : ok=92   changed=0    unreachable=0    failed=0    skipped=81   rescued=0    ignored=1
 ```
 
 This will create AWXRestore object in the namespace, and now your AWX is restored.

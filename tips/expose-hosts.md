@@ -51,7 +51,7 @@ Note that any IP addresses in the following steps have to be replaced with your 
 
    ```bash
    # Change configuration using script:
-   $ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.29.5+k3s1 sh -s - --write-kubeconfig-mode 644 --resolv-conf /etc/rancher/k3s/resolv.conf
+   $ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.29.6+k3s2 sh -s - --write-kubeconfig-mode 644 --resolv-conf /etc/rancher/k3s/resolv.conf
 
    # If you don't want to use the script, modify /etc/systemd/system/k3s.service manually:
    $ cat /etc/systemd/system/k3s.service
