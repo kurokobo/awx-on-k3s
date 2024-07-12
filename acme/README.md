@@ -43,7 +43,7 @@ Deploy cert-manager first.
 
 <!-- shell: instance: deploy cert manager -->
 ```bash
-kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.15.0/cert-manager.yaml
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.15.1/cert-manager.yaml
 ```
 
 Ensure the pods in `cert-manager` namespace are running.

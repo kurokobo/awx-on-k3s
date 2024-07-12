@@ -29,5 +29,5 @@ configMapGenerator:
 
 resources:
   - namespace.yaml
-  - https://raw.githubusercontent.com/argoproj/argo-cd/v2.11.3/manifests/install.yaml
+  - https://raw.githubusercontent.com/argoproj/argo-cd/v2.11.4/manifests/install.yaml
   - ingressroute.yaml
