@@ -28,9 +28,9 @@ dependencies:
     package_system: python3.11
     python_path: /usr/bin/python3.11
   ansible_core:
-    package_pip: ansible-core~=2.15
+    package_pip: ansible-core~=2.15.0
   ansible_runner:
-    package_pip: ansible-runner~=2.3
+    package_pip: ansible-runner~=2.3.0
   system: dependencies/bindep.txt
   python: dependencies/requirements.txt
   galaxy: dependencies/requirements.yml
