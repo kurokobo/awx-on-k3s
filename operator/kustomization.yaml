@@ -17,3 +17,5 @@ resources:
 images:
   - name: quay.io/ansible/awx-operator
     newTag: 2.19.1
+  - name: gcr.io/kubebuilder/kube-rbac-proxy
+    newName: quay.io/brancz/kube-rbac-proxy
