@@ -13,6 +13,8 @@ You can also refer [the official instructions](https://github.com/ansible/awx-op
 - [Instruction](#instruction)
   - [Prepare for Backup](#prepare-for-backup)
   - [Back up AWX manually](#back-up-awx-manually)
+  - [Clean up Backup objects](#clean-up-backup-objects)
+    - [awx-operator-controller-manager is unresponsive](#awx-operator-controller-manager-is-unresponsive)
 - [Appendix: Back up AWX using Ansible](#appendix-back-up-awx-using-ansible)
 
 ## Instruction
@@ -92,6 +94,55 @@ total 736
 -rw-------. 1 26 26  17085 Jun  6 06:51 secrets.yml
 -rw-r--r--. 1 26 26 833184 Jun  6 06:51 tower.db
 ```
+
+### Clean up Backup Objects
+!!Ensure your backup data has been transferred from the backup directory before running the commands!!
+
+After completing and transferring the backup, it is recommended to clean up the backup resource created by AWX Operator. Keeping many of these resources around may result in the `awx-operator-controller-manager` becoming unresponsive, and thus creating new backups impossible.
+
+Browse the existing backup objects:
+```sh
+kubectl get awxbackup -n awx
+```
+
+Delete the resources: 
+!!Ensure your backup data has been transferred from the backup directory before running the commands!!
+```sh
+kubectl -n awx delete awxbackup <name> # delete a single resource
+kubectl -n awx delete awxbackup --all # delete all resources
+```
+
+#### awx-operator-controller-manager is unresponsive
+
+!!Ensure your backup data has been transferred from the backup directory before running the commands!!
+
+If you are unable to delete the resources (e.g. the delete command hangs), the following commands will help clean up the resources. 
+
+First, scale down the unresponsive AWX Operator controller manager:
+
+```sh
+kubectl -n awx scale deployment/awx-operator-controller-manager --replicas=0
+``` 
+
+!!Ensure your backup data has been transferred from the backup directory before running the command!!
+
+Second, patch remove each backup resource's finalizer, ensuring the resource can get deleted. 
+
+```sh
+kubectl get awxbackup -n awx -o json | jq '.items[] | .metadata.name' | xargs -I{} kubectl patch awxbackup {} -n awx --type=json -p='[{"op": "remove", "path": "/metadata/finalizers"}]'
+``` 
+
+Browse the existing backup objects again, to see that the resources are no longer present:
+
+```sh
+kubectl get awxbackup -n awx
+```
+
+Finally, scale up the manager:
+
+```sh
+kubectl -n awx scale deployment/awx-operator-controller-manager --replicas=1
+``` 
 
 ## Appendix: Back up AWX using Ansible
 
