@@ -9,7 +9,8 @@ If you want to use a certificate from public ACME CA such as Let's Encrypt or Ze
 - [Concepts](#concepts)
 - [Procedure](#procedure)
   - [Deploy cert-manager](#deploy-cert-manager)
-  - [Prepare Issuer](#prepare-issuer)
+  - [Prepare Issuer using Azure DNS with Service Principal](#prepare-issuer-using-azure-dns-with-service-principal)
+  - [Prepare Issuer using Cloudflare](#prepare-issuer-using-cloudflare)
   - [Modify configuration files for AWX](#modify-configuration-files-for-awx)
 
 ## Concepts
@@ -56,7 +57,7 @@ cert-manager-cainjector-967788869-xnq2n   1/1     Running   0          21h
 cert-manager-webhook-6668fbb57d-r9dmj     1/1     Running   0          21h
 ```
 
-### Prepare Issuer
+### Prepare Issuer using Azure DNS with Service Principal
 
 To use **DNS-01** challenge with **Azure DNS** with **Service Principal**, the following information is required.
 
@@ -126,6 +127,86 @@ NAME         READY   AGE
 awx-issuer   True    21h
 ```
 
+### Prepare Issuer using Cloudflare
+
+The other option is to use Cloudflare. You first need to login to your cloudflare account and create an `API-Token` which is better as compared to an `API-Global-Key` from security point of view. 
+
+Tokens can be created at `User Profile > API Tokens > API Tokens`. You can create a `custom` API Token with the following recommended settings:
+
+- Permissions:
+  - Zone - DNS - Edit
+  - Zone - Zone - Read
+- Zone Resources:
+  - Include - All Zones
+
+Then modify required fields in `acme/issuer.yaml`.
+
+```yaml
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: awx-issuer
+spec:
+  acme:
+    # The email address to be registered with ACME CA
+    email: your-cloudflare-account-email@example.com          👈👈👈
+
+    # The URL of the ACME API endpoint.
+    # In Let's Encrypt, this is one of the following:
+    #   Production: https://acme-v02.api.letsencrypt.org/directory
+    #   Staging   : https://acme-staging-v02.api.letsencrypt.org/directory
+    #server: https://acme-staging-v02.api.letsencrypt.org/directory
+    server: https://acme-v02.api.letsencrypt.org/directory           👈👈👈
+
+    privateKeySecretRef:
+      name: awx-issuer-account-key
+
+    solvers:
+      - dns01:
+          cloudflare:
+            email: your-cloudflare-account-email@example.com          👈👈👈
+            apiTokenSecretRef:
+              name: cloudflare-api-token-secret
+              key: api-token
+```
+
+To store Client Secret for the Service Principal to Secret resource in Kubernetes, modify `acme/kustomization.yaml`.
+
+```yaml
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: awx
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+  - name: cloudflare-api-token-secret
+    type: Opaque
+    literals:
+      - api-token=your_cloudflare_api_token          👈👈👈
+
+resources:
+  - issuer.yaml
+```
+
+Once the file has been modified to suit your environment, deploy the Issuer.
+
+<!-- shell: instance: deploy issuer -->
+```bash
+kubectl apply -k acme
+```
+
+Ensure your Issuer exists in `awx` namespace and is in the READY=True state.
+
+```bash
+$ kubectl -n awx get issuer
+NAME         READY   AGE
+awx-issuer   True    21h
+```
+
 ### Modify configuration files for AWX
 
 Now that we have an Issuer, the last step is to add annotations to Ingress. A few files under the `base` directory need to be modified.
@@ -164,5 +245,7 @@ secretGenerator:
 ```
 
 Now your configuration files to ready to use ACME CA. Go back [`README.md`](https://github.com/kurokobo/awx-on-k3s#prepare-required-files) and proceed the procedure.
+
+Bear in mind that you don't have to create any certificates and keys etc.
 
 Once the AWX instance is up and running, we can access it over HTTPS and we will see that our AWX protected by a valid SSL certificate.
